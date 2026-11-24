@@ -1,0 +1,3 @@
+# Optional environment: use a compatible torch >=1.12, torchvision >=0.13 installation.
+pyiqa==0.1.13
+openai-clip==1.0.1

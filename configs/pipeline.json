@@ -1,0 +1,39 @@
+{
+  "generation": "generation.json",
+  "renderer": "opendwm",
+  "output": "../work/two-scene-opendwm",
+  "organizer_mapping": "../work/resources/scene_mapping.json",
+  "python": {
+    "policy": "../work/resources/envs/drivoR/bin/python",
+    "vision": "../work/resources/envs/dreamer/bin/python",
+    "evaluation": "../work/resources/evaluation-env/bin/python"
+  },
+  "runtime_env": {
+    "DRIVEAUDIT_AGENT_ASSETS": "../weights/agents",
+    "NUPLAN_DEVKIT_ROOT": "../work/resources/agent-deps/DrivoR/nuplan-devkit",
+    "DRIVEAUDIT_DINO_PYTHON": "../work/resources/envs/goalflow/bin/python",
+    "DRIVEAUDIT_METRIC_CACHE": "../weights/evaluation",
+    "TORCH_HOME": "../weights/evaluation/home/torch",
+    "XDG_CACHE_HOME": "../work/resources/cache",
+    "OPENBLAS_CORETYPE": "Haswell",
+    "OPENBLAS_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "2",
+    "MKL_NUM_THREADS": "1",
+    "HF_HUB_OFFLINE": "1",
+    "PYTHONNOUSERSITE": "1",
+    "DRIVEAUDIT_SPARSE_OPS": "../work/resources/agent-deps/SparseDriveV2/navsim/agents/sparsedrive/ops",
+    "DRIVEAUDIT_AGENT_DEPENDENCIES": "../work/resources/agent-deps",
+    "DRIVEAUDIT_DINO_SOURCE": "../work/resources/cache/torch/hub/facebookresearch_dinov2_main"
+  },
+  "panel": {
+    "interpreters": {
+      "drivor": "../work/resources/envs/drivoR/bin/python",
+      "uniad": "../work/resources/envs/uniad/bin/python",
+      "vad": "../work/resources/envs/vad/bin/python",
+      "sparsedrivev2": "../work/resources/envs/sparsedrivev2/bin/python",
+      "goalflow": "../work/resources/envs/goalflow/bin/python",
+      "diffusiondrivev2": "../work/resources/envs/diffusiondrivev2/bin/python"
+    },
+    "scoring_workers": 6
+  }
+}

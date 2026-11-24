@@ -1,0 +1,4 @@
+graft vendor
+graft configs
+graft models
+global-exclude *.py[cod] .DS_Store

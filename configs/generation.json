@@ -1,0 +1,64 @@
+{
+  "scenes": [
+    "case_000001",
+    "case_000002"
+  ],
+  "work_dir": "../work/two-scene-generation",
+  "archive": "../work/resources/participant.tar.gz",
+  "engine_code_root": "../work/native",
+  "catk_python": "../work/resources/envs/catk/bin/python",
+  "v2_python": "../work/resources/envs/mddit/bin/python",
+  "cuda_homes": {
+    "basedreamer": "../work/resources/cuda/cuda-11.3",
+    "dreamforge": "../work/resources/cuda/cuda-11.8",
+    "magicdrive": "../work/resources/cuda/cuda-11.3",
+    "opendwm": "../work/resources/cuda/cuda-12.1",
+    "panacea": "../work/resources/cuda/cuda-11.7",
+    "magicdrivev2": "../work/resources/cuda/cuda-12.1"
+  },
+  "models": {
+    "basedreamer": {
+      "render_checkpoint": "../weights/renderers/base-pretrained/dreamer_pretrained/SDv1.5_mv_single_ref_nus/weight-S200000",
+      "sd15": "../weights/renderers/base-pretrained/pretrained/stable-diffusion-v1-5",
+      "python": {
+        "renderer": "../work/resources/envs/wd_basedreamer/bin/python"
+      }
+    },
+    "dreamforge": {
+      "render_checkpoint": "../weights/renderers/models--Jianbiao--dreamforge-t",
+      "single_checkpoint": "../weights/renderers/models--Jianbiao--dreamforge-s",
+      "sd15": "../weights/renderers/base-pretrained/pretrained/stable-diffusion-v1-5",
+      "python": {
+        "renderer": "../work/resources/envs/wd_dreamforge/bin/python"
+      }
+    },
+    "horizondrive": {
+      "render_checkpoint": "../weights/renderers/models--zcliangyue--HorizonDrive/horizondrive-dit.safetensors",
+      "wan_checkpoint": "../weights/renderers/models--Wan-AI--Wan2.1-T2V-1.3B",
+      "python": {
+        "renderer": "../work/resources/envs/horizondrive/bin/python"
+      }
+    },
+    "magicdrive": {
+      "render_checkpoint": "../weights/renderers/models--flymin--MagicDrive-t-60f-224x400-80k",
+      "sd15": "../weights/renderers/models--stable-diffusion-v1-5--stable-diffusion-v1-5",
+      "python": {
+        "renderer": "../work/resources/envs/magicdrive_t/bin/python"
+      }
+    },
+    "opendwm": {
+      "render_checkpoint": "../weights/renderers/models--wzhgba--opendwm-models/ctsd_unimlvg_tirda_bm_nwa_60k.pth",
+      "base_model": "../weights/renderers/models--stabilityai--stable-diffusion-3-medium-diffusers",
+      "python": {
+        "renderer": "../work/resources/envs/opendwm/bin/python"
+      }
+    },
+    "panacea": {
+      "render_checkpoint": "../weights/renderers/models--orangewen--panacea_ckpts/panaceaplus_40k_deepspeed.ckpt",
+      "clip_checkpoint": "../weights/renderers/models--laion--CLIP-ViT-H-14-laion2B-s32B-b79K/open_clip_pytorch_model.bin",
+      "python": {
+        "renderer": "../work/resources/envs/panacea/bin/python"
+      }
+    }
+  }
+}

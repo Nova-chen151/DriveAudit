@@ -1,0 +1,2533 @@
+evaluation:
+  profile: research
+  consistency:
+    profile: research
+    backends:
+      gt_vtc:
+        version: gt_vtc_v1_oracle_paired
+        protocol:
+          name: gt_vtc_paired_ground_truth
+          use_future_gt: true
+          use_gt_agent_id: true
+          use_gt_boxes: true
+          use_gt_trajectory: true
+          use_bevformer: false
+          use_long_tracker: false
+          use_submission_data: false
+        inputs:
+          gt_images: challenge/gt
+          conditions: challenge/input/case_0001/minimal/conditions
+        output: challenge/gt_vtc
+        scene:
+          scene_id: current_sample_001
+          history_frames: 10
+          future_frames: 80
+          development_future_frames: 20
+          evaluation_start_frame: 30
+        image:
+          native_size:
+          - 1600
+          - 900
+          formal_size:
+          - 1600
+          - 900
+          low_resolution_size:
+          - 400
+          - 224
+        time_alignment:
+          use_timestamp: true
+          allow_interpolation: true
+          offset_search_diagnostic: true
+          maximum_nearest_error_s: 0.05
+        projection:
+          minimum_depth_m: 0.2
+          minimum_projected_area_px: 256
+          maximum_truncation_ratio: 0.65
+          maximum_occlusion_ratio: 0.8
+          minimum_visibility_token: 2
+        instance_region:
+          priority:
+          - gt_instance_mask
+          - gt_depth_box_rasterization
+          - projected_visible_face_core
+          erode_core: true
+          erosion_ratio: 0.08
+          minimum_core_pixels: 64
+          exclude_overlap: true
+          exclude_occluded: true
+          exclude_small_objects: true
+        motion:
+          window_delta: 1
+          candidate_deltas:
+          - 1
+          - 2
+          - 3
+          use_lk: true
+          use_farneback: true
+          use_orb: true
+          allow_raft_if_available: true
+          allow_long_propagation: false
+          maximum_points: 96
+          minimum_valid_points: 4
+          corner_quality: 0.01
+          minimum_point_distance_px: 4
+          forward_backward_error_px: 2.5
+          ransac_threshold_px: 3.0
+          maximum_flow_px: 160
+          orb_features: 128
+          repeated_frame_mean_difference: 0.15
+          minimum_contrast_std: 4.0
+        calibration:
+          use_history_frames: true
+          future_gt_for_threshold_tuning: false
+          single_scene_temporal_holdout: true
+        metrics:
+          annotation_consistency: true
+          visual_motion_consistency: true
+          multiview_consistency: true
+          temporal_consistency: true
+        thresholds:
+          status: gt_calibration_thresholds
+          minimum_projection_valid_rate: 0.95
+          minimum_annotation_consistency: 0.99
+          minimum_camera_support_recall: 0.9
+          minimum_valid_point_ratio: 0.7
+          minimum_motion_support_rate: 0.8
+          minimum_flow_cosine: 0.75
+          minimum_direction_agreement: 0.75
+          maximum_multiview_contradiction: 0.1
+          maximum_unscorable_rate: 0.2
+          minimum_scorable_windows: 50
+        outputs:
+          save_per_frame: true
+          save_per_window: true
+          save_per_agent: true
+          save_per_camera: true
+          save_visualizations: true
+        enabled: false
+        dependencies:
+        - numpy
+        - scipy
+        - cv2
+        - shapely
+      gt_vtc_v2:
+        version: gt_vtc_v2_geometry_guided
+        inputs:
+          gt_vtc_v1_config:
+            version: gt_vtc_v1_oracle_paired
+            protocol:
+              name: gt_vtc_paired_ground_truth
+              use_future_gt: true
+              use_gt_agent_id: true
+              use_gt_boxes: true
+              use_gt_trajectory: true
+              use_bevformer: false
+              use_long_tracker: false
+              use_submission_data: false
+            inputs:
+              gt_images: challenge/gt
+              conditions: challenge/input/case_0001/minimal/conditions
+            output: challenge/gt_vtc
+            scene:
+              scene_id: current_sample_001
+              history_frames: 10
+              future_frames: 80
+              development_future_frames: 20
+              evaluation_start_frame: 30
+            image:
+              native_size:
+              - 1600
+              - 900
+              formal_size:
+              - 1600
+              - 900
+              low_resolution_size:
+              - 400
+              - 224
+            time_alignment:
+              use_timestamp: true
+              allow_interpolation: true
+              offset_search_diagnostic: true
+              maximum_nearest_error_s: 0.05
+            projection:
+              minimum_depth_m: 0.2
+              minimum_projected_area_px: 256
+              maximum_truncation_ratio: 0.65
+              maximum_occlusion_ratio: 0.8
+              minimum_visibility_token: 2
+            instance_region:
+              priority:
+              - gt_instance_mask
+              - gt_depth_box_rasterization
+              - projected_visible_face_core
+              erode_core: true
+              erosion_ratio: 0.08
+              minimum_core_pixels: 64
+              exclude_overlap: true
+              exclude_occluded: true
+              exclude_small_objects: true
+            motion:
+              window_delta: 1
+              candidate_deltas:
+              - 1
+              - 2
+              - 3
+              use_lk: true
+              use_farneback: true
+              use_orb: true
+              allow_raft_if_available: true
+              allow_long_propagation: false
+              maximum_points: 96
+              minimum_valid_points: 4
+              corner_quality: 0.01
+              minimum_point_distance_px: 4
+              forward_backward_error_px: 2.5
+              ransac_threshold_px: 3.0
+              maximum_flow_px: 160
+              orb_features: 128
+              repeated_frame_mean_difference: 0.15
+              minimum_contrast_std: 4.0
+            calibration:
+              use_history_frames: true
+              future_gt_for_threshold_tuning: false
+              single_scene_temporal_holdout: true
+            metrics:
+              annotation_consistency: true
+              visual_motion_consistency: true
+              multiview_consistency: true
+              temporal_consistency: true
+            thresholds:
+              status: gt_calibration_thresholds
+              minimum_projection_valid_rate: 0.95
+              minimum_annotation_consistency: 0.99
+              minimum_camera_support_recall: 0.9
+              minimum_valid_point_ratio: 0.7
+              minimum_motion_support_rate: 0.8
+              minimum_flow_cosine: 0.75
+              minimum_direction_agreement: 0.75
+              maximum_multiview_contradiction: 0.1
+              maximum_unscorable_rate: 0.2
+              minimum_scorable_windows: 50
+            outputs:
+              save_per_frame: true
+              save_per_window: true
+              save_per_agent: true
+              save_per_camera: true
+              save_visualizations: true
+          gt_vtc_v1_results: challenge/gt_vtc
+        output: challenge/gt_vtc_v2
+        protocol:
+          use_future_gt: true
+          use_gt_agent_id: true
+          use_gt_boxes: true
+          use_gt_trajectory: true
+          use_bevformer: false
+          use_tracker_identity: false
+          allow_long_propagation: false
+          use_submission_data: false
+        time:
+          formal_protocol: native_camera_timestamp
+          compare_common_time: true
+          interpolate_gt_at_exposure_time: true
+        geometry:
+          visible_surface: true
+          model_priority:
+          - surface_homography
+          - piecewise_affine
+          - center_scale_rotation
+          reject_ill_conditioned_warp: true
+          maximum_homography_condition_number: 1000000.0
+          maximum_surface_transition: 0.75
+        foreground_core:
+          adaptive_erosion: true
+          area_thresholds:
+          - 1000
+          - 5000
+          erosion_ratios:
+          - 0.03
+          - 0.07
+          - 0.1
+          minimum_core_pixels: 64
+          exclude_overlap: true
+          exclude_occlusion: true
+          exclude_surface_boundary: true
+        point_sampling:
+          shi_tomasi: true
+          uniform_grid: true
+          gradient_points: true
+          points_must_be_inside_core: true
+          maximum_points: 128
+          target_points_by_area:
+          - 32
+          - 64
+          - 96
+          minimum_gradient: 5.0
+        tracking:
+          ordinary_lk_diagnostic: true
+          geometry_initial_flow_lk: true
+          patch_warp_residual_lk: true
+          forward_backward: true
+          ransac: true
+          fallback:
+          - ecc
+          - phase_correlation
+          - sift
+          - unscorable
+          global_parameters:
+            win_size: 21
+            max_level: 3
+            iterations: 30
+            epsilon: 0.01
+            fb_threshold_px: 2.5
+            residual_search_radius_px: 12
+            quality_level: 0.01
+            min_distance_px: 4
+            ransac_threshold_px: 3.0
+            minimum_valid_points: 4
+          parameter_profiles:
+            conservative:
+              win_size: 21
+              max_level: 3
+              quality_level: 0.01
+              min_distance_px: 4
+              fb_threshold_px: 2.5
+              residual_search_radius_px: 12
+            large_motion:
+              win_size: 31
+              max_level: 4
+              quality_level: 0.005
+              min_distance_px: 3
+              fb_threshold_px: 3.5
+              residual_search_radius_px: 18
+            low_texture:
+              win_size: 25
+              max_level: 4
+              quality_level: 0.003
+              min_distance_px: 2
+              fb_threshold_px: 3.0
+              residual_search_radius_px: 16
+        calibration:
+          history_frames:
+          - 0
+          - 9
+          development_frames:
+          - 10
+          - 29
+          evaluation_frames:
+          - 30
+          - 89
+          use_future_evaluation_for_tuning: false
+          per_camera_parameters: true
+        support:
+          inherit_v1_thresholds: true
+          minimum_ransac_inlier_ratio: 0.25
+          maximum_photometric_error: 80.0
+          weak_minimum_cosine: 0.5
+        gate:
+          separate_motion_quality_and_coverage: true
+          allow_valid_consistency_limited_coverage: true
+          thresholds_unchanged_from_v1_targets: true
+          minimum_flow_cosine: 0.85
+          minimum_direction_agreement: 0.88
+          maximum_magnitude_error: 0.35
+          minimum_scale_agreement: 0.9
+          minimum_rotation_agreement: 0.9
+          maximum_residual_epe_px: 10.0
+          minimum_valid_point_ratio: 0.7
+          minimum_scorable_coverage: 0.9
+          minimum_strong_support: 0.8
+          minimum_strong_or_weak_support: 0.9
+          maximum_unscorable_rate: 0.1
+          minimum_camera_support_recall: 0.95
+          maximum_multiview_contradiction: 0.1
+        sanity:
+          oracle_leakage_corruptions: true
+          maximum_windows: 48
+        outputs:
+          save_per_point: true
+          save_per_window: true
+          save_per_agent: true
+          save_per_camera: true
+          save_visualizations: true
+        enabled: false
+        dependencies:
+        - numpy
+        - scipy
+        - cv2
+        - shapely
+      mtpc:
+        schema_version: mtpc-v1
+        pairing:
+          manifest:
+            schema_version: image-trajectory-pairs-v2
+            pairs:
+            - pair_id: current_sample_001
+              submission_id: challenge_case_0001
+              image_generation_condition_id: nuscenes_scene_index_50_frames_0_89
+              image_sequence:
+                scene_id: case_0001_scene_50
+                history_root: challenge/input/case_0001/history
+                generated_future_root: challenge/output
+                gt_future_root: challenge/gt
+                conditions_root: challenge/input/case_0001/minimal/conditions
+              trajectory_sequence:
+                scene_id: case_0001_scene_50_generation_condition
+                trajectory_path: challenge/input/case_0001/minimal/conditions/boxes.csv
+                source_role: generation_condition_reference
+                coordinate_system: timestamped_lidar
+              calibration:
+                path: challenge/input/case_0001/minimal/conditions/camera_calibration.csv
+              ego_pose:
+                path: challenge/input/case_0001/minimal/conditions/ego_pose.csv
+              history_metadata_path: challenge/input/case_0001/minimal/conditions/boxes.csv
+              generation_manifest_path: challenge/logs/generate_case_0001.log
+              generation_entrypoint: artifacts/provenance/run_challenge_generate.sh
+              last_generation_run_pointer: challenge/last_generation_run_dir.txt
+              timeline:
+                image_history_frames: 10
+                image_future_frames: 80
+                image_dt: 0.08333723314606742
+                image_timestamp_unit: microseconds
+                first_future_timestamp: 1535639637533073.2
+                mapping: exact_condition_timestamp
+              coordinate_transform:
+                method: per_frame_lidar_to_ego_to_global
+              camera_order:
+              - CAM_FRONT_LEFT
+              - CAM_FRONT
+              - CAM_FRONT_RIGHT
+              - CAM_BACK_RIGHT
+              - CAM_BACK
+              - CAM_BACK_LEFT
+          pair_id: current_sample_001
+        output: challenge/mtpc
+        environment:
+          python: ${HOME}/miniconda3/envs/driveaudit_eval_tf/bin/python
+        tracking:
+          backend: opencv_lk_farneback_ransac
+          formal_mode: fusion
+          image_width: 400
+          image_height: 224
+          maximum_points: 24
+          minimum_surviving_points: 3
+          reseed_below_points: 8
+          forward_backward_error_px: 2.5
+          ransac_threshold_px: 3.0
+          dense_flow_weight: 0.25
+          minimum_appearance_similarity: 0.12
+          maximum_lost_frames: 5
+          reid_search_expansion: 2.0
+          reid_template_threshold: 0.6
+        projection:
+          image_width: 400
+          image_height: 224
+          minimum_depth_m: 0.2
+          minimum_projected_area_px: 64
+          maximum_occlusion_ratio: 0.8
+        future_entrants:
+          enabled: true
+          minimum_points: 3
+          maximum_track_frames: 20
+        gates:
+          provisional_thresholds: true
+          history_anchor:
+            minimum_visible_samples: 20
+            minimum_point_survival: 0.2
+            maximum_center_error_px: 40.0
+            minimum_identity_persistence: 0.2
+          future_observability:
+            minimum_expected_visible_agent_camera_frames: 100
+            minimum_supported_agent_camera_frames: 20
+          consistency:
+            minimum_support_rate: 0.2
+            maximum_normalized_center_error: 1.0
+            minimum_box_iou: 0.02
+            maximum_flow_epe_px: 25.0
+            minimum_direction_agreement: -0.2
+            minimum_identity_persistence: 0.15
+            minimum_camera_support_recall: 0.2
+        ablations:
+          backend_modes:
+          - box
+          - point
+          - mask
+          - fusion
+          history_lengths:
+          - 1
+          - 3
+          - 5
+          - 10
+          view_sets:
+            front_only:
+            - CAM_FRONT
+            front_three:
+            - CAM_FRONT_LEFT
+            - CAM_FRONT
+            - CAM_FRONT_RIGHT
+            all_six:
+            - CAM_FRONT_LEFT
+            - CAM_FRONT
+            - CAM_FRONT_RIGHT
+            - CAM_BACK_RIGHT
+            - CAM_BACK
+            - CAM_BACK_LEFT
+        scorecard:
+          provisional_total_score: false
+        enabled: true
+        dependencies:
+        - numpy
+        - scipy
+        - cv2
+        - shapely
+      tcvv:
+        schema_version: tcvv-v1
+        protocol: tcvv_submission_conditioned
+        reference_semantics: submitted_trajectory_as_visual_expectation
+        pairing:
+          manifest:
+            schema_version: image-trajectory-pairs-v2
+            pairs:
+            - pair_id: current_sample_001
+              submission_id: challenge_case_0001
+              image_generation_condition_id: nuscenes_scene_index_50_frames_0_89
+              image_sequence:
+                scene_id: case_0001_scene_50
+                history_root: challenge/input/case_0001/history
+                generated_future_root: challenge/output
+                gt_future_root: challenge/gt
+                conditions_root: challenge/input/case_0001/minimal/conditions
+              trajectory_sequence:
+                scene_id: case_0001_scene_50_generation_condition
+                trajectory_path: challenge/input/case_0001/minimal/conditions/boxes.csv
+                source_role: generation_condition_reference
+                coordinate_system: timestamped_lidar
+              calibration:
+                path: challenge/input/case_0001/minimal/conditions/camera_calibration.csv
+              ego_pose:
+                path: challenge/input/case_0001/minimal/conditions/ego_pose.csv
+              history_metadata_path: challenge/input/case_0001/minimal/conditions/boxes.csv
+              generation_manifest_path: challenge/logs/generate_case_0001.log
+              generation_entrypoint: artifacts/provenance/run_challenge_generate.sh
+              last_generation_run_pointer: challenge/last_generation_run_dir.txt
+              timeline:
+                image_history_frames: 10
+                image_future_frames: 80
+                image_dt: 0.08333723314606742
+                image_timestamp_unit: microseconds
+                first_future_timestamp: 1535639637533073.2
+                mapping: exact_condition_timestamp
+              coordinate_transform:
+                method: per_frame_lidar_to_ego_to_global
+              camera_order:
+              - CAM_FRONT_LEFT
+              - CAM_FRONT
+              - CAM_FRONT_RIGHT
+              - CAM_BACK_RIGHT
+              - CAM_BACK
+              - CAM_BACK_LEFT
+          pair_id: current_sample_001
+        output: challenge/tcvv
+        camera_order:
+        - CAM_FRONT_LEFT
+        - CAM_FRONT
+        - CAM_FRONT_RIGHT
+        - CAM_BACK_RIGHT
+        - CAM_BACK
+        - CAM_BACK_LEFT
+        timeline:
+          history_frames: 10
+          future_frames: 80
+          dt: 0.08333723314606742
+        projection:
+          image_width: 400
+          image_height: 224
+          minimum_depth_m: 0.2
+          minimum_projected_area_px: 64
+          maximum_truncation_ratio: 0.65
+          maximum_occlusion_ratio: 0.8
+        windows:
+          formal_lengths:
+          - 2
+          - 3
+          primary_length: 2
+        local_backend:
+          formal_mode: fusion
+          roi_margin: 0.25
+          maximum_search_area_ratio: 0.3
+          maximum_points: 48
+          minimum_valid_points: 3
+          corner_quality: 0.01
+          minimum_point_distance_px: 3.0
+          forward_backward_error_px: 2.5
+          ransac_threshold_px: 3.0
+          dense_dispersion_scale_px: 4.0
+          foreground_flow_scale_px: 3.0
+          orb_features: 96
+          maximum_feature_matches: 48
+          minimum_feature_matches: 3
+          minimum_flow_cosine: -0.1
+          support_threshold: 0.35
+          foreground_weight: 0.2
+          component_weights:
+            sparse: 0.45
+            dense: 0.35
+            feature: 0.2
+        camera_reliability:
+          flow_error_scale_px: 5.0
+          minimum_weight: 0.35
+          maximum_weight: 1.5
+          warning_support_gap: 0.2
+        future_entrants:
+          minimum_confirmation_frames: 2
+        gates:
+          provisional_thresholds: true
+          history:
+            minimum_support_rate: 0.2
+            minimum_valid_point_ratio: 0.1
+            maximum_flow_epe_px: 12.0
+          future_evidence:
+            minimum_windows: 100
+            minimum_flow_windows: 50
+          consistency:
+            minimum_support_rate: 0.2
+            minimum_support_retention: 0.3
+            maximum_flow_epe_px: 12.0
+            minimum_flow_cosine: -0.1
+            minimum_direction_agreement: -0.1
+            minimum_camera_support_recall: 0.2
+            maximum_multiview_contradiction: 0.8
+        ablations:
+          evidence_backends:
+          - sparse_lk
+          - dense_flow
+          - local_feature
+          - lk_dense
+          - fusion
+          roi_margins:
+          - 0.1
+          - 0.25
+          - 0.5
+          view_sets:
+            front_only:
+            - CAM_FRONT
+            front_three:
+            - CAM_FRONT_LEFT
+            - CAM_FRONT
+            - CAM_FRONT_RIGHT
+            all_six:
+            - CAM_FRONT_LEFT
+            - CAM_FRONT
+            - CAM_FRONT_RIGHT
+            - CAM_BACK_RIGHT
+            - CAM_BACK
+            - CAM_BACK_LEFT
+        scorecard:
+          provisional_total_score: false
+        enabled: true
+        dependencies:
+        - numpy
+        - scipy
+        - cv2
+        - shapely
+      tcvv_h:
+        version: tcvv_h_v2_hypothesis_testing
+        inputs:
+          pair_manifest:
+            schema_version: image-trajectory-pairs-v2
+            pairs:
+            - pair_id: current_sample_001
+              submission_id: challenge_case_0001
+              image_generation_condition_id: nuscenes_scene_index_50_frames_0_89
+              image_sequence:
+                scene_id: case_0001_scene_50
+                history_root: challenge/input/case_0001/history
+                generated_future_root: challenge/output
+                gt_future_root: challenge/gt
+                conditions_root: challenge/input/case_0001/minimal/conditions
+              trajectory_sequence:
+                scene_id: case_0001_scene_50_generation_condition
+                trajectory_path: challenge/input/case_0001/minimal/conditions/boxes.csv
+                source_role: generation_condition_reference
+                coordinate_system: timestamped_lidar
+              calibration:
+                path: challenge/input/case_0001/minimal/conditions/camera_calibration.csv
+              ego_pose:
+                path: challenge/input/case_0001/minimal/conditions/ego_pose.csv
+              history_metadata_path: challenge/input/case_0001/minimal/conditions/boxes.csv
+              generation_manifest_path: challenge/logs/generate_case_0001.log
+              generation_entrypoint: artifacts/provenance/run_challenge_generate.sh
+              last_generation_run_pointer: challenge/last_generation_run_dir.txt
+              timeline:
+                image_history_frames: 10
+                image_future_frames: 80
+                image_dt: 0.08333723314606742
+                image_timestamp_unit: microseconds
+                first_future_timestamp: 1535639637533073.2
+                mapping: exact_condition_timestamp
+              coordinate_transform:
+                method: per_frame_lidar_to_ego_to_global
+              camera_order:
+              - CAM_FRONT_LEFT
+              - CAM_FRONT
+              - CAM_FRONT_RIGHT
+              - CAM_BACK_RIGHT
+              - CAM_BACK
+              - CAM_BACK_LEFT
+          tcvv_config:
+            schema_version: tcvv-v1
+            protocol: tcvv_submission_conditioned
+            reference_semantics: submitted_trajectory_as_visual_expectation
+            pairing:
+              manifest:
+                schema_version: image-trajectory-pairs-v2
+                pairs:
+                - pair_id: current_sample_001
+                  submission_id: challenge_case_0001
+                  image_generation_condition_id: nuscenes_scene_index_50_frames_0_89
+                  image_sequence:
+                    scene_id: case_0001_scene_50
+                    history_root: challenge/input/case_0001/history
+                    generated_future_root: challenge/output
+                    gt_future_root: challenge/gt
+                    conditions_root: challenge/input/case_0001/minimal/conditions
+                  trajectory_sequence:
+                    scene_id: case_0001_scene_50_generation_condition
+                    trajectory_path: challenge/input/case_0001/minimal/conditions/boxes.csv
+                    source_role: generation_condition_reference
+                    coordinate_system: timestamped_lidar
+                  calibration:
+                    path: challenge/input/case_0001/minimal/conditions/camera_calibration.csv
+                  ego_pose:
+                    path: challenge/input/case_0001/minimal/conditions/ego_pose.csv
+                  history_metadata_path: challenge/input/case_0001/minimal/conditions/boxes.csv
+                  generation_manifest_path: challenge/logs/generate_case_0001.log
+                  generation_entrypoint: artifacts/provenance/run_challenge_generate.sh
+                  last_generation_run_pointer: challenge/last_generation_run_dir.txt
+                  timeline:
+                    image_history_frames: 10
+                    image_future_frames: 80
+                    image_dt: 0.08333723314606742
+                    image_timestamp_unit: microseconds
+                    first_future_timestamp: 1535639637533073.2
+                    mapping: exact_condition_timestamp
+                  coordinate_transform:
+                    method: per_frame_lidar_to_ego_to_global
+                  camera_order:
+                  - CAM_FRONT_LEFT
+                  - CAM_FRONT
+                  - CAM_FRONT_RIGHT
+                  - CAM_BACK_RIGHT
+                  - CAM_BACK
+                  - CAM_BACK_LEFT
+              pair_id: current_sample_001
+            output: challenge/tcvv
+            camera_order:
+            - CAM_FRONT_LEFT
+            - CAM_FRONT
+            - CAM_FRONT_RIGHT
+            - CAM_BACK_RIGHT
+            - CAM_BACK
+            - CAM_BACK_LEFT
+            timeline:
+              history_frames: 10
+              future_frames: 80
+              dt: 0.08333723314606742
+            projection:
+              image_width: 400
+              image_height: 224
+              minimum_depth_m: 0.2
+              minimum_projected_area_px: 64
+              maximum_truncation_ratio: 0.65
+              maximum_occlusion_ratio: 0.8
+            windows:
+              formal_lengths:
+              - 2
+              - 3
+              primary_length: 2
+            local_backend:
+              formal_mode: fusion
+              roi_margin: 0.25
+              maximum_search_area_ratio: 0.3
+              maximum_points: 48
+              minimum_valid_points: 3
+              corner_quality: 0.01
+              minimum_point_distance_px: 3.0
+              forward_backward_error_px: 2.5
+              ransac_threshold_px: 3.0
+              dense_dispersion_scale_px: 4.0
+              foreground_flow_scale_px: 3.0
+              orb_features: 96
+              maximum_feature_matches: 48
+              minimum_feature_matches: 3
+              minimum_flow_cosine: -0.1
+              support_threshold: 0.35
+              foreground_weight: 0.2
+              component_weights:
+                sparse: 0.45
+                dense: 0.35
+                feature: 0.2
+            camera_reliability:
+              flow_error_scale_px: 5.0
+              minimum_weight: 0.35
+              maximum_weight: 1.5
+              warning_support_gap: 0.2
+            future_entrants:
+              minimum_confirmation_frames: 2
+            gates:
+              provisional_thresholds: true
+              history:
+                minimum_support_rate: 0.2
+                minimum_valid_point_ratio: 0.1
+                maximum_flow_epe_px: 12.0
+              future_evidence:
+                minimum_windows: 100
+                minimum_flow_windows: 50
+              consistency:
+                minimum_support_rate: 0.2
+                minimum_support_retention: 0.3
+                maximum_flow_epe_px: 12.0
+                minimum_flow_cosine: -0.1
+                minimum_direction_agreement: -0.1
+                minimum_camera_support_recall: 0.2
+                maximum_multiview_contradiction: 0.8
+            ablations:
+              evidence_backends:
+              - sparse_lk
+              - dense_flow
+              - local_feature
+              - lk_dense
+              - fusion
+              roi_margins:
+              - 0.1
+              - 0.25
+              - 0.5
+              view_sets:
+                front_only:
+                - CAM_FRONT
+                front_three:
+                - CAM_FRONT_LEFT
+                - CAM_FRONT
+                - CAM_FRONT_RIGHT
+                all_six:
+                - CAM_FRONT_LEFT
+                - CAM_FRONT
+                - CAM_FRONT_RIGHT
+                - CAM_BACK_RIGHT
+                - CAM_BACK
+                - CAM_BACK_LEFT
+            scorecard:
+              provisional_total_score: false
+          tcvv_results: challenge/tcvv
+          tcvv_bench_results: challenge/tcvv_bench
+        output: challenge/tcvv_h
+        holdout:
+          scene_id: current_sample_001
+          exclude_from_calibration: true
+        window:
+          length: 2
+          allow_long_propagation: false
+        image:
+          size:
+          - 400
+          - 224
+        observed_motion:
+          core_erosion_ratio: 0.15
+          minimum_core_points: 3
+          image_border_px: 2
+          minimum_gradient: 5.0
+          maximum_flow_px: 40.0
+          ransac_threshold_px: 3.0
+          cluster_separation_px: 2.5
+        image_quality:
+          minimum_blur_score: 15.0
+          minimum_contrast: 6.0
+          minimum_luma: 10.0
+          maximum_luma: 245.0
+          repeat_difference_scale: 2.0
+          freeze_difference_scale: 4.0
+        target_hypothesis:
+          enabled: true
+          model_priority:
+          - visible_face_affine
+          - piecewise_box_affine
+          - center_scale_rotation
+          maximum_visible_face_residual_px: 3.0
+          maximum_model_uncertainty: 5.0
+          fallback_uncertainty: 4.0
+        background_hypothesis:
+          enabled: true
+          road_plane: true
+          target_depth_near_ratio: 0.5
+          target_depth_far_ratio: 2.0
+          fixed_medium_depths_m:
+          - 20.0
+          - 40.0
+          far_background_depth_m: 80.0
+          infinite_depth_m: 1000000.0
+          model_uncertainty_px: 1.5
+          depths:
+          - road_plane
+          - target_depth_near
+          - target_depth
+          - target_depth_far
+          - fixed_medium
+          - far_background
+          - infinite_depth
+        zero_hypothesis:
+          enabled: true
+          detect_repeated_frames: true
+          detect_frozen_region: true
+          motion_scale_px: 1.0
+        other_hypothesis:
+          enabled: true
+          complexity_penalty: true
+          complexity_penalty_per_parameter: 0.12
+        robust_likelihood:
+          base_scale_px: 1.0
+          huber_delta: 1.5
+          tukey_c: 4.685
+          trim_fraction: 0.2
+          inlier_threshold: 2.5
+        contamination:
+          minimum_core_point_fraction: 0.25
+          maximum_edge_dominance: 0.35
+          neighbor_overlap_threshold: 0.15
+        presence:
+          separate_from_motion: true
+          allow_unscorable: true
+          minimum_core_background_contrast: 0.52
+          minimum_boundary_score: 0.2
+          minimum_core_points: 3
+          minimum_appearance_support: 0.15
+          minimum_independent_cues: 2
+          maximum_contamination_probability: 0.75
+          contradiction_confidence: 0.2
+        motion:
+          separate_from_presence: true
+          allow_ambiguous: true
+          allow_unscorable: true
+          minimum_points: 3
+          minimum_expected_motion_px: 0.75
+          static_expected_threshold_px: 0.25
+          unexpected_motion_threshold_px: 2.0
+          reverse_cosine_threshold: -0.2
+          hard_margin: 0.05
+          support_margin: 0.08
+          contradiction_margin: 0.08
+          minimum_target_inlier_ratio: 0.35
+          maximum_contamination_probability: 0.75
+        hard_rules:
+          static_contradiction: true
+          background_wins: true
+          reverse_direction: true
+          core_support_required: true
+          image_quality_gate: true
+          contamination_gate: true
+        future_entrant:
+          status: experimental_high_false_support_risk
+          include_in_primary_score: false
+        calibration:
+          min_scenes_experimental: 5
+          min_scenes_provisional: 20
+          holdout_excluded: true
+        scene_discovery:
+          roots:
+          - ${PROJECT_ROOT}
+          maximum_candidates: 200
+        leaderboard:
+          enable_total_score: false
+          readiness_thresholds_provisional: true
+          thresholds:
+            motion_auroc: 0.85
+            motion_auprc: 0.7
+            hard_negative_fpr: 0.15
+            repeated_static_fpr: 0.1
+            background_only_fpr: 0.1
+            primary_monotonicity: 0.8
+            ece: 0.1
+        diagnostics:
+          retain_old_tcvv: true
+          retain_mtpc: true
+          retain_bevformer: true
+          simple_ring_residual_for_ranking: false
+        enabled: true
+        dependencies:
+        - numpy
+        - scipy
+        - cv2
+        - shapely
+      tcvv_o:
+        version: tcvv_o_v3_observability_gated
+        inputs:
+          pair_manifest:
+            schema_version: image-trajectory-pairs-v2
+            pairs:
+            - pair_id: current_sample_001
+              submission_id: challenge_case_0001
+              image_generation_condition_id: nuscenes_scene_index_50_frames_0_89
+              image_sequence:
+                scene_id: case_0001_scene_50
+                history_root: challenge/input/case_0001/history
+                generated_future_root: challenge/output
+                gt_future_root: challenge/gt
+                conditions_root: challenge/input/case_0001/minimal/conditions
+              trajectory_sequence:
+                scene_id: case_0001_scene_50_generation_condition
+                trajectory_path: challenge/input/case_0001/minimal/conditions/boxes.csv
+                source_role: generation_condition_reference
+                coordinate_system: timestamped_lidar
+              calibration:
+                path: challenge/input/case_0001/minimal/conditions/camera_calibration.csv
+              ego_pose:
+                path: challenge/input/case_0001/minimal/conditions/ego_pose.csv
+              history_metadata_path: challenge/input/case_0001/minimal/conditions/boxes.csv
+              generation_manifest_path: challenge/logs/generate_case_0001.log
+              generation_entrypoint: artifacts/provenance/run_challenge_generate.sh
+              last_generation_run_pointer: challenge/last_generation_run_dir.txt
+              timeline:
+                image_history_frames: 10
+                image_future_frames: 80
+                image_dt: 0.08333723314606742
+                image_timestamp_unit: microseconds
+                first_future_timestamp: 1535639637533073.2
+                mapping: exact_condition_timestamp
+              coordinate_transform:
+                method: per_frame_lidar_to_ego_to_global
+              camera_order:
+              - CAM_FRONT_LEFT
+              - CAM_FRONT
+              - CAM_FRONT_RIGHT
+              - CAM_BACK_RIGHT
+              - CAM_BACK
+              - CAM_BACK_LEFT
+          tcvv_config:
+            schema_version: tcvv-v1
+            protocol: tcvv_submission_conditioned
+            reference_semantics: submitted_trajectory_as_visual_expectation
+            pairing:
+              manifest:
+                schema_version: image-trajectory-pairs-v2
+                pairs:
+                - pair_id: current_sample_001
+                  submission_id: challenge_case_0001
+                  image_generation_condition_id: nuscenes_scene_index_50_frames_0_89
+                  image_sequence:
+                    scene_id: case_0001_scene_50
+                    history_root: challenge/input/case_0001/history
+                    generated_future_root: challenge/output
+                    gt_future_root: challenge/gt
+                    conditions_root: challenge/input/case_0001/minimal/conditions
+                  trajectory_sequence:
+                    scene_id: case_0001_scene_50_generation_condition
+                    trajectory_path: challenge/input/case_0001/minimal/conditions/boxes.csv
+                    source_role: generation_condition_reference
+                    coordinate_system: timestamped_lidar
+                  calibration:
+                    path: challenge/input/case_0001/minimal/conditions/camera_calibration.csv
+                  ego_pose:
+                    path: challenge/input/case_0001/minimal/conditions/ego_pose.csv
+                  history_metadata_path: challenge/input/case_0001/minimal/conditions/boxes.csv
+                  generation_manifest_path: challenge/logs/generate_case_0001.log
+                  generation_entrypoint: artifacts/provenance/run_challenge_generate.sh
+                  last_generation_run_pointer: challenge/last_generation_run_dir.txt
+                  timeline:
+                    image_history_frames: 10
+                    image_future_frames: 80
+                    image_dt: 0.08333723314606742
+                    image_timestamp_unit: microseconds
+                    first_future_timestamp: 1535639637533073.2
+                    mapping: exact_condition_timestamp
+                  coordinate_transform:
+                    method: per_frame_lidar_to_ego_to_global
+                  camera_order:
+                  - CAM_FRONT_LEFT
+                  - CAM_FRONT
+                  - CAM_FRONT_RIGHT
+                  - CAM_BACK_RIGHT
+                  - CAM_BACK
+                  - CAM_BACK_LEFT
+              pair_id: current_sample_001
+            output: challenge/tcvv
+            camera_order:
+            - CAM_FRONT_LEFT
+            - CAM_FRONT
+            - CAM_FRONT_RIGHT
+            - CAM_BACK_RIGHT
+            - CAM_BACK
+            - CAM_BACK_LEFT
+            timeline:
+              history_frames: 10
+              future_frames: 80
+              dt: 0.08333723314606742
+            projection:
+              image_width: 400
+              image_height: 224
+              minimum_depth_m: 0.2
+              minimum_projected_area_px: 64
+              maximum_truncation_ratio: 0.65
+              maximum_occlusion_ratio: 0.8
+            windows:
+              formal_lengths:
+              - 2
+              - 3
+              primary_length: 2
+            local_backend:
+              formal_mode: fusion
+              roi_margin: 0.25
+              maximum_search_area_ratio: 0.3
+              maximum_points: 48
+              minimum_valid_points: 3
+              corner_quality: 0.01
+              minimum_point_distance_px: 3.0
+              forward_backward_error_px: 2.5
+              ransac_threshold_px: 3.0
+              dense_dispersion_scale_px: 4.0
+              foreground_flow_scale_px: 3.0
+              orb_features: 96
+              maximum_feature_matches: 48
+              minimum_feature_matches: 3
+              minimum_flow_cosine: -0.1
+              support_threshold: 0.35
+              foreground_weight: 0.2
+              component_weights:
+                sparse: 0.45
+                dense: 0.35
+                feature: 0.2
+            camera_reliability:
+              flow_error_scale_px: 5.0
+              minimum_weight: 0.35
+              maximum_weight: 1.5
+              warning_support_gap: 0.2
+            future_entrants:
+              minimum_confirmation_frames: 2
+            gates:
+              provisional_thresholds: true
+              history:
+                minimum_support_rate: 0.2
+                minimum_valid_point_ratio: 0.1
+                maximum_flow_epe_px: 12.0
+              future_evidence:
+                minimum_windows: 100
+                minimum_flow_windows: 50
+              consistency:
+                minimum_support_rate: 0.2
+                minimum_support_retention: 0.3
+                maximum_flow_epe_px: 12.0
+                minimum_flow_cosine: -0.1
+                minimum_direction_agreement: -0.1
+                minimum_camera_support_recall: 0.2
+                maximum_multiview_contradiction: 0.8
+            ablations:
+              evidence_backends:
+              - sparse_lk
+              - dense_flow
+              - local_feature
+              - lk_dense
+              - fusion
+              roi_margins:
+              - 0.1
+              - 0.25
+              - 0.5
+              view_sets:
+                front_only:
+                - CAM_FRONT
+                front_three:
+                - CAM_FRONT_LEFT
+                - CAM_FRONT
+                - CAM_FRONT_RIGHT
+                all_six:
+                - CAM_FRONT_LEFT
+                - CAM_FRONT
+                - CAM_FRONT_RIGHT
+                - CAM_BACK_RIGHT
+                - CAM_BACK
+                - CAM_BACK_LEFT
+            scorecard:
+              provisional_total_score: false
+          tcvv_h_config:
+            version: tcvv_h_v2_hypothesis_testing
+            inputs:
+              pair_manifest:
+                schema_version: image-trajectory-pairs-v2
+                pairs:
+                - pair_id: current_sample_001
+                  submission_id: challenge_case_0001
+                  image_generation_condition_id: nuscenes_scene_index_50_frames_0_89
+                  image_sequence:
+                    scene_id: case_0001_scene_50
+                    history_root: challenge/input/case_0001/history
+                    generated_future_root: challenge/output
+                    gt_future_root: challenge/gt
+                    conditions_root: challenge/input/case_0001/minimal/conditions
+                  trajectory_sequence:
+                    scene_id: case_0001_scene_50_generation_condition
+                    trajectory_path: challenge/input/case_0001/minimal/conditions/boxes.csv
+                    source_role: generation_condition_reference
+                    coordinate_system: timestamped_lidar
+                  calibration:
+                    path: challenge/input/case_0001/minimal/conditions/camera_calibration.csv
+                  ego_pose:
+                    path: challenge/input/case_0001/minimal/conditions/ego_pose.csv
+                  history_metadata_path: challenge/input/case_0001/minimal/conditions/boxes.csv
+                  generation_manifest_path: challenge/logs/generate_case_0001.log
+                  generation_entrypoint: artifacts/provenance/run_challenge_generate.sh
+                  last_generation_run_pointer: challenge/last_generation_run_dir.txt
+                  timeline:
+                    image_history_frames: 10
+                    image_future_frames: 80
+                    image_dt: 0.08333723314606742
+                    image_timestamp_unit: microseconds
+                    first_future_timestamp: 1535639637533073.2
+                    mapping: exact_condition_timestamp
+                  coordinate_transform:
+                    method: per_frame_lidar_to_ego_to_global
+                  camera_order:
+                  - CAM_FRONT_LEFT
+                  - CAM_FRONT
+                  - CAM_FRONT_RIGHT
+                  - CAM_BACK_RIGHT
+                  - CAM_BACK
+                  - CAM_BACK_LEFT
+              tcvv_config:
+                schema_version: tcvv-v1
+                protocol: tcvv_submission_conditioned
+                reference_semantics: submitted_trajectory_as_visual_expectation
+                pairing:
+                  manifest:
+                    schema_version: image-trajectory-pairs-v2
+                    pairs:
+                    - pair_id: current_sample_001
+                      submission_id: challenge_case_0001
+                      image_generation_condition_id: nuscenes_scene_index_50_frames_0_89
+                      image_sequence:
+                        scene_id: case_0001_scene_50
+                        history_root: challenge/input/case_0001/history
+                        generated_future_root: challenge/output
+                        gt_future_root: challenge/gt
+                        conditions_root: challenge/input/case_0001/minimal/conditions
+                      trajectory_sequence:
+                        scene_id: case_0001_scene_50_generation_condition
+                        trajectory_path: challenge/input/case_0001/minimal/conditions/boxes.csv
+                        source_role: generation_condition_reference
+                        coordinate_system: timestamped_lidar
+                      calibration:
+                        path: challenge/input/case_0001/minimal/conditions/camera_calibration.csv
+                      ego_pose:
+                        path: challenge/input/case_0001/minimal/conditions/ego_pose.csv
+                      history_metadata_path: challenge/input/case_0001/minimal/conditions/boxes.csv
+                      generation_manifest_path: challenge/logs/generate_case_0001.log
+                      generation_entrypoint: artifacts/provenance/run_challenge_generate.sh
+                      last_generation_run_pointer: challenge/last_generation_run_dir.txt
+                      timeline:
+                        image_history_frames: 10
+                        image_future_frames: 80
+                        image_dt: 0.08333723314606742
+                        image_timestamp_unit: microseconds
+                        first_future_timestamp: 1535639637533073.2
+                        mapping: exact_condition_timestamp
+                      coordinate_transform:
+                        method: per_frame_lidar_to_ego_to_global
+                      camera_order:
+                      - CAM_FRONT_LEFT
+                      - CAM_FRONT
+                      - CAM_FRONT_RIGHT
+                      - CAM_BACK_RIGHT
+                      - CAM_BACK
+                      - CAM_BACK_LEFT
+                  pair_id: current_sample_001
+                output: challenge/tcvv
+                camera_order:
+                - CAM_FRONT_LEFT
+                - CAM_FRONT
+                - CAM_FRONT_RIGHT
+                - CAM_BACK_RIGHT
+                - CAM_BACK
+                - CAM_BACK_LEFT
+                timeline:
+                  history_frames: 10
+                  future_frames: 80
+                  dt: 0.08333723314606742
+                projection:
+                  image_width: 400
+                  image_height: 224
+                  minimum_depth_m: 0.2
+                  minimum_projected_area_px: 64
+                  maximum_truncation_ratio: 0.65
+                  maximum_occlusion_ratio: 0.8
+                windows:
+                  formal_lengths:
+                  - 2
+                  - 3
+                  primary_length: 2
+                local_backend:
+                  formal_mode: fusion
+                  roi_margin: 0.25
+                  maximum_search_area_ratio: 0.3
+                  maximum_points: 48
+                  minimum_valid_points: 3
+                  corner_quality: 0.01
+                  minimum_point_distance_px: 3.0
+                  forward_backward_error_px: 2.5
+                  ransac_threshold_px: 3.0
+                  dense_dispersion_scale_px: 4.0
+                  foreground_flow_scale_px: 3.0
+                  orb_features: 96
+                  maximum_feature_matches: 48
+                  minimum_feature_matches: 3
+                  minimum_flow_cosine: -0.1
+                  support_threshold: 0.35
+                  foreground_weight: 0.2
+                  component_weights:
+                    sparse: 0.45
+                    dense: 0.35
+                    feature: 0.2
+                camera_reliability:
+                  flow_error_scale_px: 5.0
+                  minimum_weight: 0.35
+                  maximum_weight: 1.5
+                  warning_support_gap: 0.2
+                future_entrants:
+                  minimum_confirmation_frames: 2
+                gates:
+                  provisional_thresholds: true
+                  history:
+                    minimum_support_rate: 0.2
+                    minimum_valid_point_ratio: 0.1
+                    maximum_flow_epe_px: 12.0
+                  future_evidence:
+                    minimum_windows: 100
+                    minimum_flow_windows: 50
+                  consistency:
+                    minimum_support_rate: 0.2
+                    minimum_support_retention: 0.3
+                    maximum_flow_epe_px: 12.0
+                    minimum_flow_cosine: -0.1
+                    minimum_direction_agreement: -0.1
+                    minimum_camera_support_recall: 0.2
+                    maximum_multiview_contradiction: 0.8
+                ablations:
+                  evidence_backends:
+                  - sparse_lk
+                  - dense_flow
+                  - local_feature
+                  - lk_dense
+                  - fusion
+                  roi_margins:
+                  - 0.1
+                  - 0.25
+                  - 0.5
+                  view_sets:
+                    front_only:
+                    - CAM_FRONT
+                    front_three:
+                    - CAM_FRONT_LEFT
+                    - CAM_FRONT
+                    - CAM_FRONT_RIGHT
+                    all_six:
+                    - CAM_FRONT_LEFT
+                    - CAM_FRONT
+                    - CAM_FRONT_RIGHT
+                    - CAM_BACK_RIGHT
+                    - CAM_BACK
+                    - CAM_BACK_LEFT
+                scorecard:
+                  provisional_total_score: false
+              tcvv_results: challenge/tcvv
+              tcvv_bench_results: challenge/tcvv_bench
+            output: challenge/tcvv_h
+            holdout:
+              scene_id: current_sample_001
+              exclude_from_calibration: true
+            window:
+              length: 2
+              allow_long_propagation: false
+            image:
+              size:
+              - 400
+              - 224
+            observed_motion:
+              core_erosion_ratio: 0.15
+              minimum_core_points: 3
+              image_border_px: 2
+              minimum_gradient: 5.0
+              maximum_flow_px: 40.0
+              ransac_threshold_px: 3.0
+              cluster_separation_px: 2.5
+            image_quality:
+              minimum_blur_score: 15.0
+              minimum_contrast: 6.0
+              minimum_luma: 10.0
+              maximum_luma: 245.0
+              repeat_difference_scale: 2.0
+              freeze_difference_scale: 4.0
+            target_hypothesis:
+              enabled: true
+              model_priority:
+              - visible_face_affine
+              - piecewise_box_affine
+              - center_scale_rotation
+              maximum_visible_face_residual_px: 3.0
+              maximum_model_uncertainty: 5.0
+              fallback_uncertainty: 4.0
+            background_hypothesis:
+              enabled: true
+              road_plane: true
+              target_depth_near_ratio: 0.5
+              target_depth_far_ratio: 2.0
+              fixed_medium_depths_m:
+              - 20.0
+              - 40.0
+              far_background_depth_m: 80.0
+              infinite_depth_m: 1000000.0
+              model_uncertainty_px: 1.5
+              depths:
+              - road_plane
+              - target_depth_near
+              - target_depth
+              - target_depth_far
+              - fixed_medium
+              - far_background
+              - infinite_depth
+            zero_hypothesis:
+              enabled: true
+              detect_repeated_frames: true
+              detect_frozen_region: true
+              motion_scale_px: 1.0
+            other_hypothesis:
+              enabled: true
+              complexity_penalty: true
+              complexity_penalty_per_parameter: 0.12
+            robust_likelihood:
+              base_scale_px: 1.0
+              huber_delta: 1.5
+              tukey_c: 4.685
+              trim_fraction: 0.2
+              inlier_threshold: 2.5
+            contamination:
+              minimum_core_point_fraction: 0.25
+              maximum_edge_dominance: 0.35
+              neighbor_overlap_threshold: 0.15
+            presence:
+              separate_from_motion: true
+              allow_unscorable: true
+              minimum_core_background_contrast: 0.52
+              minimum_boundary_score: 0.2
+              minimum_core_points: 3
+              minimum_appearance_support: 0.15
+              minimum_independent_cues: 2
+              maximum_contamination_probability: 0.75
+              contradiction_confidence: 0.2
+            motion:
+              separate_from_presence: true
+              allow_ambiguous: true
+              allow_unscorable: true
+              minimum_points: 3
+              minimum_expected_motion_px: 0.75
+              static_expected_threshold_px: 0.25
+              unexpected_motion_threshold_px: 2.0
+              reverse_cosine_threshold: -0.2
+              hard_margin: 0.05
+              support_margin: 0.08
+              contradiction_margin: 0.08
+              minimum_target_inlier_ratio: 0.35
+              maximum_contamination_probability: 0.75
+            hard_rules:
+              static_contradiction: true
+              background_wins: true
+              reverse_direction: true
+              core_support_required: true
+              image_quality_gate: true
+              contamination_gate: true
+            future_entrant:
+              status: experimental_high_false_support_risk
+              include_in_primary_score: false
+            calibration:
+              min_scenes_experimental: 5
+              min_scenes_provisional: 20
+              holdout_excluded: true
+            scene_discovery:
+              roots:
+              - ${PROJECT_ROOT}
+              maximum_candidates: 200
+            leaderboard:
+              enable_total_score: false
+              readiness_thresholds_provisional: true
+              thresholds:
+                motion_auroc: 0.85
+                motion_auprc: 0.7
+                hard_negative_fpr: 0.15
+                repeated_static_fpr: 0.1
+                background_only_fpr: 0.1
+                primary_monotonicity: 0.8
+                ece: 0.1
+            diagnostics:
+              retain_old_tcvv: true
+              retain_mtpc: true
+              retain_bevformer: true
+              simple_ring_residual_for_ranking: false
+          tcvv_results: challenge/tcvv
+          tcvv_bench_results: challenge/tcvv_bench
+          tcvv_h_results: challenge/tcvv_h
+        output: challenge/tcvv_o
+        holdout:
+          scene_id: current_sample_001
+          exclude_from_calibration: true
+          exclude_from_protocol_selection: true
+        image:
+          size:
+          - 400
+          - 224
+        observability:
+          enabled: true
+          min_target_background_separation_px: 0.75
+          min_target_zero_separation_px: 0.75
+          min_observability_snr: 1.0
+          min_projected_area: 64.0
+          max_occlusion: 0.8
+          max_truncation: 0.65
+          max_target_model_uncertainty: 5.0
+          geometry_quantization_floor_px: 0.5
+          allow_geometry_unobservable: true
+          do_not_penalize_unobservable: true
+          provisional_thresholds: true
+        historical_noise:
+          enabled: true
+          estimator: mad
+          use_per_camera: true
+          use_area_buckets: true
+          use_distance_buckets: true
+          area_buckets:
+          - 0
+          - 128
+          - 512
+          - 2048
+          - 1000000000
+          distance_buckets_m:
+          - 0
+          - 20
+          - 40
+          - 80
+          - 1000000000
+          min_bucket_samples: 8
+          noise_floor_px: 0.5
+        adaptive_interval:
+          enabled: true
+          candidate_deltas:
+          - 1
+          - 2
+          - 3
+          - 4
+          - 5
+          select_shortest_observable: true
+          use_future_visual_score_for_selection: false
+        camera_selection:
+          enabled: true
+          top_k: 2
+          use_geometry_only: true
+          use_history_reliability: true
+          use_future_score: false
+          keep_all_camera_diagnostics: true
+          minimum_reliability: 0.35
+          maximum_reliability: 1.5
+        background_scoring:
+          geometry_conservative_best_case: true
+          image_scoring_method: marginal_likelihood
+          enable_complexity_penalty: true
+          complexity_penalty_per_extra_model: 0.04
+          raw_best_of_family_for_ranking: false
+          depth_priors:
+            road_plane_approximation: 0.1
+            target_depth_near: 0.12
+            target_depth: 0.16
+            target_depth_far: 0.14
+            fixed_medium_20m: 0.12
+            fixed_medium_40m: 0.12
+            far_background: 0.12
+            infinite_depth_rotation_only: 0.12
+        history_model_gate:
+          enabled: true
+          min_observable_windows: 20
+          min_target_win_rate_observable: 0.2
+          max_false_contradiction_rate: 0.5
+          max_target_residual_sigma_ratio: 3.0
+          fail_closed: true
+          provisional_model_validity_thresholds: true
+        motion:
+          support_margin: 0.08
+          contradiction_margin: 0.08
+          minimum_target_inlier_ratio: 0.35
+          maximum_contamination_probability: 0.75
+        motion_states:
+          allow_geometry_unobservable: true
+          allow_visually_unscorable: true
+          allow_ambiguous: true
+          states:
+          - geometry_unobservable
+          - visually_unscorable
+          - visually_unscorable_contamination
+          - observable_supported
+          - observable_contradicted
+          - observable_ambiguous
+        presence:
+          status: weak_local_visual_structure_diagnostic
+          include_in_primary_gate: false
+        future_entrant:
+          status: experimental_high_false_support_risk
+          include_in_primary_gate: false
+        auxiliary_protocol:
+          enabled: auto
+          root: null
+          require_for_current_protocol: false
+          validate_instance_id_mask: true
+          validate_depth: true
+          validate_motion_vector: true
+        leaderboard:
+          enable_total_score: false
+          thresholds_provisional: true
+        diagnostics:
+          retain_tcvv_v1: true
+          retain_tcvv_h_v2: true
+          retain_mtpc: true
+          retain_bevformer: true
+        enabled: true
+        dependencies:
+        - numpy
+        - scipy
+        - cv2
+        - shapely
+      tcvv_bench:
+        benchmark:
+          version: tcvv_bench_v1
+          current_holdout_scene: current_sample_001
+          scene_level_split: true
+          random_seed: 2026
+        inputs:
+          pair_manifest:
+            schema_version: image-trajectory-pairs-v2
+            pairs:
+            - pair_id: current_sample_001
+              submission_id: challenge_case_0001
+              image_generation_condition_id: nuscenes_scene_index_50_frames_0_89
+              image_sequence:
+                scene_id: case_0001_scene_50
+                history_root: challenge/input/case_0001/history
+                generated_future_root: challenge/output
+                gt_future_root: challenge/gt
+                conditions_root: challenge/input/case_0001/minimal/conditions
+              trajectory_sequence:
+                scene_id: case_0001_scene_50_generation_condition
+                trajectory_path: challenge/input/case_0001/minimal/conditions/boxes.csv
+                source_role: generation_condition_reference
+                coordinate_system: timestamped_lidar
+              calibration:
+                path: challenge/input/case_0001/minimal/conditions/camera_calibration.csv
+              ego_pose:
+                path: challenge/input/case_0001/minimal/conditions/ego_pose.csv
+              history_metadata_path: challenge/input/case_0001/minimal/conditions/boxes.csv
+              generation_manifest_path: challenge/logs/generate_case_0001.log
+              generation_entrypoint: artifacts/provenance/run_challenge_generate.sh
+              last_generation_run_pointer: challenge/last_generation_run_dir.txt
+              timeline:
+                image_history_frames: 10
+                image_future_frames: 80
+                image_dt: 0.08333723314606742
+                image_timestamp_unit: microseconds
+                first_future_timestamp: 1535639637533073.2
+                mapping: exact_condition_timestamp
+              coordinate_transform:
+                method: per_frame_lidar_to_ego_to_global
+              camera_order:
+              - CAM_FRONT_LEFT
+              - CAM_FRONT
+              - CAM_FRONT_RIGHT
+              - CAM_BACK_RIGHT
+              - CAM_BACK
+              - CAM_BACK_LEFT
+          tcvv_config:
+            schema_version: tcvv-v1
+            protocol: tcvv_submission_conditioned
+            reference_semantics: submitted_trajectory_as_visual_expectation
+            pairing:
+              manifest:
+                schema_version: image-trajectory-pairs-v2
+                pairs:
+                - pair_id: current_sample_001
+                  submission_id: challenge_case_0001
+                  image_generation_condition_id: nuscenes_scene_index_50_frames_0_89
+                  image_sequence:
+                    scene_id: case_0001_scene_50
+                    history_root: challenge/input/case_0001/history
+                    generated_future_root: challenge/output
+                    gt_future_root: challenge/gt
+                    conditions_root: challenge/input/case_0001/minimal/conditions
+                  trajectory_sequence:
+                    scene_id: case_0001_scene_50_generation_condition
+                    trajectory_path: challenge/input/case_0001/minimal/conditions/boxes.csv
+                    source_role: generation_condition_reference
+                    coordinate_system: timestamped_lidar
+                  calibration:
+                    path: challenge/input/case_0001/minimal/conditions/camera_calibration.csv
+                  ego_pose:
+                    path: challenge/input/case_0001/minimal/conditions/ego_pose.csv
+                  history_metadata_path: challenge/input/case_0001/minimal/conditions/boxes.csv
+                  generation_manifest_path: challenge/logs/generate_case_0001.log
+                  generation_entrypoint: artifacts/provenance/run_challenge_generate.sh
+                  last_generation_run_pointer: challenge/last_generation_run_dir.txt
+                  timeline:
+                    image_history_frames: 10
+                    image_future_frames: 80
+                    image_dt: 0.08333723314606742
+                    image_timestamp_unit: microseconds
+                    first_future_timestamp: 1535639637533073.2
+                    mapping: exact_condition_timestamp
+                  coordinate_transform:
+                    method: per_frame_lidar_to_ego_to_global
+                  camera_order:
+                  - CAM_FRONT_LEFT
+                  - CAM_FRONT
+                  - CAM_FRONT_RIGHT
+                  - CAM_BACK_RIGHT
+                  - CAM_BACK
+                  - CAM_BACK_LEFT
+              pair_id: current_sample_001
+            output: challenge/tcvv
+            camera_order:
+            - CAM_FRONT_LEFT
+            - CAM_FRONT
+            - CAM_FRONT_RIGHT
+            - CAM_BACK_RIGHT
+            - CAM_BACK
+            - CAM_BACK_LEFT
+            timeline:
+              history_frames: 10
+              future_frames: 80
+              dt: 0.08333723314606742
+            projection:
+              image_width: 400
+              image_height: 224
+              minimum_depth_m: 0.2
+              minimum_projected_area_px: 64
+              maximum_truncation_ratio: 0.65
+              maximum_occlusion_ratio: 0.8
+            windows:
+              formal_lengths:
+              - 2
+              - 3
+              primary_length: 2
+            local_backend:
+              formal_mode: fusion
+              roi_margin: 0.25
+              maximum_search_area_ratio: 0.3
+              maximum_points: 48
+              minimum_valid_points: 3
+              corner_quality: 0.01
+              minimum_point_distance_px: 3.0
+              forward_backward_error_px: 2.5
+              ransac_threshold_px: 3.0
+              dense_dispersion_scale_px: 4.0
+              foreground_flow_scale_px: 3.0
+              orb_features: 96
+              maximum_feature_matches: 48
+              minimum_feature_matches: 3
+              minimum_flow_cosine: -0.1
+              support_threshold: 0.35
+              foreground_weight: 0.2
+              component_weights:
+                sparse: 0.45
+                dense: 0.35
+                feature: 0.2
+            camera_reliability:
+              flow_error_scale_px: 5.0
+              minimum_weight: 0.35
+              maximum_weight: 1.5
+              warning_support_gap: 0.2
+            future_entrants:
+              minimum_confirmation_frames: 2
+            gates:
+              provisional_thresholds: true
+              history:
+                minimum_support_rate: 0.2
+                minimum_valid_point_ratio: 0.1
+                maximum_flow_epe_px: 12.0
+              future_evidence:
+                minimum_windows: 100
+                minimum_flow_windows: 50
+              consistency:
+                minimum_support_rate: 0.2
+                minimum_support_retention: 0.3
+                maximum_flow_epe_px: 12.0
+                minimum_flow_cosine: -0.1
+                minimum_direction_agreement: -0.1
+                minimum_camera_support_recall: 0.2
+                maximum_multiview_contradiction: 0.8
+            ablations:
+              evidence_backends:
+              - sparse_lk
+              - dense_flow
+              - local_feature
+              - lk_dense
+              - fusion
+              roi_margins:
+              - 0.1
+              - 0.25
+              - 0.5
+              view_sets:
+                front_only:
+                - CAM_FRONT
+                front_three:
+                - CAM_FRONT_LEFT
+                - CAM_FRONT
+                - CAM_FRONT_RIGHT
+                all_six:
+                - CAM_FRONT_LEFT
+                - CAM_FRONT
+                - CAM_FRONT_RIGHT
+                - CAM_BACK_RIGHT
+                - CAM_BACK
+                - CAM_BACK_LEFT
+            scorecard:
+              provisional_total_score: false
+          tcvv_results: challenge/tcvv
+        output: challenge/tcvv_bench
+        positive_pairs:
+          history_real: true
+          paired_future_gt: auto
+          submission_as_positive: false
+        negative_pairs:
+          trajectory_corruption: true
+          cross_scene_pairing: true
+          image_corruption: true
+          severity_levels:
+          - mild
+          - medium
+          - severe
+          trajectory_pixel_shift_per_level: 2.5
+          perturbations:
+            world_shift_m:
+              mild: 0.5
+              medium: 1.5
+              severe: 4.0
+            depth_shift_m:
+              mild: 1.0
+              medium: 3.0
+              severe: 8.0
+            yaw_shift_deg:
+              mild: 10
+              medium: 30
+              severe: 90
+            size_scale:
+              mild: 1.1
+              medium: 1.4
+              severe: 2.0
+            time_shift_frames:
+              mild: 1
+              medium: 3
+              severe: 6
+            speed_scale:
+              mild: 1.2
+              medium: 1.6
+              severe: 2.5
+        background_compensation:
+          enabled: true
+          ring_width_ratio: 0.25
+          exclude_known_objects: true
+          min_valid_background_pixels: 64
+        tcvv:
+          primary_window_length: 2
+          image_width: 400
+          image_height: 224
+        verifiers:
+          rule_based:
+            enabled: true
+            residual_epe_scale_px: 4.0
+            relative_motion_scale_px: 2.0
+            separation_scale_px: 2.0
+            leakage_penalty: 0.35
+            minimum_residual_cosine: -0.1
+            minimum_separation: 0.1
+            maximum_leakage: 0.9
+            minimum_valid_points: 3
+            support_threshold: 0.42
+            weights:
+              sparse: 0.2
+              fb_ransac: 0.15
+              residual: 0.25
+              separation: 0.15
+              appearance: 0.1
+              feature: 0.05
+              scale: 0.1
+          calibrated:
+            enabled: true
+            default_model: logistic_regression
+            scene_level_cross_validation: true
+            minimum_calibration_scenes: 2
+        splits:
+          calibration_ratio: 0.6
+          validation_ratio: 0.2
+          test_ratio: 0.2
+        statistics:
+          bootstrap_repeats: 2000
+          confidence_level: 0.95
+          bootstrap_unit: scene
+        leaderboard:
+          enable_total_score: false
+          status: prototype_single_scene
+          score_version: tcvv_score_v1_provisional
+          requirements:
+            minimum_calibration_scenes: 20
+            minimum_validation_scenes: 10
+            minimum_auroc: 0.85
+            maximum_hard_negative_fpr: 0.1
+            minimum_monotonic_pass_rate: 0.8
+        diagnostics:
+          mtpc_long_track: true
+          bevformer_perception_utility: true
+        enabled: true
+        dependencies:
+        - numpy
+        - scipy
+        - cv2
+        - shapely
+      image_trajectory_consistency:
+        schema_version: image-trajectory-consistency-v1
+        evaluation_protocol: submission_only
+        pairing:
+          manifest:
+            schema_version: image-trajectory-pairs-v2
+            pairs:
+            - pair_id: current_sample_001
+              submission_id: challenge_case_0001
+              image_generation_condition_id: nuscenes_scene_index_50_frames_0_89
+              image_sequence:
+                scene_id: case_0001_scene_50
+                history_root: challenge/input/case_0001/history
+                generated_future_root: challenge/output
+                gt_future_root: challenge/gt
+                conditions_root: challenge/input/case_0001/minimal/conditions
+              trajectory_sequence:
+                scene_id: case_0001_scene_50_generation_condition
+                trajectory_path: challenge/input/case_0001/minimal/conditions/boxes.csv
+                source_role: generation_condition_reference
+                coordinate_system: timestamped_lidar
+              calibration:
+                path: challenge/input/case_0001/minimal/conditions/camera_calibration.csv
+              ego_pose:
+                path: challenge/input/case_0001/minimal/conditions/ego_pose.csv
+              history_metadata_path: challenge/input/case_0001/minimal/conditions/boxes.csv
+              generation_manifest_path: challenge/logs/generate_case_0001.log
+              generation_entrypoint: artifacts/provenance/run_challenge_generate.sh
+              last_generation_run_pointer: challenge/last_generation_run_dir.txt
+              timeline:
+                image_history_frames: 10
+                image_future_frames: 80
+                image_dt: 0.08333723314606742
+                image_timestamp_unit: microseconds
+                first_future_timestamp: 1535639637533073.2
+                mapping: exact_condition_timestamp
+              coordinate_transform:
+                method: per_frame_lidar_to_ego_to_global
+              camera_order:
+              - CAM_FRONT_LEFT
+              - CAM_FRONT
+              - CAM_FRONT_RIGHT
+              - CAM_BACK_RIGHT
+              - CAM_BACK
+              - CAM_BACK_LEFT
+          default_pair_id: current_sample_001
+        backend:
+          name: bevformer
+          repo: ${DEPENDENCIES_ROOT}/BEVFormer
+          model_variant: bevformer_base
+          selection_rule: largest_official_model_that_strictly_loads_and_passes_rtx4090_inference_smoke
+          larger_model_status: bevformer_base_single_frame_gpu_smoke_passed
+          config: ${DEPENDENCIES_ROOT}/BEVFormer/projects/configs/bevformer/bevformer_base.py
+          checkpoint: ${DEPENDENCIES_ROOT}/BEVFormer/ckpts/bevformer_r101_dcn_24ep.pth
+          environment: ${HOME}/miniconda3/envs/bevformer_eval
+          python: ${HOME}/miniconda3/envs/bevformer_eval/bin/python
+          score_threshold: 0.4
+          threshold_selection:
+            source: gt_image_development_baseline
+            rule: maximum_overall_f1
+            candidates:
+            - 0.1
+            - 0.2
+            - 0.3
+            - 0.4
+            - 0.5
+            generated_images_used: false
+          official_resize_scale: 1.0
+          minimum_free_gpu_mib: 23000
+          require_exclusive_compute_gpu: true
+          candidate_models:
+          - name: bevformer_base
+            config: ${DEPENDENCIES_ROOT}/BEVFormer/projects/configs/bevformer/bevformer_base.py
+            checkpoint: ${DEPENDENCIES_ROOT}/BEVFormer/ckpts/bevformer_r101_dcn_24ep.pth
+            selection_status: selected_strict_load_and_single_frame_gpu_smoke_passed
+          - name: bevformer_small
+            config: ${DEPENDENCIES_ROOT}/BEVFormer/projects/configs/bevformer/bevformer_small.py
+            checkpoint: ${DEPENDENCIES_ROOT}/BEVFormer/ckpts/bevformer_small_epoch_24.pth
+            selection_status: strict_load_passed_fallback
+          tracked_classes:
+          - car
+          - truck
+          - construction_vehicle
+          - bus
+          - trailer
+          - motorcycle
+          - bicycle
+          - pedestrian
+          ignored_static_classes:
+          - barrier
+          - traffic_cone
+          diagnostic_only: false
+        tracker:
+          protocol_version: v1_frozen_gt_calibrated
+          parameter_selection_source:
+          - gt_boxes_tracker_upper_bound
+          - gt_image_baseline
+          generated_images_used_for_selection: false
+          semantic_class_gate: true
+          process_noise: 1.0
+          measurement_noise: 1.0
+          velocity_measurement_noise: 10.0
+          max_lost_frames: 5
+          tentative_max_lost_frames: 0
+          min_confirmed_frames: 2
+          export_confirmed_only: true
+          duplicate_nms_iou: 0.5
+          gates:
+            center_distance_m: 8.0
+            center_distance_m_by_type:
+              vehicle: 8.0
+              pedestrian: 4.0
+              bicycle: 5.0
+            heading_rad: 1.57
+            size_ratio: 3.0
+            minimum_iou: 0.0
+          weights:
+            position: 0.52
+            iou: 0.25
+            heading: 0.12
+            velocity: 0.06
+            size: 0.05
+        speed_estimation:
+          formal_source: kalman_state
+          selection_source: gt_image_and_gt_boxes_only
+          selection_rule: minimum_gt_image_mae_with_at_least_500_samples_and_gt_box_mae_below_0.2_mps
+          generated_images_used_for_selection: false
+          minimum_track_length: 4
+          maximum_gap_seconds: 0.13
+          smoothing_window: 5
+        visibility:
+          minimum_projected_area_px: 64.0
+          maximum_occlusion_ratio: 0.8
+          minimum_depth_m: 0.2
+          image_width: 400
+          image_height: 224
+        detection_evaluation:
+          maximum_center_distance_m: 8.0
+          minimum_rotated_iou: 0.0
+          semantic_class_matching: true
+        matching:
+          semantic_class_matching: true
+          maximum_cost: 2.5
+          maximum_mean_center_distance_m: 8.0
+          history_anchor_maximum_cost: 0.8
+          minimum_common_visible_frames: 2
+          weights:
+            center: 0.4
+            iou: 0.2
+            heading: 0.1
+            velocity: 0.1
+            size: 0.05
+            entry_time: 0.05
+            exit_time: 0.05
+            dtw: 0.05
+        gates:
+          calibration_integrity:
+            require_all_cameras: true
+            require_explicit_pair_id: true
+          history_extractor_quality:
+            minimum_recall: 0.5
+            minimum_precision: 0.5
+            minimum_center_distance_ap: 0.1
+            maximum_center_ade_m: 3.0
+            maximum_heading_mae_rad: 0.8
+            maximum_velocity_error_mps: 4.0
+            minimum_idf1: 0.4
+          future_observability:
+            minimum_visible_agent_frames: 10
+            minimum_match_coverage: 0.2
+          extractor_absolute_quality_warning:
+            provisional_thresholds: true
+            minimum_gt_recall: 0.6
+            minimum_gt_precision: 0.6
+            minimum_gt_idf1: 0.5
+            maximum_gt_fragmentation: 50
+            maximum_gt_speed_mae_mps: 2.0
+          generated_relative_consistency:
+            provisional_thresholds: true
+            minimum_recall_retention: 0.75
+            minimum_precision_retention: 0.75
+            minimum_idf1_retention: 0.7
+            minimum_track_completeness_retention: 0.7
+            maximum_fragmentation_increase: 30
+            maximum_speed_error_increase_mps: 2.0
+            maximum_center_error_increase_m: 1.0
+            maximum_heading_error_increase_rad: 0.2
+            maximum_matched_coverage_drop: 0.15
+          coverage_aware_warning:
+            provisional_thresholds: true
+            maximum_ade_improvement_m: -0.05
+            minimum_recall_drop: 0.05
+            minimum_track_coverage_drop: 0.05
+        scoring:
+          provisional_total_score: false
+        protocols:
+          submission_only:
+            enabled: true
+            require_future_gt: false
+            submitted_trajectory_role: instruction_reference
+            enable_actbench_metrics: true
+            enable_drivinggen_metrics: true
+            enable_worldlens_metrics: true
+            enable_bevformer_metrics: true
+            enable_task_fidelity_metrics: true
+          distribution_reference:
+            enabled: auto
+            require_paired_gt: false
+            reference_dataset: ${DEPENDENCIES_ROOT}/onsite_reference/0_6_straight_straight_19_gt.pkl
+            enable_official_ftd: true
+            enable_js: true
+            enable_wasserstein: true
+            enable_ks: true
+            enable_mmd: true
+          paired_gt:
+            enabled: auto
+            require_future_gt: true
+            enable_standard_nuscenes: true
+            enable_standard_waymo: true
+            enable_standard_tracking: true
+            enable_real_generated_gap: true
+        paper_metrics:
+          actbench:
+            enabled: true
+            strict_official_definition: true
+          drivinggen:
+            enabled: true
+            official_ftd_only: true
+          worldlens:
+            enabled: true
+          bevformer:
+            enabled: true
+            center_distance_ap: true
+            tp_errors: true
+            nds_adapted: true
+            waymo_ap_aph_adapted: true
+            occupancy_iou_adapted: true
+            visibility_stratified: true
+            temporal_ablation: true
+        metric_naming:
+          prefix_submission_reference_metrics: true
+          forbid_standard_gt_names_without_gt: true
+          require_reference_semantics_field: true
+        submission_only_gates:
+          provisional_thresholds: true
+          minimum_motion_accuracy: 0.3
+          maximum_agent_missing_ratio: 0.7
+          minimum_matched_coverage: 0.2
+          maximum_ade_m: 4.0
+          maximum_mate_m: 4.0
+          maximum_maoe_rad: 1.0
+          maximum_mave_mps: 4.0
+          minimum_idf1: 0.3
+        enabled: false
+        dependencies:
+        - numpy
+        - scipy
+        - cv2
+        - shapely
+      image_trajectory_consistency_v1:
+        version: image_trajectory_consistency_v1
+        mode: gt_example
+        dataset:
+          manifest: challenge/input/nuscenes100_v1/ten_scene_manifest.json
+          fixed_scene_count: 10
+          future_frame_range:
+          - 10
+          - 89
+        inputs:
+          candidate_image_root: challenge/output/nuscenes100_v1/gt_submission/scenes
+          trajectory_root: challenge/gt/nuscenes100_v1/scenes
+          reference_image_root: challenge/gt/nuscenes100_v1/scenes
+          calibration_root: challenge/gt/nuscenes100_v1/scenes
+          ego_pose_root: challenge/gt/nuscenes100_v1/scenes
+        semantics:
+          image_role: candidate_rgb
+          trajectory_role: expected_structured_trajectory
+          current_example: paired_gt_positive_control
+          reference_semantics: trajectory_as_visual_expectation
+        time:
+          use_native_camera_timestamp: true
+          interpolate_trajectory: true
+          interpolate_ego_pose: true
+          allow_cross_valid_gap: false
+        projection:
+          visible_surface: true
+          geometry_priority:
+          - surface_homography
+          - piecewise_affine
+          - center_scale_rotation
+        foreground_core:
+          adaptive_erosion: true
+          exclude_overlap: true
+          exclude_occlusion: true
+          exclude_small_objects: true
+          exclude_severe_truncation: true
+        image_motion:
+          backend: geometry_initialized_lk
+          use_initial_flow: true
+          forward_backward: true
+          ransac: true
+          allow_long_propagation: false
+          fill_failed_points_with_prediction: false
+        backend:
+          gt_vtc_v2_config:
+            version: gt_vtc_v2_geometry_guided
+            inputs:
+              gt_vtc_v1_config:
+                version: gt_vtc_v1_oracle_paired
+                protocol:
+                  name: gt_vtc_paired_ground_truth
+                  use_future_gt: true
+                  use_gt_agent_id: true
+                  use_gt_boxes: true
+                  use_gt_trajectory: true
+                  use_bevformer: false
+                  use_long_tracker: false
+                  use_submission_data: false
+                inputs:
+                  gt_images: challenge/gt
+                  conditions: challenge/input/case_0001/minimal/conditions
+                output: challenge/gt_vtc
+                scene:
+                  scene_id: current_sample_001
+                  history_frames: 10
+                  future_frames: 80
+                  development_future_frames: 20
+                  evaluation_start_frame: 30
+                image:
+                  native_size:
+                  - 1600
+                  - 900
+                  formal_size:
+                  - 1600
+                  - 900
+                  low_resolution_size:
+                  - 400
+                  - 224
+                time_alignment:
+                  use_timestamp: true
+                  allow_interpolation: true
+                  offset_search_diagnostic: true
+                  maximum_nearest_error_s: 0.05
+                projection:
+                  minimum_depth_m: 0.2
+                  minimum_projected_area_px: 256
+                  maximum_truncation_ratio: 0.65
+                  maximum_occlusion_ratio: 0.8
+                  minimum_visibility_token: 2
+                instance_region:
+                  priority:
+                  - gt_instance_mask
+                  - gt_depth_box_rasterization
+                  - projected_visible_face_core
+                  erode_core: true
+                  erosion_ratio: 0.08
+                  minimum_core_pixels: 64
+                  exclude_overlap: true
+                  exclude_occluded: true
+                  exclude_small_objects: true
+                motion:
+                  window_delta: 1
+                  candidate_deltas:
+                  - 1
+                  - 2
+                  - 3
+                  use_lk: true
+                  use_farneback: true
+                  use_orb: true
+                  allow_raft_if_available: true
+                  allow_long_propagation: false
+                  maximum_points: 96
+                  minimum_valid_points: 4
+                  corner_quality: 0.01
+                  minimum_point_distance_px: 4
+                  forward_backward_error_px: 2.5
+                  ransac_threshold_px: 3.0
+                  maximum_flow_px: 160
+                  orb_features: 128
+                  repeated_frame_mean_difference: 0.15
+                  minimum_contrast_std: 4.0
+                calibration:
+                  use_history_frames: true
+                  future_gt_for_threshold_tuning: false
+                  single_scene_temporal_holdout: true
+                metrics:
+                  annotation_consistency: true
+                  visual_motion_consistency: true
+                  multiview_consistency: true
+                  temporal_consistency: true
+                thresholds:
+                  status: gt_calibration_thresholds
+                  minimum_projection_valid_rate: 0.95
+                  minimum_annotation_consistency: 0.99
+                  minimum_camera_support_recall: 0.9
+                  minimum_valid_point_ratio: 0.7
+                  minimum_motion_support_rate: 0.8
+                  minimum_flow_cosine: 0.75
+                  minimum_direction_agreement: 0.75
+                  maximum_multiview_contradiction: 0.1
+                  maximum_unscorable_rate: 0.2
+                  minimum_scorable_windows: 50
+                outputs:
+                  save_per_frame: true
+                  save_per_window: true
+                  save_per_agent: true
+                  save_per_camera: true
+                  save_visualizations: true
+              gt_vtc_v1_results: challenge/gt_vtc
+            output: challenge/gt_vtc_v2
+            protocol:
+              use_future_gt: true
+              use_gt_agent_id: true
+              use_gt_boxes: true
+              use_gt_trajectory: true
+              use_bevformer: false
+              use_tracker_identity: false
+              allow_long_propagation: false
+              use_submission_data: false
+            time:
+              formal_protocol: native_camera_timestamp
+              compare_common_time: true
+              interpolate_gt_at_exposure_time: true
+            geometry:
+              visible_surface: true
+              model_priority:
+              - surface_homography
+              - piecewise_affine
+              - center_scale_rotation
+              reject_ill_conditioned_warp: true
+              maximum_homography_condition_number: 1000000.0
+              maximum_surface_transition: 0.75
+            foreground_core:
+              adaptive_erosion: true
+              area_thresholds:
+              - 1000
+              - 5000
+              erosion_ratios:
+              - 0.03
+              - 0.07
+              - 0.1
+              minimum_core_pixels: 64
+              exclude_overlap: true
+              exclude_occlusion: true
+              exclude_surface_boundary: true
+            point_sampling:
+              shi_tomasi: true
+              uniform_grid: true
+              gradient_points: true
+              points_must_be_inside_core: true
+              maximum_points: 128
+              target_points_by_area:
+              - 32
+              - 64
+              - 96
+              minimum_gradient: 5.0
+            tracking:
+              ordinary_lk_diagnostic: true
+              geometry_initial_flow_lk: true
+              patch_warp_residual_lk: true
+              forward_backward: true
+              ransac: true
+              fallback:
+              - ecc
+              - phase_correlation
+              - sift
+              - unscorable
+              global_parameters:
+                win_size: 21
+                max_level: 3
+                iterations: 30
+                epsilon: 0.01
+                fb_threshold_px: 2.5
+                residual_search_radius_px: 12
+                quality_level: 0.01
+                min_distance_px: 4
+                ransac_threshold_px: 3.0
+                minimum_valid_points: 4
+              parameter_profiles:
+                conservative:
+                  win_size: 21
+                  max_level: 3
+                  quality_level: 0.01
+                  min_distance_px: 4
+                  fb_threshold_px: 2.5
+                  residual_search_radius_px: 12
+                large_motion:
+                  win_size: 31
+                  max_level: 4
+                  quality_level: 0.005
+                  min_distance_px: 3
+                  fb_threshold_px: 3.5
+                  residual_search_radius_px: 18
+                low_texture:
+                  win_size: 25
+                  max_level: 4
+                  quality_level: 0.003
+                  min_distance_px: 2
+                  fb_threshold_px: 3.0
+                  residual_search_radius_px: 16
+            calibration:
+              history_frames:
+              - 0
+              - 9
+              development_frames:
+              - 10
+              - 29
+              evaluation_frames:
+              - 30
+              - 89
+              use_future_evaluation_for_tuning: false
+              per_camera_parameters: true
+            support:
+              inherit_v1_thresholds: true
+              minimum_ransac_inlier_ratio: 0.25
+              maximum_photometric_error: 80.0
+              weak_minimum_cosine: 0.5
+            gate:
+              separate_motion_quality_and_coverage: true
+              allow_valid_consistency_limited_coverage: true
+              thresholds_unchanged_from_v1_targets: true
+              minimum_flow_cosine: 0.85
+              minimum_direction_agreement: 0.88
+              maximum_magnitude_error: 0.35
+              minimum_scale_agreement: 0.9
+              minimum_rotation_agreement: 0.9
+              maximum_residual_epe_px: 10.0
+              minimum_valid_point_ratio: 0.7
+              minimum_scorable_coverage: 0.9
+              minimum_strong_support: 0.8
+              minimum_strong_or_weak_support: 0.9
+              maximum_unscorable_rate: 0.1
+              minimum_camera_support_recall: 0.95
+              maximum_multiview_contradiction: 0.1
+            sanity:
+              oracle_leakage_corruptions: true
+              maximum_windows: 48
+            outputs:
+              save_per_point: true
+              save_per_window: true
+              save_per_agent: true
+              save_per_camera: true
+              save_visualizations: true
+          gt_vtc_v1_results: challenge/gt_vtc
+          frozen_parameters: challenge/gt_vtc_v2/history_calibration/per_camera_parameters.json
+          retune_on_current_scenes: false
+        metrics:
+          evidence_coverage: true
+          residual_epe: true
+          normalized_epe:
+          - image_diagonal
+          - projected_box_diagonal
+          - expected_motion_magnitude
+          flow_cosine: true
+          direction_agreement: true
+          magnitude_error: true
+          scale_agreement: true
+          rotation_agreement: true
+          temporal_consistency: true
+          multiview_consistency: true
+        corruption_test:
+          enabled: true
+          maximum_windows_per_scene: 24
+          families:
+          - time_shift
+          - x_shift
+          - y_shift
+          - yaw_shift
+          - speed_scale
+          - motion_reverse
+          - wrong_camera
+          - repeated_frame
+          - shuffled_image
+          - frozen_patch
+        aggregation:
+          bootstrap_unit: scene
+          bootstrap_repeats: 2000
+          confidence_level: 0.95
+          seed: 20260730
+          enable_total_score: false
+        integrity:
+          preserve_hashes:
+          - challenge/input/nuscenes100_v1/ten_scene_manifest.json
+          - challenge/gt_vtc_v2/final_metrics.json
+          - challenge/gt_vtc_v2/final_report.md
+          - challenge/evaluation/nuscenes100_v1/ten_scene_full/image_trajectory_consistency/report.md
+        outputs:
+          root: challenge/evaluation/nuscenes100_v1/image_trajectory_consistency_v1
+          save_per_point: true
+          save_per_window: true
+          save_per_agent: true
+          save_per_camera: true
+          save_per_scene: true
+          save_visualizations: true
+        enabled: false
+        dependencies:
+        - numpy
+        - scipy
+        - cv2
+        - shapely
+  agent:
+    extra_sensors:
+      alignment_protocol: motion_compensated_v1
+  video:
+    metrics:
+      fid:
+        enabled: false
+        backend: pytorch_fid_inception_v3
+        feature: 2048
+        batch_size: 32
+        resize:
+        - 299
+        - 299
+        allow_cache_read: false
+        compute_sanity: false
+        min_images_for_normal_confidence: 5000
+      boundary:
+        enabled: false
+      temporal_warp:
+        enabled: false
+        flow_backend: opencv
+      history_future:
+        enabled: false
+        flow_backend: opencv
+        warp_error_unit: mean_abs_rgb_0_1
+      flicker:
+        enabled: false
+      tracking:
+        enabled: false
+    visual_quality:
+      musiq:
+        enabled: false
+        batch_size: 4
+      kid:
+        enabled: false
+        subset_size: 100
+        num_subsets: 100
+        seed: 42
+      dover:
+        enabled: false
+        source_dir: ${HOME}/.cache/DOVER
+        weights_path: ${HOME}/.cache/DOVER/pretrained_weights/DOVER.pth
+        config_path: ${HOME}/.cache/DOVER/dover.yml
