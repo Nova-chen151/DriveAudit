@@ -1,10 +1,16 @@
 # Participant inputs, CAT-K and future RGB
 
+[![English](https://img.shields.io/badge/English-2878B5?style=flat-square)](generation.md) [![简体中文](https://img.shields.io/badge/简体中文-777777?style=flat-square)](generation.zh-CN.md)
+
+[Home](../README.md) · [Evaluation guide](evaluation.md#evaluation-scope)
+
 Run the commands below from a DriveAudit checkout. The input is a GenBench `nuscenes_ego_conditioned_v1` participant archive. CAT-K takes observed traffic and map context, predicts future actors and its own ego trajectory jointly, and exports the actors at the 80 participant target timestamps. The renderer uses the public ego and camera motion supplied in the archive. CAT-K's predicted ego trajectory is available for diagnostics.
+
+<a id="install-the-native-inference-source-offline"></a>
 
 ## Install the native inference source offline
 
-The native sources are tracked under [trajectory/CAT-K](../models/generation/trajectory/CAT-K) and [image](../models/generation/image), with one directory per renderer. The offline installer reconstructs the project paths expected by the upstream launchers. The upstream SHA-256 inventory is in `vendor/generation/bundles`. It contains official CAT-K Python source, seven renderer integrations and their model components, the relevant diffusers and 3D detection variants, and the editable dependencies used by the native environments. The installer copies these sources into a new engine root, applies this checkout's participant adapters, copies ABI-specific compiled extensions from a compatible build, and links the model assets. Every installed Python source file is a regular file under the new root.
+Native sources are under [CAT-K](../models/generation/trajectory/CAT-K) and [renderers](../models/generation/image). The installer combines these sources, participant adapters, compatible compiled extensions, and external weights into `work/native`.
 
 Set these environment variables to the resource locations on your site.
 
@@ -25,7 +31,17 @@ python scripts/geninstall_native.py --destination "$ENGINE_CODE" \
 python scripts/geninstall_native.py --destination "$ENGINE_CODE" --verify
 ```
 
-`NATIVE_INSTALL.json` records hashes for the installed source and compiled extensions and the seven explicit weight/vocabulary links. The tested installation contains 3,193 source/config/license files and 29 compiled extensions. A machine without the GPU environments can unpack and verify the full code for inspection with `python scripts/geninstall_native.py --source-only --destination work/native`. The source checkout can be installed with networking disabled. An installed wheel exposes the same installer as `python -m driveaudit.generation.native`. To reproduce the distribution from an existing source installation, use `scripts/genpack_native.py --source-code SOURCE_TREE --dependencies-root ABI_ROOT --output native-sources.tar.gz`. The resulting compressed archive and its sibling `native-sources.tar.json` are deterministic for a fixed input snapshot. [Native source inventory](../vendor/generation/bundles/native-sources.tar.json) · [Source packer](../scripts/genpack_native.py) · [Offline installer](../scripts/geninstall_native.py)
+`NATIVE_INSTALL.json` records installed source and extension hashes and asset links. For source-only inspection, use `python scripts/geninstall_native.py --source-only --destination work/native`. See the [source inventory](../vendor/generation/bundles/native-sources.tar.json) for provenance.
+
+<a id="model-weights"></a>
+
+## Model weights
+
+Use `weights/` as the shared root: `catk/` for traffic weights and vocabularies, `renderers/` and `magicdrivev2/` for renderer assets, `agents/` for policy assets, and `evaluation/` for LoFTR, DINO, and CLIP-IQA+. A provisioned store records its inventory in `weights/inventory.json`; weights are not downloaded by cloning the repository.
+
+Use `python scripts/collect_weights.py --help` to import an existing store. The native installer also accepts `--weight-store WEIGHTS` with `--extensions-root ABI_ROOT`. Shared weights may be hard-linked: replace files with new versions rather than overwriting them in place. Rebuild the native installation after changing model source. Policy environments are covered in the [evaluation guide](evaluation.md).
+
+<a id="configure-a-generation-run"></a>
 
 ## Configure a generation run
 
@@ -69,6 +85,8 @@ On the original HPC system also pass `--cuda-prefix /share/apps` to select the o
 
 To use independently installed CAT-K assets, set `catk_official` to the directory containing `src/smart` and `checkpoints/clsft_E9.ckpt`, and `catk_python` to its Python executable. Default source and vocabulary checksums are in `vendor/generation/catk/official_source.sha256` and `original_config.yaml`. The CLI preserves the original deterministic seed 20260914 unless the run JSON supplies `traffic_seed`.
 
+<a id="generate-and-stage-traffic"></a>
+
 ## Generate and stage traffic
 
 ```bash
@@ -81,6 +99,8 @@ The traffic stage verifies selected archive members, runs the pretrained CAT-K d
 
 To stage a previously completed traffic run, set `catk_run` to its directory in the run JSON and execute `stage`. This reuses its predictions. Staging checks the archive digest, actor CSV digests and byte identity of the public ego trajectory. It hashes every staged scene file, including history RGB, map and calibration, then publishes `WORK/conditions` by atomic rename. Rendering verifies these scene digests before loading a model. A new work directory is required to change the conditions of an existing run.
 
+<a id="render-future-rgb"></a>
+
 ## Render future RGB
 
 ```bash
@@ -92,7 +112,7 @@ srun -p L40 --gres=gpu:l40:4 -c 24 --mem=256G \
   python -m driveaudit.generation render --config run.json --model magicdrivev2
 ```
 
-The original native adapters use Slurm L40 allocations, with two GPUs for the first six models and four for MagicDrive-V2. The process launcher stays in the foreground so the scheduler tracks failures. Each run uses a content-addressed private view of the installed native source and shares external model weights. Source search paths explicitly select the migrated diffusers, xFormers and 3D detection variants before environment defaults. `WORK/logs/<model>/attempt-*/` contains the exact argument vectors, worker logs, wall time, process return codes, and verification output. A re-run in the same conditioned directory follows each adapter's native resume checks. Existing status files seen at launch are recorded explicitly.
+These example allocations use two L40 GPUs for the first six models and four for MagicDrive-V2. Adjust them to your cluster. Logs and verification output are under `WORK/logs/<model>/attempt-*/`. Re-running follows the adapter's native resume checks; use a fresh work directory for changed conditions or checkpoints.
 
 Outputs are `WORK/conditions/predictions/<model>/nuscenes/scenes/<case>/future/rgb/<camera>/<frame>.jpg`. Verification requires valid native completion metadata and decodes every 400 × 224 RGB JPEG across six cameras and frames 10–89. Each model and scene produces 480 images. Comparison of new generator settings or checkpoints requires a fresh work directory to avoid accidental reuse.
 
@@ -108,6 +128,8 @@ Outputs are `WORK/conditions/predictions/<model>/nuscenes/scenes/<case>/future/r
 
 Panacea puts the reference in the model's final slot, supplies the future targets in chronological order, and takes the last generated frame from each window as the next reference.
 
+<a id="what-conditions-reach-each-renderer"></a>
+
 ## What conditions reach each renderer
 
 The actor CSV supplies box centers, dimensions, headings and categories at each target timestamp. The map comes from the participant archive. The public ego poses and calibrated camera rig put both the boxes and map in each target camera's frame. The shared loader validates the supplied camera-to-anchor records. The renderers below derive their camera geometry from ego poses and calibrated camera-to-ego transforms. All seven receive a scene prompt.
@@ -122,7 +144,7 @@ The actor CSV supplies box centers, dimensions, headings and categories at each 
 | Panacea | Frame 9 initializes the first reference. Later windows use their last generated target. | The 19-channel panorama combines three projected box channels, ten class-specific box-depth channels, three vector-map channels and three calibrated viewing-ray channels. Each future slot receives its own layout transformed with the public ego pose. |
 | MagicDrive-V2 | The VAE encodes frames 1–9 as a fixed three-latent prefix within the 89-frame sequence. | The denoiser receives warped semantic BEV maps, 3D corner/class/visibility tensors, camera calibration, relative ego poses and the measured clip FPS. Missing map channels are zeros because the checkpoint lacks an unknown-layer mask. |
 
-**OpenDWM condition path.** The GenBench dataset rasterizes the valid traffic boxes for every view into `3dbox_images`. It separately draws available drivable-area and pedestrian-crossing contours into `hdmap_images`. The participant map lacks native lane polygons, so the lane layer is absent. Box categories outside the renderer's color table are skipped. The released `ctsd_unimlvg_6views_video_generation.json` enables `condition_on_all_frames`, `explicit_view_modeling` and a six-channel `condition_image_adapter_config`. In the native `CrossviewTemporalSD.get_conditions` method, concatenating the two three-channel rasters produces `condition_image_tensor`. The DiT forward pass sends this tensor into the image adapter and uses its residuals. The same profile sets `cond_with_action=false` and omits `added_time_ids`, so there is no separate numerical action/FPS conditioning vector. Its `pts` array determines sequence length in this sampling path. These are input-path properties. The strength of the visual response requires an output ablation. [OpenDWM dataset adapter](../vendor/generation/gen-benchmark/OpenDWM-main/src/dwm/datasets/genbench_gt2.py) · [traffic and map rasterizer](../vendor/generation/gen-benchmark/OpenDWM-main/src/dwm/datasets/genbench_gt2_renderer.py) · [native sampling call](../vendor/generation/gen-benchmark/OpenDWM-main/infer_genbench_gt2.py)
+OpenDWM conditions all frames on projected traffic boxes and available HD-map contours, with calibrated camera geometry. The participant map has no native lane polygons; unsupported box categories are skipped. This profile uses no separate numerical action/FPS vector. See the [dataset adapter](../vendor/generation/gen-benchmark/OpenDWM-main/src/dwm/datasets/genbench_gt2.py) and [rasterizer](../vendor/generation/gen-benchmark/OpenDWM-main/src/dwm/datasets/genbench_gt2_renderer.py).
 
 Run the geometry diagnostic to compare box and map conditioning with and without traffic actors.
 
@@ -131,6 +153,33 @@ Run the geometry diagnostic to compare box and map conditioning with and without
   --conditions "$WORK/conditions" --engine-code-root "$ENGINE_CODE"
 ```
 
+<a id="slurm-submission"></a>
+
 ## Slurm submission
 
 The Slurm scheduler entry accepts three starting points. Use `bash scripts/submit_demo.sh CONFIG fresh` for a new traffic run, `staged` to render and evaluate a different generator using an existing verified CAT-K conditions directory, or `rendered` for evaluation of existing renderer results. For each additional renderer select its ID in `CONFIG` and a distinct evaluation output directory. All renderers can share the same generation work directory and traffic.
+
+<a id="participant-inputs-and-submission"></a>
+
+## Participant inputs and submission
+
+The participant package is specified by `archive` in the generation configuration. It contains 250 nuScenes scenes, task instructions, the submission format and a public validator. The example selects the first two public scene IDs.
+
+Each scene provides six-view RGB for frames 0–9, historical traffic actors, a map, camera calibration and timestamps. Ego and camera poses for frames 10–89 are given conditions. Traffic trajectories use the frame-9 ego coordinate system: x forward, y left and z up, with lengths in metres. Sampling times are read from `timeline.json`. CAT-K predicts other traffic actors, and the selected renderer generates the corresponding future images.
+
+<a id="export-the-submission-directory"></a>
+
+## Export the submission directory
+
+Run from the repository root, specifying the extracted public participant directory, the rendering conditions directory and an accurate method declaration. `PARTICIPANT_DIR` points to the extracted participant directory, and `SUBMISSION_METADATA` points to your method-declaration JSON. Fill in its fields according to the submission specification in the participant package.
+
+```bash
+python -m driveaudit.submission \
+  --inputs "$PARTICIPANT_DIR" \
+  --conditions work/two-scene-generation/conditions --renderer opendwm \
+  --cases case_000001 case_000002 \
+  --metadata "$SUBMISSION_METADATA" \
+  --output work/two-scene-submission
+```
+
+Each scene exports one anonymous traffic-trajectory CSV and 80 RGB JPEGs at 400 × 224 for each of six cameras. File names and symbolic-link restrictions follow the validator included in the participant package. The program invokes that validator for every selected scene and publishes the submission directory only after all scenes pass. The two-scene demonstration covers only the selected IDs; a full official submission must cover the complete scene list released by the organizer.

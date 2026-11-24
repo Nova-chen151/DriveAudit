@@ -1,23 +1,43 @@
-# DriveAudit 闭环测试
+[![English](https://img.shields.io/badge/English-2878B5?style=flat-square)](README.md) [![简体中文](https://img.shields.io/badge/简体中文-777777?style=flat-square)](README.zh-CN.md)
 
-每轮由当前自车位姿和 CAT-K 交通状态生成六视角图像。DrivoR 使用其原生相机子集预测轨迹，执行器将前 0.5 秒分成五个 0.1 秒子步。CAT-K 将执行结果写回交通历史，渲染器在下一轮读取更新后的状态。目标点取自选手公开自车条件的最后一帧，导航适配器将相对方位转换为 DrivoR 的左转、右转或直行命令。进入目标半径后使用吸收终态。
+# DriveAudit Closed-loop Testing
 
-## 运行一个场景
+Each round renders six-view images from the current ego pose and CAT-K traffic state. DrivoR predicts a trajectory using its native camera subset; the executor applies its first 0.5 s in five 0.1 s substeps. CAT-K writes the executed state back to traffic history, which conditions the next rendering round.
 
-使用与生成配置相同的 CAT-K、主车和视频权重。将此工作目录的 `weights` 链接到现有统一权重目录，将 `work/resources` 指向已配置的资源目录。本分支的原生运行环境安装在 `work/native`，安装方式见 [生成说明](../docs/generation.md)。
+The goal is the final ego pose in the public participant conditions. The navigation adapter converts its relative bearing to DrivoR's left, right, or straight command. Arrival within the goal radius enters an absorbing terminal state.
 
-在仓库根目录使用装有 NumPy 的 Python。指定同一公开场景的两种输入，`PUBLIC_SCENE` 是解压后的选手场景目录，`RENDER_SCENE` 是生成流程 stage 阶段输出的对应场景目录。闭环每轮重新计算交通状态和 RGB。若选用其他渲染器，将 `basedreamer` 替换为相应 ID。
+<a id="run"></a>
+## Run a Scene
+
+Use the same CAT-K, policy, and renderer weights as generation. Link `weights` to the shared weight store and `work/resources` to the configured resources. Install native runtimes under `work/native` following the [generation guide](../docs/generation.md).
+
+Run from the repository root with a Python environment containing NumPy:
+
+- `PUBLIC_SCENE`: an extracted public participant scene.
+- `RENDER_SCENE`: the corresponding scene produced by the generation `stage` step.
+- Replace `basedreamer` with another renderer ID as needed. Traffic and RGB are regenerated each round.
 
 ```bash
 python closed_loop/configure.py --renderer basedreamer \
   --participant-scene "$PUBLIC_SCENE" --render-scene "$RENDER_SCENE" \
   --output work/closed-loop/config.json
-# 在 Slurm GPU 分配内执行
+
+# Run inside a Slurm GPU allocation.
 python closed_loop/run_goal.py --config work/closed-loop/config.json \
   --output work/closed-loop/run-01 --steps 2
 python closed_loop/verify_run.py work/closed-loop/run-01
 ```
 
-BaseDreamer、DreamForge、HorizonDrive、MagicDrive 和 Panacea 的默认布局使用两张 GPU。OpenDWM 与 MagicDrive-V2 使用五张，其中四张用于分布式渲染。每次使用新的输出目录。验证器检查执行轨迹、下一轮位姿、生成图像指纹和到达终点后的状态。逐轮记录与耗时写入 Git 忽略的 `work/`。闭环核验通过表示反馈链路成立；论文的配对评分另有独立入口。
+<a id="resources"></a>
+## Resources and Verification
 
-MagicDrive-V2 的四个渲染进程分别在主机内存中加载模型并向 GPU 卸载权重。单场景五卡 Slurm 作业可用 `--gres=gpu:l40:5 --cpus-per-task=20 --mem=256G` 申请资源。
+| Renderers | Default GPUs |
+| --- | ---: |
+| BaseDreamer, DreamForge, HorizonDrive, MagicDrive, Panacea | 2 |
+| OpenDWM, MagicDrive-V2 | 5, including four rendering workers |
+
+Use a fresh output directory for each run. The verifier checks execution traces, next-round poses, generated-image fingerprints, and terminal-state behavior. Per-round records and timing are written under ignored `work/`. Passing verification establishes feedback-chain consistency; [paired policy scoring](../docs/evaluation.md) is a separate evaluation.
+
+MagicDrive-V2's four rendering processes each load the model in host memory and offload weights to GPUs. A five-GPU, single-scene Slurm job can request `--gres=gpu:l40:5 --cpus-per-task=20 --mem=256G`.
+
+[← Project overview](../README.md)
