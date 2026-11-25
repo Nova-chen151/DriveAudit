@@ -221,7 +221,7 @@ coverToggle.addEventListener('click', () => {
 cover.addEventListener('play', () => { coverToggle.textContent = 'Pause cover'; });
 cover.addEventListener('pause', () => { coverToggle.textContent = 'Play cover'; });
 if (!reduceMotion.matches) cover.play().catch(() => {});
-document.querySelectorAll('.dimension').forEach((section, index) => {
+document.querySelectorAll('.dimension:has(.atlas-picker)').forEach((section, index) => {
   const video = section.querySelector('video');
   const buttons = section.querySelectorAll('[data-demo]');
   buttons.forEach(button => button.addEventListener('click', () => {
