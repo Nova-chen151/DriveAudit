@@ -49,3 +49,21 @@ section:not(.hero)>h2{font-family:var(--serif);font-weight:500;letter-spacing:-.
 .camera-inspect .line b{white-space:nowrap}
 .camera-inspect .choices{grid-template-columns:repeat(2,minmax(0,1fr))}
 #camera-play{font:inherit;color:var(--ink);background:var(--paper);border:1px solid var(--rule);border-radius:4px;padding:4px 12px;cursor:pointer}
+
+/* Screening room */
+:root{--paper:#0b1014;--ink:#f0f4f4;--soft:#b0bec3;--rule:#344249;--accent:#a6f3d5;--pale:#172328;--glass:#132026e8;--display:"Helvetica Neue",Arial,sans-serif}
+main,header,footer{max-width:1180px}
+header{background:var(--paper)}header .brand{font-size:21px}header nav a{text-decoration:none}
+.hero{padding:36px 0 24px;display:flex;align-items:end;justify-content:space-between;text-align:left;gap:24px}
+.hero h1{font-family:var(--display);font-size:clamp(60px,8vw,112px);letter-spacing:-.075em}
+.hero .paper-title{font-family:var(--sans);font-size:clamp(16px,2vw,23px);line-height:1.25;max-width:29ch;margin:0 0 4px}
+section.screening{margin:0 0 40px;padding-top:12px}
+.filmhead,.pairlabels{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.screening .filmhead h2{font:550 clamp(24px,3vw,40px)/1.12 var(--display);letter-spacing:-.045em;margin:12px 0 16px}.filmhead>span{color:var(--soft);font-size:14px}.pairlabels{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));background:var(--pale);border-radius:8px 8px 0 0;padding:8px 12px;color:var(--accent);font-size:14px}
+#cut{aspect-ratio:800/224;border-radius:0 0 8px 8px}
+.cutlist{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.cutlist button{font:inherit;color:var(--ink);background:var(--pale);border:1px solid var(--rule);border-radius:8px;overflow:hidden;cursor:pointer;text-align:left;padding:0}
+.cutlist button[aria-pressed=true]{border-color:var(--accent);box-shadow:inset 0 -2px var(--accent)}
+.cutlist img{width:100%;display:block}.cutlist span{display:block;padding:8px 12px}
+#annotation{margin:8px 0 16px}.paperfig img,.framework{background:var(--white)}
+@media(max-width:680px){.hero{display:block}.hero .paper-title{margin-top:12px}.filmhead{display:block}.filmhead>span{display:block;margin-bottom:8px}.cutlist{grid-template-columns:repeat(2,minmax(0,1fr))}.screening .filmhead h2{margin-bottom:4px}}
