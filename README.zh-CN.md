@@ -180,9 +180,20 @@ python -m driveaudit panel infer --config configs/pipeline.json \
 <a id="closed-loop"></a>
 ## 🔁 闭环测试
 
-闭环运行器连接 **CAT-K → 六视角渲染 → DrivoR → 自车执行 → 更新交通历史**。每轮将预测轨迹的前 0.5 秒分成五个 0.1 秒子步执行，再根据更新后的状态生成观测。
+在单个 nuScenes 场景中，自车执行 DrivoR 规划的轨迹后，位姿随之更新，DrivoR 下一轮看到的画面也随之改变。
 
-按[闭环指南](closed_loop/README.zh-CN.md)配置场景、选择渲染器、运行 GPU 推理并验证反馈链路。该验证检查执行与观测的一致性，而非复现完整基准评分。
+![DriveAudit 闭环流程，从场景历史到六视角渲染、DrivoR 规划、自车执行与 CAT-K 交通状态反馈](assets/readme/closed-loop.zh-CN.svg)
+
+| 组件 | 在闭环中的作用 |
+| --- | --- |
+| [场景配置](driveaudit/closed_loop/configure.py) | 将选手场景与对应的渲染输入配对，并以公开自车轨迹的终点作为导航目标。 |
+| [六视角渲染器](models/generation/image) | 根据当前自车位姿、周围交通状态和相机标定，生成六路图像。 |
+| [DrivoR 驾驶策略](models/agents/DrivoR/driveaudit_adapter.py) | 使用前、后、左前、右前四路图像，结合自车运动状态和导航指令规划轨迹。 |
+| [自车轨迹执行](driveaudit/closed_loop/core.py) | 分五个子步执行规划轨迹的前 0.5 秒。自车进入目标区域后，保持到达时的位姿。 |
+| [CAT-K 交通模型](models/generation/trajectory/CAT-K/closed_loop.py) | 推演周围交通参与者的运动，将预测轨迹与自车实际执行的轨迹一同写入历史，供下一轮使用。 |
+| [运行记录校验](driveaudit/closed_loop/verify_run.py) | 核对下一轮渲染使用的位姿与上轮执行结果是否一致，并检查策略收到的图像是否与保存的渲染帧相符。 |
+
+运行和校验单个场景的步骤见[闭环指南](closed_loop/README.zh-CN.md#run)。基准分数的计算方式见[配对策略评测](docs/evaluation.zh-CN.md)。
 
 <a id="documentation"></a>
 ## 📚 使用文档

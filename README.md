@@ -176,9 +176,20 @@ The panel evaluates each policy on generated and recorded branches. Reports cont
 <a id="closed-loop"></a>
 ## 🔁 Closed-loop Testing
 
-The closed-loop runner connects **CAT-K → six-view rendering → DrivoR → ego execution → updated traffic history**. Each round executes the first 0.5 s of the predicted plan in five 0.1 s substeps, then regenerates observations from the updated state.
+In a single nuScenes scene, DrivoR's executed motion changes the camera views it receives on the next round.
 
-Use the [closed-loop guide](closed_loop/README.md) to configure a scene, select a renderer, run GPU inference, and verify the feedback chain. This verification checks execution and observation consistency, rather than reproducing the full benchmark score.
+![DriveAudit closed loop from scene history through rendering, DrivoR planning, ego execution, and CAT-K traffic feedback](assets/readme/closed-loop.svg)
+
+| Component | Role in the closed loop |
+| --- | --- |
+| [Scene configuration](driveaudit/closed_loop/configure.py) | Matches the participant scene to its rendering inputs and takes the navigation goal from the final public ego position. |
+| [Six-view renderer](models/generation/image) | Renders six calibrated views from the current ego pose and surrounding traffic. |
+| [DrivoR policy](models/agents/DrivoR/driveaudit_adapter.py) | Uses the front, rear, front-left, and front-right images, ego motion, and a navigation command to plan a trajectory. |
+| [Ego execution](driveaudit/closed_loop/core.py) | Executes the first 0.5 s of the plan in five substeps. Once the ego vehicle reaches the goal region, it holds its pose. |
+| [CAT-K traffic](models/generation/trajectory/CAT-K/closed_loop.py) | Advances surrounding actors and writes their predicted motion and the executed ego path into the history for the next round. |
+| [Trace verification](driveaudit/closed_loop/verify_run.py) | Checks that the next render uses the committed pose and that the images sent to the policy match the saved frames. |
+
+Follow the [closed-loop guide](closed_loop/README.md#run) to run and verify a scene. For benchmark scores, see [paired policy evaluation](docs/evaluation.md).
 
 <a id="documentation"></a>
 ## 📚 Documentation
