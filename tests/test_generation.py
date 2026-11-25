@@ -4,7 +4,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from driveaudit.generation import MODELS, VENDOR
+from driveaudit.generation import MODELS
 from driveaudit.generation.__main__ import load_config, main, scene_ids, traffic
 from driveaudit.generation.renderer import launch_plan, overlay, runtime_for
 from driveaudit.generation.staging import relative_scene, stage, verify_stage, write
@@ -107,7 +107,7 @@ class GenerationTests(unittest.TestCase):
         root = self.root / "conditions"
         for name in MODELS:
             with self.subTest(model=name):
-                plans = launch_plan(cfg, name, VENDOR, root, self.root, shell)
+                plans = launch_plan(cfg, name, runtime_for(self.root, name, self.root), root, self.root, shell)
                 cmd, _, env = plans[0]
                 self.assertEqual(env["GENBENCH_USE_CATK_EGO_PREDICTION"], "0")
                 self.assertEqual(env["GENBENCH_SCENE_INDICES"], "0,1")

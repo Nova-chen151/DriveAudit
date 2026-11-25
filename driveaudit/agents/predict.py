@@ -110,12 +110,12 @@ def run(args):
     # The nuPlan devkit can be installed as a regular package or supplied as a checkout.
     if os.environ.get("NUPLAN_DEVKIT_ROOT"):
         sys.path.insert(1, os.environ["NUPLAN_DEVKIT_ROOT"])
-    from .native.drivor import DrivoRAdapter
+    from .registry import load_adapter
     checkpoint = args.checkpoint or asset_root("DrivoR") / "weights/drivor_Nav1_25epochs.pth"
     backbone = args.backbone or asset_root("DrivoR") / "weights/vit_small_patch14_reg4_dinov2.lvd142m/model.safetensors"
     identity = {"checkpoint_sha256": hash_file(checkpoint), "backbone_sha256": hash_file(backbone),
                 "config_sha256": hash_file(code / "navsim/planning/script/config/common/agent/drivoR.yaml")}
-    policy = DrivoRAdapter(checkpoint, backbone)
+    policy = load_adapter("drivor").DrivoRAdapter(checkpoint, backbone)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.NamedTemporaryFile(mode="w", dir=args.output.parent, delete=False,
                                      prefix=args.output.name + ".", suffix=".partial") as handle:

@@ -63,12 +63,12 @@ def main():
     parser.add_argument("--engine-code-root", type=Path, required=True, help="Native engine installation")
     parser.add_argument("--frames", nargs="+", type=int, default=[10, 50], choices=range(10, 90), metavar="TARGET_FRAME")
     args = parser.parse_args()
-    vendor = Path(__file__).resolve().parents[1] / "vendor/generation/gen-benchmark"
+    root = Path(__file__).resolve().parents[1]
     opendwm = args.engine_code_root / "gen-benchmark/OpenDWM-main"
-    sys.path[:0] = [str(vendor), str(opendwm / "src")]
+    sys.path[:0] = [str(root / "driveaudit/generation"), str(opendwm / "src")]
     # Use this checkout's rasterizer with the installed native pipeline.
     import dwm.datasets
-    dwm.datasets.__path__ = [str(vendor / "OpenDWM-main/src/dwm/datasets"), *dwm.datasets.__path__]
+    dwm.datasets.__path__ = [str(root / "models/generation/image/OpenDWM/src/dwm/datasets"), *dwm.datasets.__path__]
     from genbench_gt2.dataset import load_generation_set
 
     config = json.loads((opendwm / "examples/ctsd_unimlvg_6views_video_generation.json").read_text())

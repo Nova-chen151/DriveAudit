@@ -6,7 +6,7 @@ CARS 是正式运行的条件依赖：traffic evaluator 的碰撞责任链与 ep
 
 保留的四文件为 responsibility_models.py、LICENSE、NOTICE.md、WHY_REQUIRED.md；它们提供控制器及其必要的碰撞/回放辅助函数。删除该源文件会破坏启用 CARS 的正式碰撞证据路径，因此保留最小 vendor，而非整个上游仓库。责任公式、证据权重和源字节不因整理改变。
 
-六模型源码/权重默认位于项目根目录 dependencies/DrivingAgents，可用 DRIVEAUDIT_DEPENDENCIES 覆盖；dependencies 整体被 gitignore 排除，不进入发布包，包内 adapters 是必要推理桥接。原 Apache-2.0 与 DiffusionDriveV2 MIT 说明保留在 [adapter notice](../driveaudit_eval/agents/adapters/NOTICE.md)。DINOv2 使用独立 Torch Hub 源及配置 checkpoint，遵循其 Apache-2.0 许可。I3D、CLIP、CLIP-IQA+、LoFTR 等实际模型权重按配置提供，缺少资源不得伪造分数。
+六个自车模型的源码与推理入口位于 `models/agents/<模型名>/`。权重默认从 `weights/agents/<模型名>/` 读取。可用 `DRIVEAUDIT_AGENT_SOURCES` 和 `DRIVEAUDIT_AGENT_ASSETS` 指定外部目录。旧版评测配置仍支持 `DRIVEAUDIT_DEPENDENCIES/DrivingAgents` 布局。各模型许可证位于对应源码目录，另见[适配器许可说明](../../models/agents/NOTICE.md)。DINOv2 使用独立 Torch Hub 源及配置 checkpoint，遵循其 Apache-2.0 许可。I3D、CLIP、CLIP-IQA+、LoFTR 等实际模型权重按配置提供，缺少资源不得伪造分数。
 
 BEVFormer 是外部可选感知诊断，不是九项核心指标的必需模型；研究配置必须明确 repo/config/checkpoint。Onsite Ego Testing 分布参考是可选外部数据，不替代当前 input-gt。下列概念/来源参考不构成当前 Python runtime import，保留署名不意味着其完整仓库必须随软件分发。
 

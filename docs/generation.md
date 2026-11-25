@@ -12,6 +12,8 @@ Run the commands below from a DriveAudit checkout. The input is a GenBench `nusc
 
 Native sources are under [CAT-K](../models/generation/trajectory/CAT-K) and [renderers](../models/generation/image). The installer combines these sources, participant adapters, compatible compiled extensions, and external weights into `work/native`.
 
+Model-specific inference and closed-loop workers live alongside each model. Shared participant readers, rendering conditions and frame validation live in `driveaudit/generation/`. The [adapter inventory](../driveaudit/generation/bundles/adapters.json) maps those files to the paths expected by the native engines.
+
 Set these environment variables to the resource locations on your site.
 
 | Variable | Existing resource |
@@ -31,7 +33,7 @@ python scripts/geninstall_native.py --destination "$ENGINE_CODE" \
 python scripts/geninstall_native.py --destination "$ENGINE_CODE" --verify
 ```
 
-`NATIVE_INSTALL.json` records installed source and extension hashes and asset links. For source-only inspection, use `python scripts/geninstall_native.py --source-only --destination work/native`. See the [source inventory](../vendor/generation/bundles/native-sources.tar.json) for provenance.
+`NATIVE_INSTALL.json` records installed source and extension hashes and asset links. For source-only inspection, use `python scripts/geninstall_native.py --source-only --destination work/native`. See the [source inventory](../driveaudit/generation/bundles/native-sources.tar.json) for provenance.
 
 <a id="model-weights"></a>
 
@@ -83,7 +85,7 @@ On the original HPC system also pass `--cuda-prefix /share/apps` to select the o
 | Panacea | `python.renderer`, `render_checkpoint`, `clip_checkpoint` |
 | MagicDrive-V2 | `v2_python` in the run JSON. The native `MagicDrive-V2/rd/ckpts` and `rd/pretrained` trees provide the DiT, CogVideoX VAE and T5 weights. |
 
-To use independently installed CAT-K assets, set `catk_official` to the directory containing `src/smart` and `checkpoints/clsft_E9.ckpt`, and `catk_python` to its Python executable. Default source and vocabulary checksums are in `vendor/generation/catk/official_source.sha256` and `original_config.yaml`. The CLI preserves the original deterministic seed 20260914 unless the run JSON supplies `traffic_seed`.
+To use independently installed CAT-K assets, set `catk_official` to the directory containing `src/smart` and `checkpoints/clsft_E9.ckpt`, and `catk_python` to its Python executable. Default source and vocabulary checksums are in `models/generation/trajectory/CAT-K/official_source.sha256` and `original_config.yaml`. The CLI preserves the original deterministic seed 20260914 unless the run JSON supplies `traffic_seed`.
 
 <a id="generate-and-stage-traffic"></a>
 
@@ -144,7 +146,7 @@ The actor CSV supplies box centers, dimensions, headings and categories at each 
 | Panacea | Frame 9 initializes the first reference. Later windows use their last generated target. | The 19-channel panorama combines three projected box channels, ten class-specific box-depth channels, three vector-map channels and three calibrated viewing-ray channels. Each future slot receives its own layout transformed with the public ego pose. |
 | MagicDrive-V2 | The VAE encodes frames 1–9 as a fixed three-latent prefix within the 89-frame sequence. | The denoiser receives warped semantic BEV maps, 3D corner/class/visibility tensors, camera calibration, relative ego poses and the measured clip FPS. Missing map channels are zeros because the checkpoint lacks an unknown-layer mask. |
 
-OpenDWM conditions all frames on projected traffic boxes and available HD-map contours, with calibrated camera geometry. The participant map has no native lane polygons; unsupported box categories are skipped. This profile uses no separate numerical action/FPS vector. See the [dataset adapter](../vendor/generation/gen-benchmark/OpenDWM-main/src/dwm/datasets/genbench_gt2.py) and [rasterizer](../vendor/generation/gen-benchmark/OpenDWM-main/src/dwm/datasets/genbench_gt2_renderer.py).
+OpenDWM conditions all frames on projected traffic boxes and available HD-map contours, with calibrated camera geometry. The participant map has no native lane polygons; unsupported box categories are skipped. This profile uses no separate numerical action/FPS vector. See the [dataset adapter](../models/generation/image/OpenDWM/src/dwm/datasets/genbench_gt2.py) and [rasterizer](../models/generation/image/OpenDWM/src/dwm/datasets/genbench_gt2_renderer.py).
 
 Run the geometry diagnostic to compare box and map conditioning with and without traffic actors.
 

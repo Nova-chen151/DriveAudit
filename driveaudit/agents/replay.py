@@ -17,7 +17,7 @@ from urllib.request import ProxyHandler, Request, build_opener
 import numpy as np
 
 from .predict import CAMERAS, COMMANDS, ego_state, hash_file, model_input, scene_frames, selected_rgb
-from .registry import POLICIES, resources
+from .registry import POLICIES, adapter_path, resources
 from .temporal import WORLD_DREAMER_CAMERA_ORDER, build_http_request, parse_output, planning_to_unified_ego
 
 
@@ -133,7 +133,7 @@ def run(args):
     config, paths = resources(args.policy)
     asset_hashes = {name: hash_file(path) for name, path in paths.items()}
     config_hash = hash_file(config)
-    adapter_hash = hash_file(Path(__file__).parent / "native" / (args.policy+".py"))
+    adapter_hash = hash_file(adapter_path(args.policy))
     roots = selected_rgb(args)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     with service(args) as endpoint, tempfile.NamedTemporaryFile(mode="w", dir=args.output.parent,

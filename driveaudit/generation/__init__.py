@@ -4,5 +4,9 @@ from pathlib import Path
 
 from driveaudit.resources import resource_root
 
-VENDOR = resource_root() / "vendor" / "generation"
-MODELS = ("basedreamer", "dreamforge", "horizondrive", "magicdrive", "opendwm", "panacea", "magicdrivev2")
+GENERATION = Path(__file__).resolve().parent
+MODEL_DIRS = {
+    name.lower().replace("-", ""): resource_root() / "models/generation/image" / name
+    for name in ("BaseDreamer", "DreamForge", "HorizonDrive", "MagicDrive", "OpenDWM", "Panacea", "MagicDrive-V2")
+}
+MODELS = tuple(MODEL_DIRS)

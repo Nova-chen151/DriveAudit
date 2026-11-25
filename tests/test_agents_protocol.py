@@ -37,6 +37,21 @@ class PolicyInputTests(unittest.TestCase):
         self.assertAlmostEqual(state["acceleration"][0], 0.0)
         self.assertEqual(state["timestamp"], clock[2])
 
+    def test_external_sources_keep_the_bundled_policy_adapter(self):
+        from unittest.mock import patch
+        from driveaudit.agents.registry import POLICIES, adapter_path, load_adapter
+        from driveaudit.agents.native.drivor import DrivoRAdapter
+        from driveaudit.agents.runtime import model_root
+
+        with tempfile.TemporaryDirectory() as external, patch.dict("os.environ", {"DRIVEAUDIT_AGENT_SOURCES": external}):
+            for policy, (directory, _, _) in POLICIES.items():
+                self.assertEqual(model_root(directory), Path(external).resolve() / directory)
+                path = adapter_path(policy)
+                self.assertTrue(path.is_file())
+                self.assertEqual(path.parent.name, directory)
+                self.assertEqual(path.name, "driveaudit_adapter.py")
+            self.assertIs(load_adapter("drivor").DrivoRAdapter, DrivoRAdapter)
+
     def test_legacy_policy_coordinates_and_scene_seed(self):
         from driveaudit.agents.native.camera_only_temporal import stable_request_seed
         from driveaudit.agents.temporal import planning_to_unified_ego

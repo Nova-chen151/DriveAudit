@@ -3,7 +3,9 @@ import hashlib
 import json
 from pathlib import Path
 
-from driveaudit_eval.agents.registry import AGENTS, dependencies_root
+from driveaudit.agents.runtime import seed_camera_request, timestamp_seed
+from driveaudit.agents import camera_only, navsim_service, null_lidar, runtime, temporal
+from driveaudit_eval.agents.registry import AGENTS, model_directories, service_path
 from driveaudit_eval.metrics.testing_effectiveness import content_hash
 
 MODEL_FILES = {
@@ -26,22 +28,6 @@ def digest(path):
     return h.hexdigest()
 
 
-def timestamp_seed(timestamp):
-    return int(hashlib.sha256(str(timestamp).encode()).hexdigest()[:8], 16)
-
-
-def seed_camera_request(timestamp):
-    """Same timestamp => same RNG in both RGB domains, independent of scene order."""
-    import random
-    import numpy as np
-    import torch
-    seed = timestamp_seed(timestamp)
-    random.seed(seed)
-    np.random.seed(seed)
-    torch.manual_seed(seed)
-    return seed
-
-
 def model_identity(agent):
     """Hash released weights, anchors, native configuration/source and local adapters.
 
@@ -50,9 +36,9 @@ def model_identity(agent):
     from a current checkpoint for an unrecorded historical prediction.
     """
     directory = next(item[1] for item in AGENTS if item[0] == agent)
-    native = dependencies_root()/'DrivingAgents'/directory
+    native, asset_directory = model_directories(directory)
     package = Path(__file__).resolve().parent
-    resources = {name: digest(native/name) for name in MODEL_FILES[agent]}
+    resources = {name: digest(asset_directory/name) for name in MODEL_FILES[agent]}
     sources = {}
     for folder in ('projects', 'CAMixerSR', 'navsim', 'vovnet'):
         for path in sorted((native/folder).rglob('*')):
@@ -60,6 +46,14 @@ def model_identity(agent):
                 sources[str(path.relative_to(native))] = digest(path)
     adapters = {str(path.relative_to(package)): digest(path) for path in sorted(package.rglob('*.py'))
                 if 'score_audit' not in path.parts}
+    service = service_path(agent)
+    for path in (service, service.with_name('lidar.py')):
+        if path.is_file():
+            adapters[f'models/{directory}/{path.name}'] = digest(path)
+    for module in (camera_only, navsim_service, null_lidar, runtime, temporal):
+        adapters[module.__name__] = digest(module.__file__)
+    for name in ('lidar_motion.py', 'points.py'):
+        adapters['driveaudit.agents.' + name] = digest(Path(runtime.__file__).with_name(name))
     return dict(checkpoint_hash=content_hash(resources), agent_config_hash=content_hash(dict(
         native_sources=sources, adapters=adapters)), resources=resources,
         native_sources=sources, adapter_sources=adapters, agent=agent)
@@ -72,13 +66,15 @@ def protocol_identity(agent):
                     requirements=requirements_for(agent).as_dict(),
                     lidar_mode='zero' if agent in ('goalflow', 'diffusiondrivev2') else 'not_requested',
                     seed_policy='scene_frame_v1' if agent in ('uniad', 'vad') else 'timestamp_sha256_v1',
-                    source_hashes={name:digest(package/name) for name in
-                        ('sensor_guard.py','null_lidar.py','agent_input_adapter.py','adapters/camera_only_temporal.py','provenance.py')})
+                    source_hashes={name:digest(path) for name, path in (
+                        ('sensor_guard', package/'sensor_guard.py'), ('null_lidar', null_lidar.__file__),
+                        ('runtime', runtime.__file__), ('temporal', temporal.__file__),
+                        ('camera_only', camera_only.__file__), ('provenance', __file__))})
     return content_hash(protocol)
 
 
 def request_seeds(agent, sid, frames):
-    from driveaudit_eval.agents.adapters.camera_only_temporal import stable_request_seed
+    from driveaudit.agents.camera_only import stable_request_seed
     return [stable_request_seed(sid, frame['frame_id']) if agent in ('uniad','vad')
             else timestamp_seed(frame['timestamp']) for frame in frames]
 

@@ -1,5 +1,10 @@
 """Six supported external model services."""
+from dataclasses import dataclass
+import os
 from pathlib import Path
+
+from driveaudit.agents.registry import adapter_path
+from driveaudit.agents.runtime import asset_root, model_root
 from driveaudit_eval.config import dependencies_root
 
 AGENTS = [('uniad', 'UniAD', 'uniad', []), ('vad', 'VAD', 'vad', []),
@@ -12,10 +17,20 @@ FORMAL_AGENTS = tuple(item[0] for item in AGENTS)
 
 def service_path(name):
     module = 'sparsedrivev2' if name.startswith('sparsedrivev2_') else name
-    return Path(__file__).resolve().parent / 'adapters' / (module + '.py')
+    return adapter_path(module)
 
 
-from dataclasses import dataclass
+def model_directories(directory):
+    """Resolve current paths or the evaluator's legacy combined checkout."""
+    legacy = dependencies_root() / 'DrivingAgents' / directory
+    source, assets = model_root(directory), asset_root(directory)
+    if legacy.is_dir():
+        if 'DRIVEAUDIT_AGENT_SOURCES' not in os.environ:
+            source = legacy
+        if 'DRIVEAUDIT_AGENT_ASSETS' not in os.environ and 'DRIVEAUDIT_WEIGHTS' not in os.environ:
+            assets = legacy
+    return source, assets
+
 
 @dataclass(frozen=True)
 class AgentRequirements:

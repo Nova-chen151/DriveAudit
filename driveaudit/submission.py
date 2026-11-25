@@ -8,7 +8,7 @@ import subprocess
 import sys
 import tempfile
 
-from .generation import MODELS, VENDOR
+from .generation import MODELS, GENERATION
 from .generation.__main__ import scene_ids
 from .generation.staging import relative_scene
 
@@ -25,7 +25,7 @@ def package(inputs, conditions, renderer, cases, metadata, destination):
     if dest.exists():
         raise FileExistsError(dest)
     dest.parent.mkdir(parents=True, exist_ok=True)
-    validator = VENDOR / "catk/participant_tools/validate_submission.py"
+    validator = GENERATION / "participant_tools/validate_submission.py"
     with tempfile.TemporaryDirectory(dir=dest.parent) as tmp:
         bundle = Path(tmp) / "submission"
         bundle.mkdir()

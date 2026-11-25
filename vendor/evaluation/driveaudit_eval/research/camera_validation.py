@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 import numpy as np
 from driveaudit_eval.agents.real_agents import model_input_signature
-from driveaudit_eval.agents.adapters.camera_only_temporal import stable_request_seed
+from driveaudit.agents.camera_only import stable_request_seed
 FRAMES=set(range(9,19))
 FUSION=('diffusiondrivev2','goalflow')
 

@@ -7,6 +7,7 @@ from pathlib import Path
 from statistics import mean
 from types import SimpleNamespace
 
+from driveaudit.agents.registry import adapter_path
 from .score import content_hash, digest, policy_identity, read_records, run, write_json, local_retention
 from driveaudit_eval.agents.registry import FORMAL_AGENTS
 from driveaudit_eval.metrics.population_testing import aggregate
@@ -32,8 +33,7 @@ def require_receipts(policy, scene, rows):
     mode = "zero" if policy in ("goalflow", "diffusiondrivev2") else "not_requested"
     expected = dict(sensor_protocol="camera_only", real_lidar_used=False, sensor_leakage=False,
                     history_rgb_sha256=measured_history(scene, first), lidar_mode=mode, policy=policy)
-    adapter_file = Path(__file__).resolve().parents[1]/"agents/native"/(policy+".py")
-    expected["adapter_sha256"] = digest(adapter_file)
+    expected["adapter_sha256"] = digest(adapter_path(policy))
     for row in rows.values():
         if any(k not in row or type(row[k]) is not type(v) or row[k] != v for k, v in expected.items()):
             raise ValueError(f"{scene.name}/{policy}: camera protocol, adapter or history receipt mismatch")

@@ -103,11 +103,11 @@
 | [OpenDWM](models/generation/image/OpenDWM)&nbsp;·&nbsp;**软件项目**&nbsp;·&nbsp;[源码](https://github.com/SenseTime-FVG/OpenDWM) | [VAD](models/agents/VAD)&nbsp;·&nbsp;**ICCV&nbsp;2023**&nbsp;·&nbsp;[源码](https://github.com/hustvl/VAD) |
 | [Panacea](models/generation/image/Panacea)&nbsp;·&nbsp;**CVPR&nbsp;2024**&nbsp;·&nbsp;[源码](https://github.com/wenyuqing/panacea) | [DrivoR](models/agents/DrivoR)&nbsp;·&nbsp;**CVPR&nbsp;2026**&nbsp;·&nbsp;[源码](https://github.com/valeoai/DrivoR) |
 | [DreamForge](models/generation/image/DreamForge)&nbsp;·&nbsp;[arXiv&nbsp;2024](https://arxiv.org/abs/2409.04003)&nbsp;·&nbsp;[源码](https://github.com/PJLab-ADG/DriveArena) | [SparseDriveV2](models/agents/SparseDriveV2)&nbsp;·&nbsp;**ECCV&nbsp;2026**&nbsp;·&nbsp;[源码](https://github.com/swc-17/SparseDriveV2) |
-| [BaseDreamer](models/generation/image/BaseDreamer)&nbsp;·&nbsp;**项目适配**&nbsp;·&nbsp;[来源](vendor/generation/README.zh-CN.md) | [DiffusionDriveV2](models/agents/DiffusionDriveV2)&nbsp;·&nbsp;[arXiv&nbsp;2025](https://arxiv.org/abs/2512.07745)&nbsp;·&nbsp;[源码](https://github.com/hustvl/DiffusionDriveV2) |
+| [BaseDreamer](models/generation/image/BaseDreamer)&nbsp;·&nbsp;**项目适配**&nbsp;·&nbsp;[来源](driveaudit/generation/README.zh-CN.md) | [DiffusionDriveV2](models/agents/DiffusionDriveV2)&nbsp;·&nbsp;[arXiv&nbsp;2025](https://arxiv.org/abs/2512.07745)&nbsp;·&nbsp;[源码](https://github.com/hustvl/DiffusionDriveV2) |
 | [HorizonDrive](models/generation/image/HorizonDrive)&nbsp;·&nbsp;[arXiv&nbsp;2026](https://arxiv.org/abs/2605.11596)&nbsp;·&nbsp;[源码](https://github.com/zcliangyue/HorizonDrive) | [GoalFlow](models/agents/GoalFlow)&nbsp;·&nbsp;**CVPR&nbsp;2025**&nbsp;·&nbsp;[源码](https://github.com/YvanYin/GoalFlow) |
 | [MagicDrive](models/generation/image/MagicDrive)&nbsp;·&nbsp;**ICLR&nbsp;2024**&nbsp;·&nbsp;[源码](https://github.com/cure-lab/MagicDrive) | — |
 
-arXiv 表示预印本；OpenDWM 为多论文实现项目，BaseDreamer 为[选手快照](vendor/generation/bundles/native-sources.tar.json)中的适配基线。
+arXiv 表示预印本；OpenDWM 为多论文实现项目，BaseDreamer 为[选手快照](driveaudit/generation/bundles/native-sources.tar.json)中的适配基线。
 
 **交通生成后端：**[CAT-K](models/generation/trajectory/CAT-K) 提供交通轨迹，不计入上述七个主渲染基线。渲染器配置见[生成指南](docs/generation.zh-CN.md)，策略适配与传感器协议见[评测指南](docs/evaluation.zh-CN.md)。
 

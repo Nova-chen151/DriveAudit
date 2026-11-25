@@ -1,5 +1,16 @@
 """Fixed compatibility tensor; never imports or reads a sensor source."""
 
+SENSOR_MODES = ('original_multimodal', 'zero_lidar', 'camera_only_native')
+
+
+def validate_sensor_mode(mode):
+    if mode not in SENSOR_MODES:
+        raise ValueError('Unknown sensor mode: ' + str(mode))
+    if mode == 'camera_only_native':
+        raise ValueError('camera_only_native is not supported by the frozen checkpoint; use zero_lidar')
+    return mode
+
+
 def make_null_lidar_tensor(config):
     """Allocate the native histogram shape from config, without sensor data."""
     import torch

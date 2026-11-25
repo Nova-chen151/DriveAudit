@@ -12,6 +12,8 @@
 
 原生源码位于 [CAT-K](../models/generation/trajectory/CAT-K) 和[渲染器目录](../models/generation/image)。安装器将这些源码、选手数据适配器、兼容的编译扩展及外部权重整合到 `work/native`。
 
+各模型的推理入口和闭环执行代码位于其模型目录中。选手包读取、渲染条件和帧校验等共用代码位于 `driveaudit/generation/`。[适配文件清单](../driveaudit/generation/bundles/adapters.json) 给出源码与运行时路径的对应关系。
+
 请将以下环境变量设为本地站点的资源位置。
 
 | 变量 | 已有资源 |
@@ -31,7 +33,7 @@ python scripts/geninstall_native.py --destination "$ENGINE_CODE" \
 python scripts/geninstall_native.py --destination "$ENGINE_CODE" --verify
 ```
 
-`NATIVE_INSTALL.json` 记录已安装源码和扩展的哈希，以及资源链接。如只需检查源码，可运行 `python scripts/geninstall_native.py --source-only --destination work/native`。来源信息见[源码清单](../vendor/generation/bundles/native-sources.tar.json)。
+`NATIVE_INSTALL.json` 记录已安装源码和扩展的哈希，以及资源链接。如只需检查源码，可运行 `python scripts/geninstall_native.py --source-only --destination work/native`。来源信息见[源码清单](../driveaudit/generation/bundles/native-sources.tar.json)。
 
 <a id="model-weights"></a>
 
@@ -83,7 +85,7 @@ MagicDrive 和 DriveAudit 实现使用各自对应的视频目录树及编译依
 | Panacea | `python.renderer`, `render_checkpoint`, `clip_checkpoint` |
 | MagicDrive-V2 | 运行 JSON 中的 `v2_python`。原生 `MagicDrive-V2/rd/ckpts` 和 `rd/pretrained` 目录树提供 DiT、CogVideoX VAE 和 T5 权重。 |
 
-如需使用独立安装的 CAT-K 资源，将 `catk_official` 设为包含 `src/smart` 与 `checkpoints/clsft_E9.ckpt` 的目录，将 `catk_python` 设为其 Python 可执行文件。默认源码和词表校验和位于 `vendor/generation/catk/official_source.sha256` 与 `original_config.yaml`。除非运行 JSON 提供 `traffic_seed`，否则 CLI 保留原始确定性种子 20260914。
+如需使用独立安装的 CAT-K 资源，将 `catk_official` 设为包含 `src/smart` 与 `checkpoints/clsft_E9.ckpt` 的目录，将 `catk_python` 设为其 Python 可执行文件。默认源码和词表校验和位于 `models/generation/trajectory/CAT-K/official_source.sha256` 与 `original_config.yaml`。除非运行 JSON 提供 `traffic_seed`，否则 CLI 保留原始确定性种子 20260914。
 
 <a id="generate-and-stage-traffic"></a>
 
@@ -144,7 +146,7 @@ Panacea 将参考帧放在模型的最后一个槽位，按时间顺序提供未
 | Panacea | 第 9 帧初始化首个参考帧。后续窗口使用各自最后一个生成目标帧。 | 19 通道全景图组合三个投影包围盒通道、十个按类别划分的包围盒深度通道、三个矢量地图通道及三个标定视线通道。每个未来槽位接收通过公开自车位姿变换后的独立布局。 |
 | MagicDrive-V2 | VAE 将帧 1–9 编码为 89 帧序列中的固定三个潜变量前缀。 | 去噪器接收经过扭曲变换的语义 BEV 地图、3D 角点/类别/可见性张量、相机标定、相对自车位姿及实测片段 FPS。由于检查点没有未知图层掩码，缺失地图通道填零。 |
 
-OpenDWM 使用投影交通包围盒、可用高精地图轮廓及标定相机几何作为所有帧的条件。选手地图没有原生车道多边形；不支持的包围盒类别将被跳过。此配置不使用单独的数值动作/FPS 向量。详见[数据集适配器](../vendor/generation/gen-benchmark/OpenDWM-main/src/dwm/datasets/genbench_gt2.py)与[栅格化器](../vendor/generation/gen-benchmark/OpenDWM-main/src/dwm/datasets/genbench_gt2_renderer.py)。
+OpenDWM 使用投影交通包围盒、可用高精地图轮廓及标定相机几何作为所有帧的条件。选手地图没有原生车道多边形；不支持的包围盒类别将被跳过。此配置不使用单独的数值动作/FPS 向量。详见[数据集适配器](../models/generation/image/OpenDWM/src/dwm/datasets/genbench_gt2.py)与[栅格化器](../models/generation/image/OpenDWM/src/dwm/datasets/genbench_gt2_renderer.py)。
 
 运行几何诊断，对比包含和不包含交通参与者时的包围盒与地图条件。
 

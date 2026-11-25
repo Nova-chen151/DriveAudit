@@ -69,7 +69,7 @@ Every managed replay row binds the service adapter, checkpoint, config and named
 
 Each policy requires its own upstream packages or compiled CUDA operators. SparseDriveV2 includes the CUDA sources in `models/agents/SparseDriveV2/navsim/agents/sparsedrive/ops`. Build the operators there with `python setup.py build_ext --inplace` using the SparseDriveV2 environment, or point `DRIVEAUDIT_SPARSE_OPS` at an existing ABI-compatible operator directory. For the NAVSIM models, `NUPLAN_DEVKIT_ROOT` may point to the matching external nuPlan devkit checkout. Model setup and release files appear in each vendor's `UPSTREAM.md`.
 
-The dedicated DrivoR replay preserves the native eight-pose trajectory. The six-policy panel uses managed replay for consistent sensor, history and model receipts. Source licenses are in the respective vendor directories, and the adapter notice is in `driveaudit/agents/native/NOTICE.md`.
+The dedicated DrivoR replay preserves the native eight-pose trajectory. The six-policy panel uses managed replay for consistent sensor, history and model receipts. Source licenses are in the respective vendor directories, and the adapter notice is in `models/agents/NOTICE.md`.
 
 <a id="run"></a>
 

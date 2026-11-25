@@ -1,9 +1,7 @@
 from __future__ import annotations
 
-import base64
 import csv
 import hashlib
-import io
 import json
 import math
 import statistics
@@ -14,15 +12,8 @@ from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
 
 import numpy as np
 
-# These are explicit on purpose.  Never rely on dict insertion order for cameras.
-WORLD_DREAMER_CAMERA_ORDER = [
-    "CAM_FRONT_LEFT", "CAM_FRONT", "CAM_FRONT_RIGHT",
-    "CAM_BACK_RIGHT", "CAM_BACK", "CAM_BACK_LEFT",
-]
-UNIAD_CAMERA_ORDER = [
-    "CAM_FRONT", "CAM_FRONT_RIGHT", "CAM_FRONT_LEFT",
-    "CAM_BACK", "CAM_BACK_LEFT", "CAM_BACK_RIGHT",
-]
+from driveaudit.agents.temporal import UNIAD_CAMERA_ORDER, WORLD_DREAMER_CAMERA_ORDER, compose_worlddreamer_png
+
 VAD_CAMERA_ORDER = UNIAD_CAMERA_ORDER[:]
 CAMERA_SET = set(WORLD_DREAMER_CAMERA_ORDER)
 EGO_WIDTH = 1.85
@@ -149,20 +140,6 @@ def image_info(path: Path) -> Dict[str, Any]:
     except Exception as exc:
         result["reason"] = f"unreadable:{type(exc).__name__}"
     return result
-
-
-def compose_worlddreamer_png(camera_images: Dict[str, str], height: int = 224, width: int = 400) -> str:
-    """Create the exact vertical order consumed by the bundled API services."""
-    from PIL import Image
-    canvas = Image.new("RGB", (width, height * 6))
-    for i, camera in enumerate(WORLD_DREAMER_CAMERA_ORDER):
-        with Image.open(camera_images[camera]) as source:
-            resampling = getattr(Image, "Resampling", Image)
-            image = source.convert("RGB").resize((width, height), resampling.LANCZOS)
-        canvas.paste(image, (0, i * height))
-    buf = io.BytesIO()
-    canvas.save(buf, format="PNG")
-    return base64.b64encode(buf.getvalue()).decode("ascii")
 
 
 def corners(x: float, y: float, yaw: float, length: float, width: float) -> np.ndarray:

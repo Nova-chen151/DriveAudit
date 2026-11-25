@@ -4,6 +4,6 @@ from pathlib import Path
 
 def resource_root():
     source = Path(__file__).resolve().parents[1]
-    if (source / "vendor/generation/catk/run_inference.py").is_file():
+    if (source / "models/generation/trajectory/CAT-K/run_inference.py").is_file():
         return source
     return Path(__file__).resolve().parent / "_assets"

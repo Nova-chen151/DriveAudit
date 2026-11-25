@@ -5,8 +5,8 @@ class AgentAdapter:
         self.sensor_mode = sensor_mode
 
     def load(self, context):
-        from .registry import dependencies_root
-        directory = dependencies_root() / 'DrivingAgents' / self.specification[1]
+        from .registry import model_directories
+        directory, _ = model_directories(self.specification[1])
         if not directory.is_dir():
             raise FileNotFoundError(directory)
         self.context = context
@@ -76,11 +76,17 @@ class AgentAdapter:
     def launch(self, root, output, port):
         import os
         from pathlib import Path
-        from .registry import dependencies_root, service_path
+        from driveaudit import __file__ as public_package
+        from driveaudit_eval import __file__ as evaluation_package
+        from .registry import dependencies_root, model_directories, service_path
         name,directory,environment,extra=self.specification
-        agent_root=dependencies_root()/'DrivingAgents'/directory
+        agent_root, assets = model_directories(directory)
         py=Path(os.environ.get('DRIVEAUDIT_CONDA_ENVS', Path.home()/'miniconda3/envs')).expanduser()/environment/'bin/python'
-        env=dict(os.environ,PYTHONPATH=f'{agent_root}:{root}:{dependencies_root()}:{agent_root}/nuplan-devkit',
+        pythonpath = [agent_root, Path(public_package).resolve().parents[1],
+                      Path(evaluation_package).resolve().parents[1], root, dependencies_root(),
+                      os.environ.get('NUPLAN_DEVKIT_ROOT', agent_root/'nuplan-devkit')]
+        env=dict(os.environ, PYTHONPATH=os.pathsep.join(map(str, pythonpath)),
+            DRIVEAUDIT_AGENT_SOURCES=str(agent_root.parent), DRIVEAUDIT_AGENT_ASSETS=str(assets.parent),
             HF_HUB_OFFLINE='1',PYTHONUNBUFFERED='1',UNIAD_DISABLE_SR='0',UNIAD_SR_OOM_FALLBACK='0')
         # Native extensions must use their own environment's compiler runtime.
         library_path = str(py.parent.parent/'lib')
@@ -98,5 +104,4 @@ class AgentAdapter:
             guard=Path(__file__).with_name('sensor_guard.py')
             service=[service[0],str(guard),'--audit',str(output/name/'sensor_access_audit.jsonl'),'--service',*service[1:]]
         cwd=agent_root if self.temporal else root
-        if self.temporal: env['PYTHONPATH']=str(agent_root)+os.pathsep+str(root)
         return service,cwd,env

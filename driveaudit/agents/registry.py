@@ -1,4 +1,8 @@
 """Required released assets and primary config used by stock service launchers."""
+from importlib import import_module
+import runpy
+
+from driveaudit.resources import resource_root
 from .runtime import asset_root, model_root
 
 POLICIES = {
@@ -23,3 +27,16 @@ POLICIES = {
 def resources(policy):
     model, configuration, names = POLICIES[policy]
     return model_root(model) / configuration, {name: asset_root(model) / name for name in names}
+
+
+def adapter_path(policy):
+    """The integration is bundled even when upstream model sources are external."""
+    return resource_root() / "models" / "agents" / POLICIES[policy][0] / "driveaudit_adapter.py"
+
+
+def load_adapter(policy):
+    return import_module(f"driveaudit.agents.{POLICIES[policy][0]}.driveaudit_adapter")
+
+
+def run_adapter(policy):
+    runpy.run_path(str(adapter_path(policy)), run_name="__main__")

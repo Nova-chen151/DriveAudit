@@ -1,4 +1,8 @@
 """Verified measured-point decoding for optional multimodal research."""
+import hashlib
+import json
+from pathlib import Path
+
 import numpy as np
 
 def measured_lidar_xyz(payload, point_format='nuscenes_bin'):
@@ -14,3 +18,8 @@ def measured_lidar_xyz(payload, point_format='nuscenes_bin'):
     if points.ndim != 2 or points.shape[1] != 3 or not len(points) or not np.isfinite(points).all():
         raise ValueError('Invalid measured XYZ points')
     return points
+
+
+def load_index(path):
+    payload=Path(path).read_bytes()
+    return json.loads(payload),hashlib.sha256(payload).hexdigest()

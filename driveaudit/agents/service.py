@@ -1,11 +1,10 @@
 """Launch one of the six native ego inference services in its matching environment."""
 import argparse
 import os
-import runpy
 import sys
 
 from .runtime import model_root
-from .registry import POLICIES, resources
+from .registry import POLICIES, resources, run_adapter
 
 
 SERVICES = {key: value[0] for key, value in POLICIES.items()}
@@ -37,7 +36,7 @@ def main():
     if options.policy in ("uniad", "vad") and "--no-visualization" not in remaining:
         remaining.append("--no-visualization")
     sys.argv = [sys.argv[0], *remaining]
-    runpy.run_module("driveaudit.agents.native." + options.policy, run_name="__main__")
+    run_adapter(options.policy)
 
 
 if __name__ == "__main__":

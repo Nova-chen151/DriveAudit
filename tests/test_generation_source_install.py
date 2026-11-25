@@ -17,7 +17,7 @@ class NativeDistributionTests(unittest.TestCase):
         self.assertEqual(len(set(paths.values())), len(paths))
         found = {name: native.sha(path) for name, path in paths.items()}
         self.assertEqual(found, manifest["files"])
-        for line in (native.VENDOR / "catk/official_source.sha256").read_text().splitlines():
+        for line in (source / "trajectory/CAT-K/official_source.sha256").read_text().splitlines():
             digest, _, name = line.partition("  ")
             if name.startswith("dependencies/catk-official/src/") and name.endswith(".py"):
                 installed = name.replace("dependencies/", "catk/third_party/", 1)

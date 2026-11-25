@@ -69,7 +69,7 @@ UniAD 和 VAD 在首个计分未来帧之前，使用各相机全部十张公开
 
 各策略需要各自的上游包或已编译 CUDA 算子。SparseDriveV2 的 CUDA 源码位于 `models/agents/SparseDriveV2/navsim/agents/sparsedrive/ops`。使用 SparseDriveV2 环境在该目录运行 `python setup.py build_ext --inplace` 构建算子，或将 `DRIVEAUDIT_SPARSE_OPS` 指向已有且 ABI 兼容的算子目录。对于 NAVSIM 模型，可将 `NUPLAN_DEVKIT_ROOT` 指向匹配的外部 nuPlan devkit 检出目录。模型安装与发布文件见各第三方目录的 `UPSTREAM.md`。
 
-专用 DrivoR 回放保留原生八位姿轨迹。六策略面板使用托管回放，以统一传感器、历史数据和模型回执。源码许可证位于各第三方目录，适配器声明位于 `driveaudit/agents/native/NOTICE.md`。
+专用 DrivoR 回放保留原生八位姿轨迹。六策略面板使用托管回放，以统一传感器、历史数据和模型回执。源码许可证位于各第三方目录，适配器声明位于 `models/agents/NOTICE.md`。
 
 <a id="run"></a>
 

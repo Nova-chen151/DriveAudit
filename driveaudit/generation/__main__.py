@@ -7,8 +7,8 @@ from pathlib import Path
 import re
 import subprocess
 
-from . import MODELS, VENDOR
-from .renderer import render
+from . import MODELS
+from .renderer import render, runtime_for
 from .installation import model_settings
 from .staging import read, stage
 
@@ -50,10 +50,12 @@ def traffic(cfg):
     env = {key: value for key, value in os.environ.items() if key != "PYTHONPATH" and not key.startswith("GENBENCH_")}
     env.update(PYTHONNOUSERSITE="1", PYTHONDONTWRITEBYTECODE="1", OPENBLAS_NUM_THREADS="4",
                OMP_NUM_THREADS="4", DRIVEAUDIT_CATK_OFFICIAL=official)
-    subprocess.run([cfg["catk_python"], "-u", str(VENDOR / "catk/run_inference.py"), "--archive",
+    work.mkdir(parents=True, exist_ok=True)
+    runtime = runtime_for(Path(cfg["engine_code_root"]), "catk", work)
+    subprocess.run([cfg["catk_python"], "-u", str(runtime / "catk/run_inference.py"), "--archive",
                     cfg["archive"], "--output", str(work / "traffic"), "--scene", *cfg["scenes"],
                     "--device", cfg.get("traffic_device", "cuda:0"), "--seed", str(cfg.get("traffic_seed", 20260914))],
-                   env=env, cwd=VENDOR / "catk", check=True)
+                   env=env, cwd=runtime / "catk", check=True)
     return work / "traffic/COMPLETED.json"
 
 

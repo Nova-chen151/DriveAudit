@@ -10,7 +10,8 @@ import tempfile
 import time
 from contextlib import ExitStack
 
-from . import VENDOR
+from . import GENERATION
+from .native import adapter_sources
 from .staging import read, verify_stage, write
 
 WORLD_DREAMER = Path("DriveAudit-video/WorldDreamer")
@@ -48,20 +49,25 @@ def runtime_for(engine, model, logs):
     if model == "magicdrivev2":
         roots.append("MagicDrive-V2")
     identity = hashlib.sha256(os.fsencode(engine.resolve()))
-    for name in roots:
-        for file in sorted((VENDOR / name).rglob("*")):
-            if "__pycache__" in file.parts or not file.is_file():
-                continue
-            identity.update(file.relative_to(VENDOR).as_posix().encode() + b"\0")
-            identity.update(hashlib.sha256(file.read_bytes()).digest())
+    if model == "catk":
+        roots.append("catk")
+    overrides = [(name, source) for name, source in adapter_sources() if name.parts[0] in roots]
+    for name, source in overrides:
+        identity.update(name.as_posix().encode() + b"\0")
+        identity.update(hashlib.sha256(source.read_bytes()).digest())
     runtime = logs / ("runtime-" + identity.hexdigest())
     if runtime.is_dir():
         return runtime
     with tempfile.TemporaryDirectory(prefix=".build-", dir=logs) as staging:
         build = Path(staging) / "code"
         build.mkdir()
+        patches = Path(staging) / "patches"
+        for relative, source in overrides:
+            patch = patches / relative
+            patch.parent.mkdir(parents=True, exist_ok=True)
+            patch.symlink_to(source)
         for name in roots:
-            overlay(engine / name, VENDOR / name, build / name)
+            overlay(engine / name, patches / name, build / name)
         build.rename(runtime)
     return runtime
 
@@ -83,7 +89,7 @@ def launch_plan(cfg, model, runtime, root, attempt, env):
                GENBENCH_PREDICTION_ROOT=str(prediction), GENBENCH_GENERATION_SET="participant_joint",
                GENBENCH_SCENE_INDICES=indices, GENBENCH_LIMIT="0", GENBENCH_USE_CATK_EGO_PREDICTION="0",
                DEMO_ROOT=str(root))
-    paths = [VENDOR / "guard"]
+    paths = [GENERATION / "guard"]
     if model == "magicdrivev2":
         project = runtime / "MagicDrive-V2"
         python = cfg["v2_python"]
@@ -102,7 +108,7 @@ def launch_plan(cfg, model, runtime, root, attempt, env):
             }
             paths.extend(world / ".build" / name for name in native_packages[model])
         if model == "magicdrive":
-            paths = [VENDOR / "guard", bench / "MagicDrive-video", bench / "MagicDrive-bevfusion",
+            paths = [GENERATION / "guard", bench / "MagicDrive-video", bench / "MagicDrive-bevfusion",
                      bench / "MagicDrive-video/third_party/diffusers/src", bench / "MagicDrive-xformers", bench]
         if model == "opendwm":
             paths.insert(1, project / "src")
@@ -198,6 +204,6 @@ def render(cfg, model):
             raise RuntimeError(f"{model} exited with {codes}. See {attempt}")
         command = [cfg["catk_python"], str(Path(__file__).with_name("verify_rgb.py")), str(root), model,
                    str(attempt / "VERIFIED.json"), *cfg["scenes"]]
-        subprocess.run(command, check=True, env=dict(os.environ, PYTHONPATH=str(VENDOR / "gen-benchmark"),
+        subprocess.run(command, check=True, env=dict(os.environ, PYTHONPATH=str(GENERATION),
                                                      PYTHONNOUSERSITE="1", PYTHONDONTWRITEBYTECODE="1"))
         return attempt / "VERIFIED.json"

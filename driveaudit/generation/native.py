@@ -9,8 +9,19 @@ import shutil
 import tempfile
 
 from driveaudit.resources import resource_root
-from . import VENDOR
-BUNDLES = VENDOR / "bundles"
+from . import GENERATION
+BUNDLES = GENERATION / "bundles"
+
+
+def adapter_sources():
+    """Map native launch paths to their single maintained source."""
+    layout = json.loads((BUNDLES / "adapters.json").read_text())
+    for name, source in layout.items():
+        path = Path(source)
+        if path.parts[0] == "driveaudit":
+            yield Path(name), GENERATION.parent / path.relative_to("driveaudit")
+        else:
+            yield Path(name), resource_root() / path
 # Upstream import and launch paths are reconstructed only in the native runtime.
 WORLD = "gen-benchmark/DriveAudit-video/WorldDreamer/"
 SOURCE_LAYOUT = {
@@ -99,16 +110,11 @@ def install(args):
             dst.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(src, dst)
             hashes[name] = sha(dst)
-        # Apply the exact participant adapters after the original model sources.
-        for name in ("catk", "MagicDrive-V2", "gen-benchmark", "guard"):
-            for src in sorted((VENDOR / name).rglob("*")):
-                if not src.is_file() or "__pycache__" in src.parts:
-                    continue
-                relative = src.relative_to(VENDOR)
-                dst = staging / relative
-                dst.parent.mkdir(parents=True, exist_ok=True)
-                shutil.copyfile(src, dst)
-                hashes[relative.as_posix()] = sha(dst)
+        for relative, src in adapter_sources():
+            dst = staging / relative
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(src, dst)
+            hashes[relative.as_posix()] = sha(dst)
         binaries = {}
         links = {}
         if not args.source_only:

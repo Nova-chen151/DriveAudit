@@ -36,7 +36,7 @@ def validate_camera_only_run(directory, agents=None):
     """Accept only measured, unique decision manifests backed by guarded services."""
     import json
     from driveaudit_eval.agents.registry import FORMAL_AGENTS
-    from driveaudit_eval.agents.adapters.camera_only_temporal import stable_request_seed
+    from driveaudit.agents.camera_only import stable_request_seed
     directory=Path(directory)
     source=json.loads((directory/'input_manifest.json').read_text())
     if source.get('sensor_protocol')!='camera_only':

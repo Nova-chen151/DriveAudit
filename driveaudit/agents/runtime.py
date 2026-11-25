@@ -18,25 +18,31 @@ def asset_root(name):
     return (base.expanduser() / name).resolve()
 
 
+def timestamp_seed(timestamp):
+    return int(hashlib.sha256(str(timestamp).encode()).hexdigest()[:8], 16)
+
+
 def seed_camera_request(timestamp):
     import random
     import numpy as np
     import torch
 
-    seed = int(hashlib.sha256(str(timestamp).encode()).hexdigest()[:8], 16)
+    seed = timestamp_seed(timestamp)
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
     return seed
 
 
-def assert_no_evaluation_leakage(value):
-    forbidden = {"evaluation_only", "background_boxes", "future_state_frame_ids",
+FORBIDDEN_AGENT_FIELDS = {"evaluation_only", "background_boxes", "future_state_frame_ids",
                  "reference_route_positions", "drivable_mask_source", "collision_result",
                  "scoring_result", "gt_bboxes_3d", "gt_labels_3d", "gt_attr_labels",
                  "ego_fut_trajs", "gt_future_trajectory", "gt_actor_future", "gt_occupancy", "gt_boxes"}
+
+
+def assert_no_evaluation_leakage(value):
     if isinstance(value, dict):
-        if forbidden.intersection(value):
+        if FORBIDDEN_AGENT_FIELDS.intersection(value):
             raise ValueError("Evaluation fields present in agent input")
         for child in value.values():
             assert_no_evaluation_leakage(child)
