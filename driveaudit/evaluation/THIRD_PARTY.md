@@ -8,7 +8,7 @@ BEVFormer is an optional perception diagnostic outside the nine core metrics. To
 
 | Project | Source | Use in DriveAudit | License observed |
 |---|---|---|---|
-| CARS | [CARS-code](https://github.com/RoboSafe-Lab/CARS-code) | FSM, CC-JP and RSS replay collisions to assess avoidability. | [Apache-2.0](driveaudit_eval/vendor/cars/LICENSE) · [Source notice](driveaudit_eval/vendor/cars/NOTICE.md) |
+| CARS | [CARS-code](https://github.com/RoboSafe-Lab/CARS-code) | FSM, CC-JP and RSS replay collisions to assess avoidability. | [Apache-2.0](driveaudit_eval/responsibility/cars/LICENSE) · [Source notice](driveaudit_eval/responsibility/cars/NOTICE.md) |
 | OnSite Unified Train-Test Scenario Generation Track Evaluation Tool | https://github.com/Nova-chen151/Onsite_UT2SG_Testing | Observability-based traffic-rule selection and geometry conventions, implemented in the DriveAudit traffic-compliance module; no runtime import | No LICENSE or NOTICE present anywhere in supplied source snapshot; do not infer a license from another OnSite repository |
 | Onsite Ego Testing | https://github.com/Nova-chen151/Onsite_Ego_Testing | Historical trajectory/evaluation reference; optional distribution-reference dataset; no runtime Python import | BSD-3-Clause, Copyright (c) 2026 Nova-chen151; complete notice below |
 | CAT-K | External `catk_root` configured in `tools/configs/catk.yaml`; checkpoint and token vocabulary stay outside the core package | Existing trajectory generator and checkpoint class definitions; not imported for cached TRS reproduction | NVIDIA Source Code License in the supplied CAT-K repository; not covered by this project's Apache-2.0 license |

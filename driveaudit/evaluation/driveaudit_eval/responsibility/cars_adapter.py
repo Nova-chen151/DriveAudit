@@ -15,7 +15,7 @@ from shapely.geometry import Point, LineString
 from driveaudit_eval.agents.input_gt import sample
 from driveaudit_eval.traffic_compliance import evaluate_actor_compliance
 
-DEFAULTS = dict(source_path='driveaudit_eval/vendor/cars/responsibility_models.py',
+DEFAULTS = dict(source_path='driveaudit_eval/responsibility/cars/responsibility_models.py',
                 desired_pre_collision_s=5., minimum_pre_collision_s=1.,
                 post_collision_s=1., dt=.1, max_gap_s=.25, consensus_votes=2,
                 bidirectional=True, lane_cross_section_half_length_m=20.)
@@ -69,7 +69,12 @@ def evaluate_collision_responsibility(events, trajectories_by_id, map_context, c
         return dict(status='not_applicable', reason='no_original_collision', events=[], summary=_summary([]))
     if cfg['dt'] <= 0 or cfg['consensus_votes'] not in (1, 2, 3):
         raise ValueError('invalid replay dt/consensus threshold')
-    path = Path(context['root'])/cfg['source_path']
+    root = Path(context['root'])
+    path = root / cfg['source_path']
+    # The v1.0 defaults used the previous location of the bundled replay module.
+    if path == root / 'driveaudit_eval/vendor/cars/responsibility_models.py' and not path.is_file():
+        cfg['source_path'] = DEFAULTS['source_path']
+        path = root / cfg['source_path']
     digest = hashlib.sha256(path.read_bytes()).hexdigest() if path.is_file() else None
     load_reason = 'cars_source_missing'
     try:

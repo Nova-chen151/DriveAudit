@@ -590,7 +590,7 @@ traffic_compliance:
     enabled: true
 collision_responsibility:
   enabled: true
-  source_path: driveaudit_eval/vendor/cars/responsibility_models.py
+  source_path: driveaudit_eval/responsibility/cars/responsibility_models.py
   controllers:
   - FSM
   - CCJP
