@@ -25,6 +25,11 @@
 - ⚖️ **Quality-aware scoring:** QTES rewards paired policy degradation together with retained scenario quality; RPDMS adds responsibility-aware collision scoring.
 - 🌐 **Multi-source, multi-model benchmark:** 550 scenarios, seven generation baselines, and six driving policies, with tooling for traffic generation, rendering, paired evaluation, and closed-loop feedback.
 
+<a id="news"></a>
+## 📢 News
+
+- `[2026/11/24]` We released the code **v1.0**.
+
 <a id="contents"></a>
 ## 📌 Table of Contents
 
