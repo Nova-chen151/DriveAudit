@@ -147,3 +147,16 @@ header nav{flex-wrap:wrap}
 .driving-film h3{margin:0 0 8px;font-size:18px}
 .qtes-components{font-size:13px;font-variant-numeric:tabular-nums}
 @media(max-width:680px){.scored-picker,.policy-pairs{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+:root{--bev-open-plan:#d59efb;--bev-comparison-plan:#f3dcff;--bev-ego:#b8f887;--bev-vehicle:#45d4ee;--bev-pedestrian:#fca888}
+.policy-bev-key{display:flex;flex-wrap:wrap;gap:4px 16px;list-style:none;padding:0;margin:8px 0 4px;color:var(--ink);font-size:13px}
+.policy-bev-key li{display:inline-flex;align-items:center;gap:4px}
+.policy-bev-key li::before{content:'';width:12px;height:4px;border-radius:2px;background:var(--bev-key-color)}
+.policy-key-opendwm{--bev-key-color:var(--bev-open-plan)}
+.policy-key-comparison{--bev-key-color:var(--bev-comparison-plan)}
+.policy-key-comparison::before{background:transparent;border-top:2px dashed var(--bev-key-color);height:0;border-radius:0}
+.policy-key-ego{--bev-key-color:var(--bev-ego)}
+.policy-key-ego::before,.policy-key-vehicle::before{height:7px;border-radius:0}
+.policy-key-pedestrian::before{width:6px;height:6px;border-radius:50%}
+.policy-key-vehicle{--bev-key-color:var(--bev-vehicle)}
+.policy-key-pedestrian{--bev-key-color:var(--bev-pedestrian)}

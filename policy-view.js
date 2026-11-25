@@ -11,7 +11,7 @@ let policyName = policyTabs[0].dataset.policy;
 function showPolicyPair(index) {
   const options = policyResults[policyName];
   const result = options[index];
-  const videoPath = 'media/policy-stack/' + result.file + '.mp4';
+  const videoPath = 'media/policy-stack/' + result.file + '.mp4?v=shared-bev';
   if (policyVideo.getAttribute('src') !== videoPath) {
     policyVideo.pause();
     policyVideo.src = videoPath;
