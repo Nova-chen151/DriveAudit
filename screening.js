@@ -21,21 +21,75 @@ document.querySelectorAll('.visual-metric').forEach(section => {
   const toggle = section.querySelector('.motion-toggle');
   const choices = section.querySelectorAll('.clip-choice');
   const poster = new Image();
-  const scope = section.querySelector('.clip-scope');
-  const benchmarkScope = scope.textContent;
   let nextFrame = 0;
   let videoReady = false;
+  let camera = -1;
+  const modes = section.querySelector('.camera-modes');
+  const viewButtons = modes.querySelectorAll('[data-view]');
+  const names = [...viewButtons].slice(1).map(button => button.textContent);
+  const labels = getComputedStyle(stage);
+  const divider = labels.getPropertyValue('--white').trim();
+  const surface = labels.getPropertyValue('--glass').trim();
+  const caption = section.querySelector('.clip-caption');
+  let activeChoice = section.querySelector('.clip-choice[aria-pressed=true]');
+
+  function updateView() {
+    const all = camera === -1;
+    canvas.width = all ? 960 : 640;
+    canvas.height = 360;
+    stage.classList.toggle('all-views', all);
+    caption.textContent = activeChoice.dataset.caption.replace(
+      /^(.*?) \/ .*? \/ (.*?)$/, (_, scene, length) =>
+        scene + ' / ' + (all ? 'All six cameras' : names[camera]) + ' / ' + length
+    );
+    viewButtons.forEach(button => button.setAttribute('aria-pressed', String(Number(button.dataset.view) === camera)));
+    draw();
+  }
 
   function draw() {
     const frame = videoReady ? video : poster;
     const width = videoReady ? video.videoWidth : poster.naturalWidth;
     const height = videoReady ? video.videoHeight : poster.naturalHeight;
-    const half = width / 2;
-    if (!half || !height || (!videoReady && !poster.complete)) return;
-    const leftWidth = Math.round(half * Number(slider.value) / 100);
-    const rightWidth = half - leftWidth;
-    if (leftWidth) context.drawImage(frame, 0, 0, leftWidth, height, 0, 0, leftWidth, height);
-    if (rightWidth) context.drawImage(frame, half + leftWidth, 0, rightWidth, height, leftWidth, 0, rightWidth, height);
+    if (!width || !height || (!videoReady && !poster.complete)) return;
+    const tileWidth = width / 6;
+    const tileHeight = height / 2;
+    const split = Number(slider.value) / 100;
+    const all = camera === -1;
+    const destinationWidth = all ? canvas.width / 3 : canvas.width;
+    const destinationHeight = all ? canvas.height / 2 : canvas.height;
+
+    function tile(index) {
+      const column = index % 3;
+      const row = Math.floor(index / 3);
+      const x = all ? column * destinationWidth : 0;
+      const y = all ? row * destinationHeight : 0;
+      const sx = column * tileWidth;
+      const sy = row * tileHeight;
+      const cut = destinationWidth * split;
+      if (split > 0) {
+        context.drawImage(frame, sx, sy, tileWidth * split, tileHeight, x, y, cut, destinationHeight);
+      }
+      if (split < 1) {
+        context.drawImage(frame, width / 2 + sx + tileWidth * split, sy, tileWidth * (1 - split), tileHeight,
+          x + cut, y, destinationWidth - cut, destinationHeight);
+      }
+      if (!all) return;
+      context.strokeStyle = surface;
+      context.lineWidth = 2;
+      context.strokeRect(x, y, destinationWidth, destinationHeight);
+      context.fillStyle = divider;
+      if (split > 0 && split < 1) context.fillRect(x + cut - 1, y, 2, destinationHeight);
+      context.font = '600 15px system-ui';
+      const name = names[index];
+      const labelWidth = context.measureText(name).width;
+      context.fillStyle = surface;
+      context.fillRect(x + 7, y + destinationHeight - 27, labelWidth + 12, 21);
+      context.fillStyle = divider;
+      context.fillText(name, x + 13, y + destinationHeight - 11);
+    }
+
+    if (all) names.forEach((_, index) => tile(index));
+    else tile(camera);
   }
 
   function animate() {
@@ -44,12 +98,16 @@ document.querySelectorAll('.visual-metric').forEach(section => {
   }
 
   poster.addEventListener('load', () => {
-    draw();
+    updateView();
     stage.classList.add('interactive');
-    canvas.hidden = slider.hidden = toggle.hidden = false;
+    canvas.hidden = slider.hidden = toggle.hidden = modes.hidden = false;
     video.controls = false;
   });
   poster.src = video.poster;
+  viewButtons.forEach(button => button.addEventListener('click', () => {
+    camera = Number(button.dataset.view);
+    updateView();
+  }));
   slider.addEventListener('input', () => {
     stage.style.setProperty('--cut', slider.value + '%');
     draw();
@@ -77,41 +135,19 @@ document.querySelectorAll('.visual-metric').forEach(section => {
 
   choices.forEach(choice => choice.addEventListener('click', () => {
     if (choice.getAttribute('aria-pressed') === 'true') return;
-    const {clip, caption, left, right, leftScore, rightScore} = choice.dataset;
+    activeChoice = choice;
+    const {clip, left, right, leftScore, rightScore} = choice.dataset;
     const wasPlaying = !video.paused;
     video.pause();
     videoReady = false;
-    video.src = 'media/atlas/' + clip + '.mp4';
-    video.poster = poster.src = 'media/atlas/' + clip + '.jpg';
+    video.src = 'media/atlas-six/' + clip + '.mp4';
+    video.poster = poster.src = 'media/atlas-six/' + clip + '.jpg';
     choices.forEach(button => button.setAttribute('aria-pressed', String(button === choice)));
     section.querySelector('.model-left').textContent = left;
     section.querySelector('.model-right').textContent = right;
     section.querySelector('.score-left').textContent = leftScore;
     section.querySelector('.score-right').textContent = rightScore;
-    section.querySelector('.clip-caption').textContent = caption;
-    scope.textContent = choice.dataset.scope || benchmarkScope;
+    updateView();
     if (wasPlaying || !reduceMotion.matches) video.play().catch(() => {});
   }));
 });
-
-const cases = Array.from(document.querySelectorAll('.policy-case'));
-const caseLinks = document.querySelectorAll('[data-policy-case]');
-
-function showPolicyCase(id) {
-  cases.forEach(figure => { figure.hidden = figure.id !== id; });
-  caseLinks.forEach(link => {
-    if (link.hash === '#' + id) link.setAttribute('aria-current', 'true');
-    else link.removeAttribute('aria-current');
-  });
-}
-
-if (cases.length) {
-  const showFromHash = () => {
-    const id = location.hash.slice(1);
-    if (cases.some(figure => figure.id === id)) showPolicyCase(id);
-  };
-  showPolicyCase(cases[0].id);
-  showFromHash();
-  caseLinks.forEach(link => link.addEventListener('click', () => showPolicyCase(link.hash.slice(1))));
-  addEventListener('hashchange', showFromHash);
-}
