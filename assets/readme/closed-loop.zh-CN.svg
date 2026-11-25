@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="960" height="304" viewBox="0 0 960 304" role="img" aria-labelledby="title desc">
   <title id="title">DriveAudit 闭环测试</title>
-  <desc id="desc">场景历史初始化渲染器和 CAT-K 交通状态。DrivoR 根据生成画面规划轨迹，执行器将前半秒的运动交给 CAT-K，更新后的状态用于下一轮渲染。运行结束后校验逐轮记录。</desc>
+  <desc id="desc">场景历史用于初始化渲染器和交通状态。驾驶策略根据相机图像规划轨迹，执行器沿规划轨迹推进自车，交通模型更新周围参与者的状态。渲染器据此生成下一轮观测。</desc>
   <defs>
     <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
       <path d="M 0 0 L 10 5 L 0 10 Z" fill="#475569"/>
@@ -19,19 +19,19 @@
   <g font-family="Arial, 'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif">
     <text x="28" y="36" font-size="21" font-weight="700" fill="#604503">DriveAudit 闭环测试</text>
     <rect x="30" y="66" width="184" height="63" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/>
-    <text x="122" y="92" text-anchor="middle" font-size="17" font-weight="700" fill="#263449">nuScenes 场景</text>
-    <text x="122" y="114" text-anchor="middle" font-size="14" fill="#374151">选手包历史观测</text>
+    <text x="122" y="92" text-anchor="middle" font-size="17" font-weight="700" fill="#263449">场景输入</text>
+    <text x="122" y="114" text-anchor="middle" font-size="14" fill="#374151">地图与场景历史</text>
     <rect x="360" y="66" width="218" height="63" rx="10" fill="#edf4ff" stroke="#467dd4" stroke-width="1.5"/>
-    <text x="469" y="92" text-anchor="middle" font-size="17" font-weight="700" fill="#204e90">六视角渲染器</text>
+    <text x="469" y="92" text-anchor="middle" font-size="17" font-weight="700" fill="#204e90">场景渲染器</text>
     <text x="469" y="114" text-anchor="middle" font-size="14" fill="#374151">使用相机标定</text>
     <rect x="728" y="66" width="207" height="63" rx="10" fill="#eaf6ed" stroke="#469663" stroke-width="1.5"/>
-    <text x="831.5" y="92" text-anchor="middle" font-size="17" font-weight="700" fill="#225c37">DrivoR 驾驶策略</text>
-    <text x="831.5" y="114" text-anchor="middle" font-size="14" fill="#374151">使用其中四路相机</text>
+    <text x="831.5" y="92" text-anchor="middle" font-size="17" font-weight="700" fill="#225c37">驾驶策略</text>
+    <text x="831.5" y="114" text-anchor="middle" font-size="14" fill="#374151">规划自车轨迹</text>
     <rect x="728" y="206" width="207" height="63" rx="10" fill="#f2edfa" stroke="#8a65ba" stroke-width="1.5"/>
     <text x="831.5" y="232" text-anchor="middle" font-size="17" font-weight="700" fill="#5b3d85">自车轨迹执行</text>
-    <text x="831.5" y="254" text-anchor="middle" font-size="14" fill="#374151">5 个 0.1 秒子步</text>
+    <text x="831.5" y="254" text-anchor="middle" font-size="14" fill="#374151">执行一段规划轨迹</text>
     <rect x="360" y="206" width="218" height="63" rx="10" fill="#e8f6f5" stroke="#49978e" stroke-width="1.5"/>
-    <text x="469" y="232" text-anchor="middle" font-size="17" font-weight="700" fill="#285e59">CAT-K 交通模型</text>
+    <text x="469" y="232" text-anchor="middle" font-size="17" font-weight="700" fill="#285e59">交通模型</text>
     <text x="469" y="254" text-anchor="middle" font-size="14" fill="#374151">更新交通历史</text>
     <rect x="30" y="206" width="184" height="63" rx="10" fill="#ffffff" stroke="#ba8b39" stroke-width="1.5"/>
     <text x="122" y="232" text-anchor="middle" font-size="17" font-weight="700" fill="#674912">运行记录校验</text>
@@ -43,6 +43,6 @@
     <text x="480" y="172" text-anchor="start" font-size="14" fill="#334155">自车位姿与交通参与者状态</text>
     <text x="258" y="155" text-anchor="middle" font-size="14" fill="#334155">初始交通状态</text>
     <text x="287" y="228" text-anchor="middle" font-size="14" fill="#334155">逐轮记录</text>
-    <text x="480" y="291" text-anchor="middle" font-size="14" fill="#604503">每轮推进 0.5 秒。自车到达目标区域后，在剩余轮次保持到达时的位姿。</text>
+    <text x="480" y="291" text-anchor="middle" font-size="14" fill="#604503">下一轮观测由自车执行后的位姿和更新后的交通状态共同决定。</text>
   </g>
 </svg>

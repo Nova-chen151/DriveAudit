@@ -176,18 +176,20 @@ The panel evaluates each policy on generated and recorded branches. Reports cont
 <a id="closed-loop"></a>
 ## 🔁 Closed-loop Testing
 
-In a single nuScenes scene, DrivoR's executed motion changes the camera views it receives on the next round.
+Each round, the driving policy plans from rendered camera images. The renderer then uses the executed ego motion and updated traffic to generate the policy’s next observation.
 
-![DriveAudit closed loop from scene history through rendering, DrivoR planning, ego execution, and CAT-K traffic feedback](assets/readme/closed-loop.svg)
+![Closed-loop architecture showing how the driving policy, ego executor, traffic model, and renderer feed the next observation back to the policy](assets/readme/closed-loop.svg)
 
 | Component | Role in the closed loop |
 | --- | --- |
 | [Scene configuration](driveaudit/closed_loop/configure.py) | Matches the participant scene to its rendering inputs and takes the navigation goal from the final public ego position. |
-| [Six-view renderer](models/generation/image) | Renders six calibrated views from the current ego pose and surrounding traffic. |
-| [DrivoR policy](models/agents/DrivoR/driveaudit_adapter.py) | Uses the front, rear, front-left, and front-right images, ego motion, and a navigation command to plan a trajectory. |
-| [Ego execution](driveaudit/closed_loop/core.py) | Executes the first 0.5 s of the plan in five substeps. Once the ego vehicle reaches the goal region, it holds its pose. |
-| [CAT-K traffic](models/generation/trajectory/CAT-K/closed_loop.py) | Advances surrounding actors and writes their predicted motion and the executed ego path into the history for the next round. |
+| [Scene renderer](models/generation/image) | Renders calibrated camera views from the current ego pose and surrounding traffic. |
+| [Driving policy](models/agents) | Uses camera images, ego motion, and a navigation command to plan a trajectory. |
+| [Ego execution](driveaudit/closed_loop/core.py) | Executes the first segment of the planned trajectory and commits the resulting ego pose. |
+| [Traffic model](models/generation/trajectory) | Advances surrounding actors and writes their predicted motion and the executed ego path into the history for the next round. |
 | [Trace verification](driveaudit/closed_loop/verify_run.py) | Checks that the next render uses the committed pose and that the images sent to the policy match the saved frames. |
+
+**Example implementation.** In the nuScenes example, [CAT-K](models/generation/trajectory/CAT-K/closed_loop.py) advances traffic. The renderer generates six views, and [DrivoR](models/agents/DrivoR/driveaudit_adapter.py) uses four of them to plan. The executor applies the first 0.5 s in five 0.1 s steps.
 
 Follow the [closed-loop guide](closed_loop/README.md#run) to run and verify a scene. For benchmark scores, see [paired policy evaluation](docs/evaluation.md).
 
