@@ -11,17 +11,17 @@ let policyName = policyTabs[0].dataset.policy;
 function showPolicyPair(index) {
   const options = policyResults[policyName];
   const result = options[index];
-  const videoPath = 'media/policy-pairs/' + result.scene + '.mp4';
+  const videoPath = 'media/policy-stack/' + result.file + '.mp4';
   if (policyVideo.getAttribute('src') !== videoPath) {
     policyVideo.pause();
     policyVideo.src = videoPath;
   }
   policyVideo.setAttribute('aria-label', policyName + ', OpenDWM and ' + result.renderer + ' camera inputs and predicted paths');
-  activeLabel.textContent = policyName + ' / ' + result.scene;
+  activeLabel.textContent = policyName + ' / ' + result.dataset + ' ' + result.scene;
   supportLabel.textContent = result.frames.length + ' matched decision windows';
   rendererLabel.textContent = result.renderer;
   pairTabs.forEach((button, i) => {
-    button.querySelector('span').textContent = options[i].scene;
+    button.querySelector('span').textContent = options[i].dataset + ' ' + options[i].scene;
     button.querySelector('small').textContent = 'OpenDWM / ' + options[i].renderer;
     button.setAttribute('aria-pressed', String(i === index));
   });

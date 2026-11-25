@@ -31,6 +31,7 @@ document.querySelectorAll('.visual-metric').forEach(section => {
   const divider = labels.getPropertyValue('--white').trim();
   const surface = labels.getPropertyValue('--glass').trim();
   const caption = section.querySelector('.clip-caption');
+  const components = section.querySelector('.qtes-components');
   let activeChoice = section.querySelector('.clip-choice[aria-pressed=true]');
 
   function updateView() {
@@ -40,7 +41,7 @@ document.querySelectorAll('.visual-metric').forEach(section => {
     stage.classList.toggle('all-views', all);
     caption.textContent = activeChoice.dataset.caption.replace(
       /^(.*?) \/ .*? \/ (.*?)$/, (_, scene, length) =>
-        scene.replace('case_000001', 'adv_case_0001').replace('case_000002', 'adv_case_0003')
+        scene
         + ' / ' + (all ? 'All six cameras' : names[camera]) + ' / ' + length
     );
     viewButtons.forEach(button => button.setAttribute('aria-pressed', String(Number(button.dataset.view) === camera)));
@@ -140,41 +141,18 @@ document.querySelectorAll('.visual-metric').forEach(section => {
     const {clip, left, right, leftScore, rightScore} = choice.dataset;
     video.pause();
     videoReady = false;
-    video.src = 'media/atlas-six/' + clip + '.mp4';
-    video.poster = poster.src = 'media/atlas-six/' + clip + '.jpg';
+    video.src = 'media/atlas-scored/' + clip + '.mp4';
+    video.poster = poster.src = 'media/atlas-scored/' + clip + '.jpg';
     choices.forEach(button => button.setAttribute('aria-pressed', String(button === choice)));
     section.querySelector('.model-left').textContent = left;
     section.querySelector('.model-right').textContent = right;
     section.querySelector('.score-left').textContent = leftScore;
     section.querySelector('.score-right').textContent = rightScore;
+    if (components) components.textContent = choice.dataset.components;
+    video.setAttribute('aria-label', left + ' and ' + right + ' paired replay');
     updateView();
     if (play && !reduceMotion.matches) video.play().catch(() => {});
   }
 
   choices.forEach(choice => choice.addEventListener('click', () => chooseClip(choice, true)));
-  section.addEventListener('select-scene', event => {
-    const originalId = 'case_' + event.detail.padStart(6, '0') + ' /';
-    choices.forEach(choice => { choice.hidden = !choice.dataset.caption.includes(originalId); });
-    if (activeChoice.hidden) {
-      const next = [...choices].find(choice => !choice.hidden);
-      if (next) chooseClip(next, false);
-    }
-  });
 });
-
-
-const visualTabs = [...document.querySelectorAll('[data-visual-scene]')];
-const visualMetrics = document.querySelectorAll('.visual-metric');
-const exampleReplays = document.querySelectorAll('[data-example]');
-
-function showVisualScene(scene) {
-  visualTabs.forEach(tab => tab.setAttribute('aria-pressed', String(tab.dataset.visualScene === scene)));
-  visualMetrics.forEach(metric => metric.dispatchEvent(new CustomEvent('select-scene', { detail: scene })));
-  exampleReplays.forEach(figure => {
-    figure.hidden = figure.dataset.example !== scene;
-    if (figure.hidden) figure.querySelector('video').pause();
-  });
-}
-
-visualTabs.forEach(tab => tab.addEventListener('click', () => showVisualScene(tab.dataset.visualScene)));
-showVisualScene(visualTabs[0].dataset.visualScene);
