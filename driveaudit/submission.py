@@ -15,7 +15,7 @@ from .generation.staging import relative_scene
 CAMERAS = ("CAM_FRONT_LEFT", "CAM_FRONT", "CAM_FRONT_RIGHT", "CAM_BACK_LEFT", "CAM_BACK", "CAM_BACK_RIGHT")
 
 
-def package(inputs, conditions, renderer, cases, metadata, destination):
+def package(inputs, conditions, renderer, cases, destination):
     if sys.flags.optimize:
         raise RuntimeError("Run the public validation script with Python assertions enabled")
     scene_ids(cases)
@@ -29,7 +29,6 @@ def package(inputs, conditions, renderer, cases, metadata, destination):
     with tempfile.TemporaryDirectory(dir=dest.parent) as tmp:
         bundle = Path(tmp) / "submission"
         bundle.mkdir()
-        shutil.copyfile(metadata, bundle / "submission.json")
         for case in cases:
             output = bundle / "scenes" / case / "future"
             output.mkdir(parents=True)
@@ -55,12 +54,12 @@ def package(inputs, conditions, renderer, cases, metadata, destination):
 
 def main():
     p = argparse.ArgumentParser(description=__doc__)
-    for key in ("inputs", "conditions", "metadata", "output"):
+    for key in ("inputs", "conditions", "output"):
         p.add_argument("--" + key, type=Path, required=True)
     p.add_argument("--renderer", choices=MODELS, required=True)
     p.add_argument("--cases", nargs="+", required=True)
     args = p.parse_args()
-    print(package(args.inputs, args.conditions, args.renderer, args.cases, args.metadata, args.output))
+    print(package(args.inputs, args.conditions, args.renderer, args.cases, args.output))
 
 
 if __name__ == "__main__":

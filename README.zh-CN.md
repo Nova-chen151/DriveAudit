@@ -81,7 +81,7 @@
 
 示例使用选手包中的两个 nuScenes 场景 `case_000001` 和 `case_000002`。将[示例配置](configs/generation.json)中的 `archive` 设为本地选手包路径。每个场景提供六路相机的 10 帧历史图像、历史交通轨迹、地图，以及未来 80 帧的自车和相机位姿。
 
-每个场景需提交一份未来交通轨迹 CSV，以及六路相机各 80 张 RGB 图像。可以先用这两个场景跑通生成和校验流程。正式提交时，需为主办方清单中的每个场景生成结果，并用选手包自带的校验器检查。[选手输入格式与提交导出](docs/generation.zh-CN.md#participant-inputs-and-submission)
+每个场景需提交一份未来交通轨迹 CSV，以及六路相机各 80 张 RGB 图像。可以先用这两个场景跑通生成和校验流程。正式提交时，需为主办方清单中的每个场景生成结果，并用选手包自带的校验器检查。[赛题与提交格式](docs/challenge.md)
 
 <a id="benchmark-results"></a>
 <a id="leaderboard"></a>

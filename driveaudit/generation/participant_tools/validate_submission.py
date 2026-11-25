@@ -62,31 +62,42 @@ def boolean(s):
     return s in ["True", "true", "1"]
 
 
+def entries(directory):
+    if directory.is_symlink() or not directory.is_dir():
+        raise ValueError(f"Expected a directory: {directory}")
+    paths = list(directory.iterdir())
+    if any(path.is_symlink() for path in paths):
+        raise ValueError(f"Symlinks forbidden in {directory}")
+    return {path.name for path in paths}
+
+
 def check(inputs, submission, scene=None, trajectories_only=False):
-    if any(p.is_symlink() for p in submission.rglob("*")):
-        raise ValueError("Symlinks forbidden")
-    meta = read(submission / "submission.json")
-    assert meta["protocol"] == "nuscenes_ego_conditioned_v1"
-    for k in ["team", "method", "checkpoint", "training_data", "external_data"]:
-        assert isinstance(meta[k], str) and meta[k].strip()
-    assert type(meta["seed"]) is int
+    if not __debug__:
+        raise RuntimeError("Run validation with Python assertions enabled")
+    if entries(submission) != {"scenes"}:
+        raise ValueError("The submission directory must contain only scenes/")
     names = read(inputs / "dataset.json")["scenes"]
     assert len(names) == len(set(names))
+    submitted = entries(submission / "scenes")
     if scene is not None:
-        assert scene in names
+        assert scene in names and scene in submitted
         names = [scene]
     else:
-        assert {p.name for p in (submission / "scenes").iterdir()} == set(names)
+        assert submitted == set(names)
     for name in names:
         root = submission / "scenes" / name / "future"
         inp = inputs / "scenes" / name
         task = read(inp / "task.json")
         target = task["target_frame_indices"]
         assert target == list(range(10, 90))
-        assert (
-            not (root / "ego_trajectory.csv").exists()
-            and not (root / "ego_poses.json").exists()
-        ), "Ego motion is provided, not a prediction submission"
+        if entries(root.parent) != {"future"}:
+            raise ValueError(f"{name} must contain only future/")
+        payload = entries(root)
+        required = {"future_trajectories.csv", "rgb"}
+        if payload != required and not (trajectories_only and payload == {"future_trajectories.csv"}):
+            raise ValueError(f"Unexpected submission contents in {root}")
+        if not (root / "future_trajectories.csv").is_file():
+            raise ValueError(f"Expected a trajectory CSV in {root}")
         ego = rows(
             inp / "conditioning/ego_trajectory.csv",
             ["frame_index", "x", "y", "yaw", "valid"],
@@ -144,10 +155,10 @@ def check(inputs, submission, scene=None, trajectories_only=False):
             assert ff == set(target if a in known else range(min(ff), 90))
         if trajectories_only:
             continue
-        assert {p.name for p in (root / "rgb").iterdir()} == set(CAMS)
+        assert entries(root / "rgb") == set(CAMS)
         for cam in CAMS:
             folder = root / "rgb" / cam
-            assert {p.name for p in folder.iterdir()} == {
+            assert entries(folder) == {
                 f"{f:06d}.jpg" for f in target
             }
             for p in folder.iterdir():

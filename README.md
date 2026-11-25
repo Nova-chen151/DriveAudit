@@ -79,7 +79,7 @@ The main benchmark uses **non-reactive replay**: predicted actions do not change
 
 The example uses two nuScenes cases from the participant archive, `case_000001` and `case_000002`. Set `archive` in the [example configuration](configs/generation.json) to your copy of the package. Each case provides 10 frames of six-camera history, traffic tracks, a map, and the ego and camera poses for the next 80 frames.
 
-For each case, submit a CSV of future traffic trajectories and 80 RGB images per camera for all six views. Use the two cases to check your pipeline. For the competition submission, generate results for every case on the organizer’s list and check them with the validator in the participant package. [Input format and submission export](docs/generation.md#participant-inputs-and-submission)
+For each case, submit a CSV of future traffic trajectories and 80 RGB images per camera for all six views. Use the two cases to check your pipeline. For the competition submission, generate results for every case on the organizer’s list and check them with the validator in the participant package. [Challenge and submission format](docs/challenge.md)
 
 <a id="benchmark-results"></a>
 <a id="leaderboard"></a>

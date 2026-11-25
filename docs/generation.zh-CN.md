@@ -74,7 +74,7 @@ ENGINE_CODE/
 
 MagicDrive 和 DriveAudit 实现使用各自对应的视频目录树及编译依赖。`--weights-root` 创建的内联 `models` 部分记录所有环境与检查点路径，可按其他存储布局修改。全新推理不需要先前的实验目录或已生成图像。
 
-在原始 HPC 系统上，还需传入 `--cuda-prefix /share/apps`，为各渲染器选择原始 CUDA 工具包。省略 `--weights-root` 会选择已有安装配置，并将 `models_json` 设为安装目录的同级 `configs/models.json`。如果安装位置发生变化，请在模型注册表的私有副本中更新各模型的 Python 和检查点路径。各适配器通过以下注册表字段解析解释器与检查点。
+可以通过 `--cuda-prefix` 指定 CUDA 工具包目录。省略 `--weights-root` 会选择已有安装配置，并将 `models_json` 设为安装目录的同级 `configs/models.json`。如果安装位置发生变化，请在模型注册表的私有副本中更新各模型的 Python 和检查点路径。各适配器通过以下注册表字段解析解释器与检查点。
 
 | 模型 | Python 与检查点 |
 | --- | --- |
@@ -173,14 +173,13 @@ Slurm 调度入口支持三个起点。新建交通任务时使用 `bash scripts
 
 ## 导出提交目录
 
-从仓库根目录运行，指定解压后的公开选手目录、渲染条件目录和实际方法声明。`PARTICIPANT_DIR` 指向解压后的选手目录，`SUBMISSION_METADATA` 指向自己的方法声明 JSON。字段按选手包的提交规范填写。
+在仓库根目录运行，将 `PARTICIPANT_DIR` 指向解压得到的 `participant/` 目录。轨迹 CSV 与 RGB 帧的文件名见[赛题说明](challenge.md)。
 
 ```bash
 python -m driveaudit.submission \
   --inputs "$PARTICIPANT_DIR" \
   --conditions work/two-scene-generation/conditions --renderer opendwm \
   --cases case_000001 case_000002 \
-  --metadata "$SUBMISSION_METADATA" \
   --output work/two-scene-submission
 ```
 

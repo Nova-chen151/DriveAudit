@@ -4,7 +4,7 @@ import argparse,json,os,sys,time,traceback
 from pathlib import Path
 ROOT=Path(__file__).resolve().parent
 sys.path.insert(0,str(ROOT/'participant_tools'))
-from participant_io import extract_inputs,write,read,sha,write_actor_csv,PROTOCOL
+from participant_io import extract_inputs,write,read,sha,write_actor_csv
 
 def main():
  p=argparse.ArgumentParser();p.add_argument('--archive',type=Path,required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--scene',nargs='+',default=['case_000001']);p.add_argument('--device',default='cuda:0');p.add_argument('--seed',type=int,default=20260914);a=p.parse_args()
@@ -29,7 +29,7 @@ def main():
   cfg.update(root=str(official),selected_checkpoint=str(official/'checkpoints/clsft_E9.ckpt'),checkpoint_dir=str(official/'checkpoints'),migration_manifest=str(ROOT/'official_source.sha256'),device=a.device,global_seed=a.seed,cpu_threads=4)
   for key in ('input_root','output_root','work_root'):cfg.pop(key,None)
   load_start=time.perf_counter();model=CATKPredictor(cfg);load_seconds=time.perf_counter()-load_start
-  submission=output/'submission';write(submission/'submission.json',dict(protocol=PROTOCOL,team='organizer-baseline',method='CAT-K clsft_E9 + existing constrained token sampler',seed=a.seed,checkpoint=cfg['checkpoint_sha256'],training_data='Existing pretrained CAT-K checkpoint; see upstream README',external_data='No external scenario data at inference; public package history and map only'))
+  submission=output/'submission'
   records=[]
   for name in a.scene:
    source=inputs/'scenes'/name;prep=time.perf_counter();scene=prepare_scene(source);prep_seconds=time.perf_counter()-prep

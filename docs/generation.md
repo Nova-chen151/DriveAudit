@@ -74,7 +74,7 @@ ENGINE_CODE/
 
 The MagicDrive and DriveAudit implementations use their corresponding video trees and compiled dependencies. The inline `models` section created by `--weights-root` records every environment and checkpoint path and can be edited for a different storage layout. No previous experiment directory or generated images are needed for fresh inference.
 
-On the original HPC system also pass `--cuda-prefix /share/apps` to select the original CUDA toolkit per renderer. Omitting `--weights-root` selects the existing-installation profile and sets `models_json` to the installation's sibling `configs/models.json`. If the installation moved, update the per-model Python and checkpoint paths in a private copy of that model registry. Each adapter resolves its interpreter and checkpoints using the registry fields below.
+Use `--cuda-prefix` to set a custom CUDA toolkit directory. Omitting `--weights-root` selects the existing-installation profile and sets `models_json` to the installation's sibling `configs/models.json`. If the installation moved, update the per-model Python and checkpoint paths in a private copy of that model registry. Each adapter resolves its interpreter and checkpoints using the registry fields below.
 
 | Model | Python and checkpoints |
 | --- | --- |
@@ -173,14 +173,13 @@ Each scene provides six-view RGB for frames 0–9, historical traffic actors, a 
 
 ## Export the submission directory
 
-Run from the repository root, specifying the extracted public participant directory, the rendering conditions directory and an accurate method declaration. `PARTICIPANT_DIR` points to the extracted participant directory, and `SUBMISSION_METADATA` points to your method-declaration JSON. Fill in its fields according to the submission specification in the participant package.
+Run from the repository root. Set `PARTICIPANT_DIR` to the extracted `participant/` directory. The [challenge specification](challenge.md) defines the trajectory CSV and RGB frame names.
 
 ```bash
 python -m driveaudit.submission \
   --inputs "$PARTICIPANT_DIR" \
   --conditions work/two-scene-generation/conditions --renderer opendwm \
   --cases case_000001 case_000002 \
-  --metadata "$SUBMISSION_METADATA" \
   --output work/two-scene-submission
 ```
 
