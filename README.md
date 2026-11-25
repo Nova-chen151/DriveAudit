@@ -1,5 +1,7 @@
 [![English](https://img.shields.io/badge/English-2878B5?style=flat-square)](README.md) [![Simplified Chinese](https://img.shields.io/badge/Simplified_Chinese-777777?style=flat-square)](README.zh-CN.md)
 
+[Interactive scene comparisons](index.html)
+
 <div align="center" id="top">
 
 <img src="https://github.com/Nova-chen151/DriveAudit/blob/main/assets/readme/title.gif?raw=true" width="100%" alt="DriveAudit animated title retaining the original road, overpasses, and city backdrop">

@@ -1,5 +1,7 @@
 [![英文版](https://img.shields.io/badge/英文版-777777?style=flat-square)](README.md) [![简体中文](https://img.shields.io/badge/简体中文-2878B5?style=flat-square)](README.zh-CN.md)
 
+[交互式场景对比](index.html)
+
 <div align="center" id="top">
 
 <img src="https://github.com/Nova-chen151/DriveAudit/blob/main/assets/readme/title.gif?raw=true" width="100%" alt="DriveAudit 原图标题动效，保留道路、高架与城市背景">
