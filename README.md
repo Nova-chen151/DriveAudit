@@ -2,71 +2,70 @@
 
 <div align="center" id="top">
 
-<img src="assets/readme/title.gif" width="640" alt="DriveAudit custom geometric wordmark with a driving loop inside the D">
+<img src="assets/readme/title.gif" width="100%" alt="DriveAudit animated title retaining the original road, overpasses, and city backdrop">
 
 ## Beyond Visual Realism: Benchmarking Generated Driving Scenarios as Policy Tests
 
-**Does a generated driving scenario merely look realistic—or work as a credible policy test?**
+[![Leaderboard](https://img.shields.io/badge/Leaderboard-A42C25?style=for-the-badge&logo=simpleanalytics&logoColor=white)](https://nova-chen151.github.io/Onsite3DSG-Benchmark.github.io/#leaderboard)
+[![Getting Started](https://img.shields.io/badge/Getting_Started-5F259F?style=for-the-badge&logo=rocket&logoColor=white)](#getting-started)
+[![Models](https://img.shields.io/badge/Models-FFC107?style=for-the-badge&logo=onnx&logoColor=222222)](#benchmarked-models)
+[![Documentation](https://img.shields.io/badge/Documentation-019B8F?style=for-the-badge&logo=readthedocs&logoColor=white)](#documentation)
+[![Apache-2.0 license](https://img.shields.io/badge/Apache--2.0-2E7D32?style=for-the-badge&logo=apache&logoColor=white)](LICENSE)
 
-[![Benchmark](https://img.shields.io/badge/Benchmark-550_Scenarios-2878B5?style=for-the-badge)](#dataset)
-[![Generators](https://img.shields.io/badge/Generators-7_Baselines-766091?style=for-the-badge)](#benchmarked-models)
-[![Policies](https://img.shields.io/badge/Driving_Policies-6_Models-438563?style=for-the-badge)](#benchmarked-models)
-[![Closed Loop](https://img.shields.io/badge/Closed_Loop-Run_Guide-C57A48?style=for-the-badge)](#closed-loop)
-[![Leaderboard](https://img.shields.io/badge/Leaderboard-Explore-2878B5?style=for-the-badge)](#leaderboard)
-
-[Overview](#overview) · [Evaluation](#evaluation) · [Leaderboard](#leaderboard) · [Getting Started](#getting-started) · [Documentation](#documentation)
-
-<img src="assets/readme/overview.png" width="100%" alt="DriveAudit framework: multi-source histories, scenario generation, and four levels of policy-test evaluation">
+<a id="overview"></a>
+<a id="-overview"></a>
+<img src="assets/readme/overview.png" width="" alt="DriveAudit framework: multi-source histories, scenario generation, and four levels of policy-test evaluation">
 
 </div>
 
-<a id="overview"></a>
-## 🔎 Overview
+<a id="highlights"></a>
+## 🔥 Highlights
 
-Photorealistic driving videos are not necessarily reliable policy tests: generated images may disagree with traffic states, and corrupted observations can cause failures without exposing a meaningful driving weakness. **DriveAudit evaluates the testing value of generated driving scenarios, not visual realism or policy failure in isolation.**
+- 📐 **Four-level evaluation:** connect observation quality, scenario fidelity, policy response, and testing effectiveness in one framework.
+- ⚖️ **Quality-aware scoring:** QTES rewards paired policy degradation together with retained scenario quality; RPDMS adds responsibility-aware collision scoring.
+- 🌐 **Multi-source, multi-model benchmark:** 550 scenarios, seven generation baselines, and six driving policies, with tooling for traffic generation, rendering, paired evaluation, and closed-loop feedback.
 
-The pipeline separates **traffic trajectory generation** from **multi-view rendering**, then evaluates an independent driving policy on generated and recorded observations. Comparing recorded-traffic rendering with generated-traffic rendering helps isolate the effect of alternative traffic futures.
+<a id="contents"></a>
+## 📌 Table of Contents
 
-### Highlights
-
-- **Four-level evaluation:** connect observation quality, scenario fidelity, policy response, and testing effectiveness in one framework.
-- **Quality-aware scoring:** QTES rewards paired policy degradation together with retained scenario quality; RPDMS adds responsibility-aware collision scoring.
-- **Multi-source, multi-model benchmark:** 550 scenarios, seven generation baselines, and six driving policies, with tooling for traffic generation, rendering, paired evaluation, and closed-loop feedback.
-
-### Contents
-
-- [Evaluation framework](#evaluation)
-- [Dataset](#dataset)
-- [Leaderboard and benchmarked models](#leaderboard)
-- [Getting started](#getting-started)
-- [Closed-loop testing](#closed-loop)
-- [Documentation](#documentation)
+- 📐 [Evaluation framework](#evaluation)
+- 📦 [Dataset](#dataset)
+- ⚖️ [Leaderboard](#leaderboard) · [Benchmarked models](#benchmarked-models)
+- 🎯 [Getting started](#getting-started)
+  - [Install](#installation)
+  - [Prepare resources and configuration](#resources-and-configuration)
+  - [Generate driving scenarios](#scenario-generation)
+  - [Evaluate the six-policy panel](#six-policy-evaluation)
+- 🔁 [Closed-loop testing](#closed-loop)
+- 📚 [Documentation](#documentation)
+- ❤️ [Acknowledgements](#acknowledgements)
+- ⭐ [License and Citation](#license-and-citation)
 
 <a id="evaluation"></a>
 ## 📐 Evaluation Framework
 
 <table>
-<thead><tr><th></th><th>Dimension</th><th>Description</th></tr></thead>
+<thead><tr><th></th><th>Dimension</th><th>Why we evaluate it</th></tr></thead>
 <tbody>
 <tr>
-<td width="144" align="center"><img src="assets/readme/observation-quality.gif" width="128" height="128" alt="Looping layered video frames with temporally continuous motion"></td>
+<td width="144" align="center"><img src="assets/readme/observation-quality.gif" width="128" height="128" alt="The supplied observation SVG with an animated tracking pupil"></td>
 <td width="170"><b>Observation quality</b></td>
-<td><p><b>FVD ↓ · CLIP-IQA+ ↑ · DINO-T ↑</b></p><p>FVD and CLIP-IQA+ assess visual realism and perceptual quality, while DINO-T measures temporal coherence. Together they check whether generated observations are credible and stable, before interpreting policy behavior.</p></td>
+<td>Rendering artifacts and flicker can change how a driving policy responds. We check whether the camera views look realistic and remain coherent over time before interpreting the policy’s behavior.</td>
 </tr>
 <tr>
-<td width="144" align="center"><img src="assets/readme/scenario-fidelity.gif" width="128" height="128" alt="Moving camera views projecting onto a consistent 3D object"></td>
+<td width="144" align="center"><img src="assets/readme/scenario-fidelity.gif" width="128" height="128" alt="The supplied cube SVG with animated geometric projection cues"></td>
 <td width="170"><b>Scenario fidelity</b></td>
-<td><p><b>Epi@3 ↑ · TVC ↑ · TRS ↑</b></p><p>Epi@3 measures cross-view geometric consistency, and TVC checks agreement between rendered images and traffic states. TRS assesses the traffic distribution with an additional geometric-overlap penalty; plausible alternative futures need not reproduce the recorded future.</p></td>
+<td>A recorded drive captures only one possible future. We check whether the generated traffic moves plausibly and whether the camera views agree with each other and with the traffic states used to score the policy.</td>
 </tr>
 <tr>
-<td width="144" align="center"><img src="assets/readme/policy-response.gif" width="128" height="128" alt="A vehicle continuously following a curved planned route"></td>
+<td width="144" align="center"><img src="assets/readme/policy-response.gif" width="128" height="128" alt="The supplied car SVG with light moving along its planning curves"></td>
 <td width="170"><b>Policy response</b></td>
-<td><p><b>RPDMS ↑ · Route Completion ↑</b></p><p>An independent, frozen driving policy is evaluated for safety, comfort, progress, and route completion. RPDMS corrects collision scoring for ego responsibility, while Route Completion measures how much of the route the policy completes.</p></td>
+<td>We run the same frozen policy on recorded and generated observations to see how its plans change in safety, comfort, and route progress. When a collision occurs, we assess how much the ego vehicle contributed to it.</td>
 </tr>
 <tr>
-<td width="144" align="center"><img src="assets/readme/testing-effectiveness.gif" width="128" height="128" alt="Paired paths passing through a quality-evidence gate"></td>
+<td width="144" align="center"><img src="assets/readme/testing-effectiveness.gif" width="128" height="128" alt="The supplied response-trace SVG with an animated audit magnifier and check"></td>
 <td width="170"><b>Quality-aware testing effectiveness</b></td>
-<td><p><b>QTES ↑</b></p><p>QTES multiplicatively constrains paired policy degradation by retained observation quality and scenario fidelity. A valid reference self-comparison scores 50: more policy failures alone do not imply a better test, especially when quality deteriorates.</p></td>
+<td>Poor rendering or implausible traffic can make a policy perform worse. We give a performance drop relative to the paired recording more weight when the generated scene preserves visual quality and traffic fidelity.</td>
 </tr>
 </tbody>
 </table>
@@ -78,60 +77,42 @@ The main benchmark uses **non-reactive replay**: predicted actions do not change
 <a id="dataset"></a>
 ## 📦 Dataset
 
-The manuscript benchmark contains **550 scenario histories from five sources**, using a six-view interface with timestamps, calibration, and traffic states.
+The example uses two nuScenes cases from the participant archive, `case_000001` and `case_000002`. Set `archive` in the [example configuration](configs/generation.json) to your copy of the package. Each case provides 10 frames of six-camera history, traffic tracks, a map, and the ego and camera poses for the next 80 frames.
 
-| Input group | Sources | Scenarios | Views |
-| --- | --- | ---: | --- |
-| Native multi-camera | nuScenes, Argoverse 2, nuPlan, PandaSet | 500 | Recorded multi-camera histories |
-| Monocular-derived multi-view | Nexar | 50 | Recorded front view; five views completed generatively |
-
-The runnable example selects **two nuScenes scenes**, `case_000001` and `case_000002`, and generates **80 future frames × 6 cameras** per scene. Histories use frames 0–9; generation targets frames 10–89, conditioned on the public ego and camera poses. Observed and synthesized views remain distinguished.
-
-Participant archives, model weights, and organizer reference assets are provisioned separately. See [input preparation and submission](docs/generation.md#participant-inputs-and-submission) for the available package format and export steps.
+For each case, submit a CSV of future traffic trajectories and 80 RGB images per camera for all six views. Use the two cases to check your pipeline. For the competition submission, generate results for every case on the organizer’s list and check them with the validator in the participant package. [Input format and submission export](docs/generation.md#participant-inputs-and-submission)
 
 <a id="benchmark-results"></a>
 <a id="leaderboard"></a>
 ## ⚖️ Leaderboard
 
-<p align="center">
-<a href="https://nova-chen151.github.io/Onsite3DSG-Benchmark.github.io/"><img src="https://img.shields.io/badge/Leaderboard-Explore_the_Benchmark-2878B5?style=for-the-badge" alt="Open the DriveAudit leaderboard website"></a>
-</p>
-
-Visit the leaderboard website using the button above. This README introduces the evaluation dimensions and benchmarked models without duplicating numerical results.
+The [interactive leaderboard](https://nova-chen151.github.io/Onsite3DSG-Benchmark.github.io/#leaderboard) ranks generators by QTES under the **generated trajectories + rendering** setting. Sort the metric columns to see how each model’s visual quality and traffic fidelity compare with its effect on driving policies. Open a model’s score record for its full results.
 
 <a id="model-zoo"></a>
 <a id="benchmarked-models"></a>
 <details open>
 <summary><b>Benchmarked Models</b></summary>
 
-### Six-view rendering models · source
+<a id="six-view-rendering-models--source"></a>
+<a id="driving-policies--source"></a>
 
-- [x] [MagicDrive-V2](models/generation/image/MagicDrive-V2)
-- [x] [OpenDWM](models/generation/image/OpenDWM)
-- [x] [Panacea](models/generation/image/Panacea)
-- [x] [DreamForge](models/generation/image/DreamForge)
-- [x] [BaseDreamer](models/generation/image/BaseDreamer)
-- [x] [HorizonDrive](models/generation/image/HorizonDrive)
-- [x] [MagicDrive](models/generation/image/MagicDrive)
-
-### Driving policies · source
-
-- [x] [UniAD](models/agents/UniAD)
-- [x] [VAD](models/agents/VAD)
-- [x] [DrivoR](models/agents/DrivoR)
-- [x] [SparseDriveV2](models/agents/SparseDriveV2)
-- [x] [DiffusionDriveV2](models/agents/DiffusionDriveV2)
-- [x] [GoalFlow](models/agents/GoalFlow)
+| Rendering models | Driving policies |
+| --- | --- |
+| [MagicDrive-V2](models/generation/image/MagicDrive-V2)&nbsp;·&nbsp;**ICCV&nbsp;2025**&nbsp;·&nbsp;[code](https://github.com/flymin/MagicDrive-V2) | [UniAD](models/agents/UniAD)&nbsp;·&nbsp;**CVPR&nbsp;2023**&nbsp;·&nbsp;[code](https://github.com/OpenDriveLab/UniAD) |
+| [OpenDWM](models/generation/image/OpenDWM)&nbsp;·&nbsp;**Project**&nbsp;·&nbsp;[code](https://github.com/SenseTime-FVG/OpenDWM) | [VAD](models/agents/VAD)&nbsp;·&nbsp;**ICCV&nbsp;2023**&nbsp;·&nbsp;[code](https://github.com/hustvl/VAD) |
+| [Panacea](models/generation/image/Panacea)&nbsp;·&nbsp;**CVPR&nbsp;2024**&nbsp;·&nbsp;[code](https://github.com/wenyuqing/panacea) | [DrivoR](models/agents/DrivoR)&nbsp;·&nbsp;**CVPR&nbsp;2026**&nbsp;·&nbsp;[code](https://github.com/valeoai/DrivoR) |
+| [DreamForge](models/generation/image/DreamForge)&nbsp;·&nbsp;[arXiv&nbsp;2024](https://arxiv.org/abs/2409.04003)&nbsp;·&nbsp;[code](https://github.com/PJLab-ADG/DriveArena) | [SparseDriveV2](models/agents/SparseDriveV2)&nbsp;·&nbsp;**ECCV&nbsp;2026**&nbsp;·&nbsp;[code](https://github.com/swc-17/SparseDriveV2) |
+| [BaseDreamer](models/generation/image/BaseDreamer)&nbsp;·&nbsp;**Adaptation**&nbsp;·&nbsp;[source](vendor/generation/README.md) | [DiffusionDriveV2](models/agents/DiffusionDriveV2)&nbsp;·&nbsp;[arXiv&nbsp;2025](https://arxiv.org/abs/2512.07745)&nbsp;·&nbsp;[code](https://github.com/hustvl/DiffusionDriveV2) |
+| [HorizonDrive](models/generation/image/HorizonDrive)&nbsp;·&nbsp;[arXiv&nbsp;2026](https://arxiv.org/abs/2605.11596)&nbsp;·&nbsp;[code](https://github.com/zcliangyue/HorizonDrive) | [GoalFlow](models/agents/GoalFlow)&nbsp;·&nbsp;**CVPR&nbsp;2025**&nbsp;·&nbsp;[code](https://github.com/YvanYin/GoalFlow) |
+| [MagicDrive](models/generation/image/MagicDrive)&nbsp;·&nbsp;**ICLR&nbsp;2024**&nbsp;·&nbsp;[code](https://github.com/cure-lab/MagicDrive) | — |
 
 **Traffic-generation backend:** [CAT-K](models/generation/trajectory/CAT-K) supplies traffic trajectories and is not one of the seven main rendering baselines. See the [generation guide](docs/generation.md) for renderer setup and the [evaluation guide](docs/evaluation.md) for policy adapters and the sensor protocol.
-
-Native model sources are included. Checkpoints and compatible per-model Python/CUDA environments must be prepared separately; the orchestration package does not replace upstream runtime dependencies.
 
 </details>
 
 <a id="getting-started"></a>
 ## 🎯 Getting Started
 
+<a id="installation"></a>
 ### 1. Clone and install
 
 ```bash
@@ -143,6 +124,7 @@ python -m driveaudit --help
 
 The orchestration package requires **Python ≥ 3.9**. Native GPU inference requires Linux and each model's compatible environment. Follow the [generation guide](docs/generation.md) to install source adapters, compiled extensions, and external weights; use the [policy guide](docs/evaluation.md) for driving-policy environments.
 
+<a id="resources-and-configuration"></a>
 ### 2. Prepare resources and configuration
 
 Prepare the participant archive, native runtimes, and checkpoints. For paired evaluation, also provide the organizer scene mapping and recorded reference assets. Keep local resources under ignored `work/` and `weights/`, or point configuration paths to external storage.
@@ -155,7 +137,9 @@ Prepare the participant archive, native runtimes, and checkpoints. For paired ev
 
 JSON paths resolve **relative to the configuration file**. The example selects **OpenDWM + DrivoR**. Adjust Slurm partitions, GPU types, and resource paths for your cluster; use a distinct evaluation output directory for each renderer.
 
-### 3. Inspect and submit the pipeline
+<a id="scenario-generation"></a>
+<a id="3-inspect-and-submit-the-pipeline"></a>
+### 3. Generate driving scenarios
 
 ```bash
 # Inspect stage commands before submitting GPU work.
@@ -165,8 +149,9 @@ python -m driveaudit run --config configs/pipeline.json --plan
 bash scripts/submit_demo.sh configs/pipeline.json
 ```
 
-The generation flow is **CAT-K traffic → renderer conditions → six-view RGB**. Participants can stop after rendering and [export a submission](docs/generation.md#participant-inputs-and-submission). Recorded-reference staging and paired scoring require organizer assets.
+The generation flow is **CAT-K traffic → renderer conditions → six-view RGB**. Participants can stop after rendering and [export a submission](docs/generation.md#participant-inputs-and-submission).
 
+<a id="six-policy-evaluation"></a>
 ### 4. Evaluate the six-policy panel
 
 After generated observations, paired reference inputs, policy assets, and quality measurements are ready:
@@ -197,12 +182,17 @@ Use the [closed-loop guide](closed_loop/README.md) to configure a scene, select 
 | Configure policies; run paired inference and QTES evaluation | [Policies and evaluation](docs/evaluation.md) |
 | Run and verify action-feedback testing | [Closed-loop testing](closed_loop/README.md) |
 
-## 🤝 Acknowledgements and Terms
+<a id="acknowledgements-and-terms"></a>
+<a id="acknowledgements"></a>
+## ❤️ Acknowledgements
 
-DriveAudit builds on [NAVSIM](https://github.com/autonomousvision/navsim) and the traffic-generation, rendering, and driving-policy projects listed in the [benchmarked models](#benchmarked-models).
+We thank the [nuScenes team](https://www.nuscenes.org/nuscenes) for the driving data, [CAT-K](https://github.com/NVlabs/catk) for traffic generation, and [NAVSIM](https://github.com/autonomousvision/navsim) for the planning evaluation framework. We also thank the contributors to the [rendering models and driving policies](#benchmarked-models) used in DriveAudit.
 
-The overview figure comes from the supplied manuscript *Beyond Visual Realism: Benchmarking Generated Driving Scenarios as Policy Tests*. The animated evaluation icons and custom wordmark are original, rendered with [render_framework.py](assets/readme/render_framework.py) and [render_title.py](assets/readme/render_title.py). The paper figure retains its original rights.
+<a id="license-and-citation"></a>
+## ⭐ License and Citation
 
-Upstream code retains its original licenses and notices. Datasets, pretrained weights, and derived data remain subject to their respective usage and redistribution terms.
+Our code is available under the [Apache License 2.0](LICENSE). Third-party code and pretrained weightsretain their respective licenses and notices.
+
+The participant example uses nuScenes data. Unless otherwise marked, Motional provides these data under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) with its additional [nuScenes Dataset Terms](https://www.nuscenes.org/terms-of-use). Commercial use requires a separate [license from Motional](https://www.nuscenes.org/terms-of-use-commercial).
 
 [↑ Back to top](#top)
