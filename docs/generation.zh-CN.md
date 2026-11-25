@@ -1,6 +1,6 @@
 # 选手输入、CAT-K 与未来 RGB
 
-[![English](https://img.shields.io/badge/English-777777?style=flat-square)](generation.md) [![简体中文](https://img.shields.io/badge/简体中文-2878B5?style=flat-square)](generation.zh-CN.md)
+[![英文版](https://img.shields.io/badge/英文版-777777?style=flat-square)](generation.md) [![简体中文](https://img.shields.io/badge/简体中文-2878B5?style=flat-square)](generation.zh-CN.md)
 
 [首页](../README.zh-CN.md) · [评估指南](evaluation.zh-CN.md#evaluation-scope)
 
@@ -19,7 +19,7 @@
 | 变量 | 已有资源 |
 | --- | --- |
 | `WEIGHTS` | 检查点缓存，包含 `driveaudit/generation/installation.py` 所列的渲染器发布权重，以及 BaseDreamer 的 CLIP 目录。 |
-| `CATK_ASSETS` | CAT-K 资源根目录，包含 `checkpoints/clsft_E9.ckpt` 及 `src/smart/tokens` 下的三个 token 词表文件。 |
+| `CATK_ASSETS` | CAT-K 资源根目录，包含 `checkpoints/clsft_E9.ckpt` 及 `src/smart/tokens` 下的三个词表文件。 |
 | `V2_CKPTS`, `V2_PRETRAINED` | MagicDrive-V2 DiT 检查点目录树，以及 CogVideoX VAE/T5 预训练目录树。 |
 | `ABI_ROOT` | 兼容的已编译 gen-benchmark 目录树。安装器列出了 BaseDreamer、DreamForge、MagicDrive 和 Panacea 扩展相对于项目的路径。这些是已测试 Linux/Python/CUDA 环境的编译组件。 |
 | `CONDA_ENVS` | 各模型使用的原生 Python 环境。 |
@@ -124,8 +124,8 @@ srun -p L40 --gres=gpu:l40:4 -c 24 --mem=256G \
 | DreamForge | 每场景一个工作进程，20 个去噪步骤 | 3.9 / 2.0.0+cu118 |
 | HorizonDrive | Accelerate 分布式评估，bf16 | 3.10 / 2.8.0+cu128 |
 | MagicDrive | 每场景一个工作进程，发布版视频流水线 | 3.8 / 1.10.2+cu113 |
-| OpenDWM | 两个 rank 的 FSDP，40 个去噪步骤 | 3.10 / 2.5.1+cu121 |
-| Panacea | 两个 rank，25 步，滚动生成参考帧及有序未来槽位 | 3.8 / 1.13.1+cu117 |
+| OpenDWM | 两个并行进程执行 FSDP，40 个去噪步骤 | 3.10 / 2.5.1+cu121 |
+| Panacea | 两个并行进程，25 步，滚动生成参考帧及有序未来槽位 | 3.8 / 1.13.1+cu117 |
 | MagicDrive-V2 | 四张 GPU，89 帧序列，9 帧历史 RGB 与 80 帧生成图像 | 3.10 / 2.4.0 |
 
 Panacea 将参考帧放在模型的最后一个槽位，按时间顺序提供未来目标，并将每个窗口最后一张生成帧作为下一个参考帧。
@@ -138,9 +138,9 @@ Panacea 将参考帧放在模型的最后一个槽位，按时间顺序提供未
 
 | 渲染器 | 本配置中的 RGB 参考 | 推理接收的交通、地图与运动信息 |
 | --- | --- | --- |
-| BaseDreamer | 第 9 帧初始化首步。随后每步使用前一步生成的六视角帧。 | 流水线接收四通道鸟瞰（BEV）道路/地图栅格、14 通道投影布局、可见的 3D 包围盒角点/类别/掩码 token、相机矩阵及目标相对参考帧的自车位姿。 |
-| DreamForge | 两个初始参考槽位均为第 9 帧。后续窗口使用前一窗口最后两张生成帧。 | 流水线接收 BEV 地图、逐相机地图/交通参与者布局、3D 包围盒 token 和可见性掩码、标定投影矩阵，以及根据公开自车轨迹在局部坐标系推导的 CAN 总线风格运动信息。 |
-| HorizonDrive | 历史帧 0–9 加上重复的第 9 帧填满 11 个参考槽位。 | 配置的条件投影接收逐相机 bbox 和高精地图图像，以及连续自车运动动作（局部 delta x、delta y 和 delta yaw）。标定用于投影栅格。 |
+| BaseDreamer | 第 9 帧初始化首步。随后每步使用前一步生成的六视角帧。 | 流水线接收四通道鸟瞰（BEV）道路/地图栅格、14 通道投影布局、表示可见三维包围盒角点、类别和掩码的标记、相机矩阵及目标相对参考帧的自车位姿。 |
+| DreamForge | 两个初始参考槽位均为第 9 帧。后续窗口使用前一窗口最后两张生成帧。 | 流水线接收 BEV 地图、逐相机地图/交通参与者布局、三维包围盒标记 和可见性掩码、标定投影矩阵，以及根据公开自车轨迹在局部坐标系推导的 CAN 总线风格运动信息。 |
+| HorizonDrive | 历史帧 0–9 加上重复的第 9 帧填满 11 个参考槽位。 | 配置的条件投影接收各相机视角的包围盒和高精地图图像，以及自车在局部坐标系中的连续运动增量（纵向位移、横向位移和航向角变化）。标定用于投影栅格。 |
 | MagicDrive | 仅布局条件推理。此适配器的两个窗口均从噪声生成。 | 两个有重叠的 61 帧窗口使用自车对齐的语义 BEV 地图、可见 3D 包围盒角点/类别/掩码和相机矩阵。公开自车运动通过逐帧地图和包围盒坐标进入模型。 |
 | OpenDWM | RGB 帧 7–9 初始化滚动生成。后续 19 帧窗口保留三帧重叠。 | 原生六通道图像适配器在所有帧接收彩色投影包围盒边缘与公开高精地图轮廓。其显式视角模型还接收归一化相机内参、与公开自车位姿复合的相机配置外参，以及相邻视角掩码。 |
 | Panacea | 第 9 帧初始化首个参考帧。后续窗口使用各自最后一个生成目标帧。 | 19 通道全景图组合三个投影包围盒通道、十个按类别划分的包围盒深度通道、三个矢量地图通道及三个标定视线通道。每个未来槽位接收通过公开自车位姿变换后的独立布局。 |
@@ -173,7 +173,7 @@ Slurm 调度入口支持三个起点。新建交通任务时使用 `bash scripts
 
 ## 导出提交目录
 
-在仓库根目录运行，将 `PARTICIPANT_DIR` 指向解压得到的 `participant/` 目录。轨迹 CSV 与 RGB 帧的文件名见[赛题说明](challenge.md)。
+在仓库根目录运行，将 `PARTICIPANT_DIR` 指向解压得到的 `participant/` 目录。轨迹 CSV 与 RGB 帧的文件名见[赛题说明](challenge.zh-CN.md)。
 
 ```bash
 python -m driveaudit.submission \

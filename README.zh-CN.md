@@ -1,4 +1,4 @@
-[![English](https://img.shields.io/badge/English-777777?style=flat-square)](README.md) [![简体中文](https://img.shields.io/badge/简体中文-2878B5?style=flat-square)](README.zh-CN.md)
+[![英文版](https://img.shields.io/badge/英文版-777777?style=flat-square)](README.md) [![简体中文](https://img.shields.io/badge/简体中文-2878B5?style=flat-square)](README.zh-CN.md)
 
 <div align="center" id="top">
 
@@ -81,7 +81,7 @@
 
 示例使用选手包中的两个 nuScenes 场景 `case_000001` 和 `case_000002`。将[示例配置](configs/generation.json)中的 `archive` 设为本地选手包路径。每个场景提供六路相机的 10 帧历史图像、历史交通轨迹、地图，以及未来 80 帧的自车和相机位姿。
 
-每个场景需提交一份未来交通轨迹 CSV，以及六路相机各 80 张 RGB 图像。可以先用这两个场景跑通生成和校验流程。正式提交时，需为主办方清单中的每个场景生成结果，并用选手包自带的校验器检查。[赛题与提交格式](docs/challenge.md)
+每个场景需提交一份未来交通轨迹 CSV，以及六路相机各 80 张 RGB 图像。可以先用这两个场景跑通生成和校验流程。正式提交时，需为主办方清单中的每个场景生成结果，并用选手包自带的校验器检查。[赛题与提交格式](docs/challenge.zh-CN.md)
 
 <a id="benchmark-results"></a>
 <a id="leaderboard"></a>
@@ -103,7 +103,7 @@
 | [OpenDWM](models/generation/image/OpenDWM)&nbsp;·&nbsp;**软件项目**&nbsp;·&nbsp;[源码](https://github.com/SenseTime-FVG/OpenDWM) | [VAD](models/agents/VAD)&nbsp;·&nbsp;**ICCV&nbsp;2023**&nbsp;·&nbsp;[源码](https://github.com/hustvl/VAD) |
 | [Panacea](models/generation/image/Panacea)&nbsp;·&nbsp;**CVPR&nbsp;2024**&nbsp;·&nbsp;[源码](https://github.com/wenyuqing/panacea) | [DrivoR](models/agents/DrivoR)&nbsp;·&nbsp;**CVPR&nbsp;2026**&nbsp;·&nbsp;[源码](https://github.com/valeoai/DrivoR) |
 | [DreamForge](models/generation/image/DreamForge)&nbsp;·&nbsp;[arXiv&nbsp;2024](https://arxiv.org/abs/2409.04003)&nbsp;·&nbsp;[源码](https://github.com/PJLab-ADG/DriveArena) | [SparseDriveV2](models/agents/SparseDriveV2)&nbsp;·&nbsp;**ECCV&nbsp;2026**&nbsp;·&nbsp;[源码](https://github.com/swc-17/SparseDriveV2) |
-| [BaseDreamer](models/generation/image/BaseDreamer)&nbsp;·&nbsp;**项目适配**&nbsp;·&nbsp;[来源](driveaudit/generation/README.zh-CN.md) | [DiffusionDriveV2](models/agents/DiffusionDriveV2)&nbsp;·&nbsp;[arXiv&nbsp;2025](https://arxiv.org/abs/2512.07745)&nbsp;·&nbsp;[源码](https://github.com/hustvl/DiffusionDriveV2) |
+| [BaseDreamer](models/generation/image/BaseDreamer)&nbsp;·&nbsp;**项目适配**&nbsp;·&nbsp;[来源（英文）](driveaudit/generation/README.md) | [DiffusionDriveV2](models/agents/DiffusionDriveV2)&nbsp;·&nbsp;[arXiv&nbsp;2025](https://arxiv.org/abs/2512.07745)&nbsp;·&nbsp;[源码](https://github.com/hustvl/DiffusionDriveV2) |
 | [HorizonDrive](models/generation/image/HorizonDrive)&nbsp;·&nbsp;[arXiv&nbsp;2026](https://arxiv.org/abs/2605.11596)&nbsp;·&nbsp;[源码](https://github.com/zcliangyue/HorizonDrive) | [GoalFlow](models/agents/GoalFlow)&nbsp;·&nbsp;**CVPR&nbsp;2025**&nbsp;·&nbsp;[源码](https://github.com/YvanYin/GoalFlow) |
 | [MagicDrive](models/generation/image/MagicDrive)&nbsp;·&nbsp;**ICLR&nbsp;2024**&nbsp;·&nbsp;[源码](https://github.com/cure-lab/MagicDrive) | — |
 
@@ -135,8 +135,8 @@ python -m driveaudit --help
 
 | 路径 | 放什么 |
 | --- | --- |
-| [work/resources/participant.tar.gz](work/resources) | **选手输入包**。把下载的 nuScenes 原始 `.tar.gz` 复制或软链接为这个文件名，程序会自行解包。也可以在 [generation.json](configs/generation.json) 中把 `archive` 指向原文件。 |
-| [weights/](weights) | **共享权重库**。`catk/` 放交通模型权重与词表，`renderers/`、`magicdrivev2/` 放渲染权重，`agents/` 放主车权重，`evaluation/` 放评价模型权重。 |
+| [work/resources/participant.tar.gz](work/resources/README.zh-CN.md) | **选手输入包**。把下载的 nuScenes 原始 `.tar.gz` 复制或软链接为这个文件名，程序会自行解包。也可以在 [generation.json](configs/generation.json) 中把 `archive` 指向原文件。 |
+| [weights/](weights/README.zh-CN.md) | **共享权重库**。`catk/` 放交通模型权重与词表，`renderers/`、`magicdrivev2/` 放渲染权重，`agents/` 放主车权重，`evaluation/` 放评价模型权重。 |
 | `work/resources/envs/` | 各模型使用的 Python 环境，可软链接到本机已有环境。 |
 | `work/resources/scene_mapping.json` | 主办方配对评分使用的场景映射，配合真实参考数据使用。选手运行生成阶段无需准备此文件。 |
 

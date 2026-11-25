@@ -1,4 +1,4 @@
-[![English](https://img.shields.io/badge/English-2878B5?style=flat-square)](README.md) [![简体中文](https://img.shields.io/badge/简体中文-777777?style=flat-square)](README.zh-CN.md)
+[![English](https://img.shields.io/badge/English-2878B5?style=flat-square)](README.md) [![Simplified Chinese](https://img.shields.io/badge/Simplified_Chinese-777777?style=flat-square)](README.zh-CN.md)
 
 <div align="center" id="top">
 

@@ -1,4 +1,4 @@
-[![English](https://img.shields.io/badge/English-777777?style=flat-square)](README.md) [![简体中文](https://img.shields.io/badge/简体中文-2878B5?style=flat-square)](README.zh-CN.md)
+[![英文版](https://img.shields.io/badge/英文版-777777?style=flat-square)](README.md) [![简体中文](https://img.shields.io/badge/简体中文-2878B5?style=flat-square)](README.zh-CN.md)
 
 # DriveAudit 闭环测试
 

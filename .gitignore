@@ -12,10 +12,12 @@ build/
 !/work/resources/
 /work/resources/*
 !/work/resources/README.md
+!/work/resources/README.zh-CN.md
 ._*
 
 /weights
 !/weights/
 /weights/*
 !/weights/README.md
+!/weights/README.zh-CN.md
 /assets/readme/tools/

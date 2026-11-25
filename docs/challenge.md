@@ -1,5 +1,7 @@
 # DriveAudit challenge: generate future traffic and six-camera RGB
 
+[![English](https://img.shields.io/badge/English-2878B5?style=flat-square)](challenge.md) [![Simplified Chinese](https://img.shields.io/badge/Simplified_Chinese-777777?style=flat-square)](challenge.zh-CN.md)
+
 For each of the 250 nuScenes scenes, predict the future motion of the traffic participants, then render that prediction from six cameras on the ego vehicle. Use the supplied future ego and camera poses for rendering. Both outputs must describe the same scene at the same times. Use the provided history and conditioning data without looking up the withheld future traffic or images.
 
 ## Inputs

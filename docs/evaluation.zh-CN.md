@@ -1,6 +1,6 @@
 # 驾驶策略与配对评估
 
-[![English](https://img.shields.io/badge/English-777777?style=flat-square)](evaluation.md) [![简体中文](https://img.shields.io/badge/简体中文-2878B5?style=flat-square)](evaluation.zh-CN.md)
+[![英文版](https://img.shields.io/badge/英文版-777777?style=flat-square)](evaluation.md) [![简体中文](https://img.shields.io/badge/简体中文-2878B5?style=flat-square)](evaluation.zh-CN.md)
 
 [首页](../README.zh-CN.md) · [生成指南](generation.zh-CN.md#participant-inputs-and-submission)
 
@@ -12,7 +12,7 @@
 
 ## 评估范围
 
-论文报告的是 **非反应式回放（non-reactive replay）** 下的 550 场景、六策略基准。额外的 20 场景闭环研究采用独立协议。仓库示例使用两个 nuScenes 场景，结果仅描述所选场景。单策略诊断或已验证的闭环反馈链均不等同于正式六策略 QTES。
+论文报告的是 **非反应式回放** 下的 550 场景、六策略基准。额外的 20 场景闭环研究采用独立协议。仓库示例使用两个 nuScenes 场景，结果仅描述所选场景。单策略诊断或已验证的闭环反馈链均不等同于正式六策略 QTES。
 
 <a id="policy-setup-and-inference"></a>
 
@@ -47,7 +47,7 @@ python -m driveaudit.agents.predict --source real \
   --cases case_000001 case_000002 --output work/ego/drivor/real.jsonl
 ```
 
-DrivoR 使用其发布版的四相机子集，以及标定、速度、加速度和共享驾驶指令。演示默认为 STRAIGHT；可用 `--command` 选择其他共同指令。各分支在公开自车位姿下回放帧 10–89，预测动作不会改变后续观测。回执记录模型/配置与输入图像哈希、原生八位姿轨迹，以及 +0.5 至 +3 s 的六个评分路点（单位为米，x 向前、y 向左）。
+DrivoR 使用其发布版的四相机子集，以及标定、速度、加速度和共享驾驶指令。演示默认使用直行指令（`STRAIGHT`）；可用 `--command` 选择其他共同指令。各分支在公开自车位姿下回放帧 10–89，预测动作不会改变后续观测。回执记录模型/配置与输入图像哈希、原生八位姿轨迹，以及 +0.5 至 +3 s 的六个评分路点（单位为米，x 向前、y 向左）。
 
 <a id="replay-with-any-of-the-six-services"></a>
 
@@ -109,9 +109,9 @@ python -m driveaudit.evaluation \
 
 RPDMS 使用原生 `score_window` 和基于观测地图的 DAC 协议。每个符合条件的三秒规划贡献安全性、舒适性和路线进度项。发生重叠时会触发责任归因。无法归因或可行驶地图支持不足时，该窗口不计分。两个分支报告的 RPDMS 均值使用完全相同的受支持窗口 ID。单策略 TE 要求至少 80% 的共同覆盖率。每个结果均报告分子与分母。
 
-路线完成度（Route Completion）使用原始实录状态的滚动时域回放，包含终端时域提交、密集碰撞检查，以及对完整实录路线的连续投影。每次决策都将预测前缀重新锚定于实录自车里程计。只有原生投影覆盖率达到冻结阈值时，路线列才可用。交通与图像均来自固定序列。
+路线完成度使用原始实录状态的滚动时域回放，包含终端时域提交、密集碰撞检查，以及对完整实录路线的连续投影。每次决策都将预测前缀重新锚定于实录自车里程计。只有原生投影覆盖率达到冻结阈值时，路线列才可用。交通与图像均来自固定序列。
 
-对于每个场景，原生论文质量函数根据 CLIP-IQA+、DINO-T、Epi@3 和 TVC 计算局部保持率 `B`。支持完整时，`single_policy_QTES_diagnostic` 使用 `100 × TRS_population^0.25 × mean_scene(TE_policy × B)`。两场景 TRS 是总体指标，在表达式中只计入一次。数值诊断要求所有选定场景均有证据。运行单策略演示时，正式六策略 QTES 字段保持为 null。
+对于每个场景，原生论文质量函数根据 CLIP-IQA+、DINO-T、Epi@3 和 TVC 计算局部保持率 `B`。支持完整时，`single_policy_QTES_diagnostic` 使用 `100 × TRS_population^0.25 × mean_scene(TE_policy × B)`。两场景 TRS 是总体指标，在表达式中只计入一次。数值诊断要求所有选定场景均有证据。运行单策略演示时，正式六策略 QTES 字段保持为 `null`。
 
 <a id="full-six-policy-panel"></a>
 

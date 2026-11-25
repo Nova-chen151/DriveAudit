@@ -1,5 +1,3 @@
-[![English](https://img.shields.io/badge/English-2878B5?style=flat-square)](README.md) [![简体中文](https://img.shields.io/badge/简体中文-777777?style=flat-square)](README.zh-CN.md)
-
 # Generation source provenance
 
 - **Source:** participant traffic adapter, constrained sampler, renderer adapters, and shared GenBench loader from the Participant Visual Demos snapshot dated 2026-11-23. Native model backbones are tracked under `models/generation`; checkpoints and compatible compiled extensions are provisioned separately.

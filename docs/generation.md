@@ -1,6 +1,6 @@
 # Participant inputs, CAT-K and future RGB
 
-[![English](https://img.shields.io/badge/English-2878B5?style=flat-square)](generation.md) [![简体中文](https://img.shields.io/badge/简体中文-777777?style=flat-square)](generation.zh-CN.md)
+[![English](https://img.shields.io/badge/English-2878B5?style=flat-square)](generation.md) [![Simplified Chinese](https://img.shields.io/badge/Simplified_Chinese-777777?style=flat-square)](generation.zh-CN.md)
 
 [Home](../README.md) · [Evaluation guide](evaluation.md#evaluation-scope)
 

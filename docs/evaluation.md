@@ -1,6 +1,6 @@
 # Policies and paired evaluation
 
-[![English](https://img.shields.io/badge/English-2878B5?style=flat-square)](evaluation.md) [![简体中文](https://img.shields.io/badge/简体中文-777777?style=flat-square)](evaluation.zh-CN.md)
+[![English](https://img.shields.io/badge/English-2878B5?style=flat-square)](evaluation.md) [![Simplified Chinese](https://img.shields.io/badge/Simplified_Chinese-777777?style=flat-square)](evaluation.zh-CN.md)
 
 [Home](../README.md) · [Generation guide](generation.md#participant-inputs-and-submission)
 

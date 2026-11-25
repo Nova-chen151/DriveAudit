@@ -1,5 +1,7 @@
 # Model weights
 
+[![English](https://img.shields.io/badge/English-2878B5?style=flat-square)](README.md) [![Simplified Chinese](https://img.shields.io/badge/Simplified_Chinese-777777?style=flat-square)](README.zh-CN.md)
+
 Place checkpoints in the directories below. Keep the filenames and directory structure expected by each model.
 
 | Directory | Contents |
