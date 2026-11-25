@@ -1,11 +1,5 @@
 # Third-party runtime dependencies
 
-The only embedded third-party algorithm is the minimal Apache-2.0 CARS subset in `driveaudit_eval/vendor/cars/`. Its 15 original definitions cover FSM, CC-JP LaneAware, RSS, buffered collision checks and finite-horizon replay. It requires NumPy and Python `abc`; it does not require CARS models, training code, HDF5 loaders, CTG, Pplan, or trajdata. See its LICENSE, NOTICE.md and WHY_REQUIRED.md.
-
-The traffic evaluator calls `cars_adapter` when it attributes responsibility for a collision, including a collision that ends an episode. Valid CARS evidence about whether a collision was avoidable affects the responsibility estimate. When that evidence is unavailable, the evaluator still uses other trajectory evidence. Collision-free windows skip this step.
-
-The four vendored files are `responsibility_models.py`, `LICENSE`, `NOTICE.md`, and `WHY_REQUIRED.md`. The Python module supplies the controllers and collision and replay helpers that the evaluator calls. Vendoring this subset preserves the original source bytes, attribution formulas, and evidence weights.
-
 The six driving policies have source code and inference entry points under `models/agents/<model>/`. Their default weight directory is `weights/agents/<model>/`. Set `DRIVEAUDIT_AGENT_SOURCES` and `DRIVEAUDIT_AGENT_ASSETS` to use external directories. Older evaluation configurations also support the `DRIVEAUDIT_DEPENDENCIES/DrivingAgents` layout. Each model directory contains its license. See the [adapter notices](../../models/agents/NOTICE.md).
 
 DINOv2 uses a separate Torch Hub source tree and a configured checkpoint under its Apache-2.0 license. I3D, CLIP, CLIP-IQA+, and LoFTR require the weights specified in the evaluation configuration. If required assets are missing, report the corresponding scores as unavailable.
@@ -14,7 +8,7 @@ BEVFormer is an optional perception diagnostic outside the nine core metrics. To
 
 | Project | Source | Use in DriveAudit | License observed |
 |---|---|---|---|
-| CARS | https://github.com/RoboSafe-Lab/CARS-code | Exact controller/replay subset in `driveaudit_eval/vendor/cars/responsibility_models.py`; counterfactual responsibility evidence | Apache-2.0; full LICENSE and modification NOTICE next to source |
+| CARS | [CARS-code](https://github.com/RoboSafe-Lab/CARS-code) | FSM, CC-JP and RSS replay collisions to assess avoidability. | [Apache-2.0](driveaudit_eval/vendor/cars/LICENSE) · [Source notice](driveaudit_eval/vendor/cars/NOTICE.md) |
 | OnSite Unified Train-Test Scenario Generation Track Evaluation Tool | https://github.com/Nova-chen151/Onsite_UT2SG_Testing | Observability-based traffic-rule selection and geometry conventions, implemented in the DriveAudit traffic-compliance module; no runtime import | No LICENSE or NOTICE present anywhere in supplied source snapshot; do not infer a license from another OnSite repository |
 | Onsite Ego Testing | https://github.com/Nova-chen151/Onsite_Ego_Testing | Historical trajectory/evaluation reference; optional distribution-reference dataset; no runtime Python import | BSD-3-Clause, Copyright (c) 2026 Nova-chen151; complete notice below |
 | CAT-K | External `catk_root` configured in `tools/configs/catk.yaml`; checkpoint and token vocabulary stay outside the core package | Existing trajectory generator and checkpoint class definitions; not imported for cached TRS reproduction | NVIDIA Source Code License in the supplied CAT-K repository; not covered by this project's Apache-2.0 license |
@@ -24,8 +18,6 @@ BEVFormer is an optional perception diagnostic outside the nine core metrics. To
 | WorldLens | https://github.com/worldbench/WorldLens | Benchmark organization and temporal/multiview consistency concepts; no repository import | Apache-2.0 in supplied source |
 
 The OnSite UT2SG reference paths were `av_ego_scoring/EvaluationSystem-onsite2025/evaluateUtils/standard_parameter.py` and `TrafficRule_compliance/{detect_behaviors.py,rules_dict.py,pipeline.py,get_speed_limit_function.py}`. DriveAudit uses its own Trajectory schema and map context. Removing the downloaded repository does not remove the attribution or resolve the pre-existing absence of a license declaration. The local traffic module's source credit is retained; no new UT2SG source is vendored during this cleanup.
-
-CARS original source comments credit Mattas et al. (2022), UN R157 Annex 4 Appendix 3, Shalev-Shwartz et al. (2017), and consultation of JRC-FSM. The copied definitions retain those comments. The accompanying [license](driveaudit_eval/vendor/cars/LICENSE), [notice](driveaudit_eval/vendor/cars/NOTICE.md), and [runtime rationale](driveaudit_eval/vendor/cars/WHY_REQUIRED.md) document the source and why the evaluator uses it.
 
 ## Onsite Ego Testing complete license
 
