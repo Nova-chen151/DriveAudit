@@ -131,7 +131,14 @@ python -m driveaudit --help
 <a id="resources-and-configuration"></a>
 ### 2. 准备资源与配置
 
-准备选手输入包、原生运行环境和检查点。配对评测还需主办方场景映射及真实参考资源。本地资源可放在 Git 忽略的 `work/`、`weights/` 下，或通过配置指向外部存储。
+示例配置使用以下路径，均从仓库根目录算起。
+
+| 路径 | 放什么 |
+| --- | --- |
+| [work/resources/participant.tar.gz](work/resources) | **选手输入包**。把下载的 nuScenes 原始 `.tar.gz` 复制或软链接为这个文件名，程序会自行解包。也可以在 [generation.json](configs/generation.json) 中把 `archive` 指向原文件。 |
+| [weights/](weights) | **共享权重库**。`catk/` 放交通模型权重与词表，`renderers/`、`magicdrivev2/` 放渲染权重，`agents/` 放主车权重，`evaluation/` 放评价模型权重。 |
+| `work/resources/envs/` | 各模型使用的 Python 环境，可软链接到本机已有环境。 |
+| `work/resources/scene_mapping.json` | 主办方配对评分使用的场景映射，配合真实参考数据使用。选手运行生成阶段无需准备此文件。 |
 
 | 配置 | 用途 |
 | --- | --- |

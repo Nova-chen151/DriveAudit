@@ -8,6 +8,8 @@
 
 <a id="evaluation-scope"></a>
 
+[vendor/evaluation](vendor/evaluation) 存放评分引擎。[DriveAudit 评分入口](driveaudit/evaluation/score.py) 调用同一套实现，为真实回放和生成场景计算指标。
+
 ## 评估范围
 
 论文报告的是 **非反应式回放（non-reactive replay）** 下的 550 场景、六策略基准。额外的 20 场景闭环研究采用独立协议。仓库示例使用两个 nuScenes 场景，结果仅描述所选场景。单策略诊断或已验证的闭环反馈链均不等同于正式六策略 QTES。

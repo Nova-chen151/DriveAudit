@@ -127,7 +127,14 @@ The orchestration package requires **Python ≥ 3.9**. Native GPU inference requ
 <a id="resources-and-configuration"></a>
 ### 2. Prepare resources and configuration
 
-Prepare the participant archive, native runtimes, and checkpoints. For paired evaluation, also provide the organizer scene mapping and recorded reference assets. Keep local resources under ignored `work/` and `weights/`, or point configuration paths to external storage.
+The example configuration uses these paths relative to the repository root.
+
+| Path | What goes here |
+| --- | --- |
+| [work/resources/participant.tar.gz](work/resources) | The nuScenes participant archive. The runner extracts the selected scenes. Copy or link the original `.tar.gz` under this name, or set `archive` in [generation.json](configs/generation.json) to its existing location. |
+| [weights/](weights) | The shared model store. Use `catk/` for traffic weights and vocabularies, `renderers/` and `magicdrivev2/` for image generation, `agents/` for driving policies and `evaluation/` for metric weights. |
+| `work/resources/envs/` | Model-specific Python environments, or links to the environments on your system. |
+| `work/resources/scene_mapping.json` | Organizer-only mapping for paired evaluation, alongside access to the recorded references. Participants can run generation without it. |
 
 | Configuration | Purpose |
 | --- | --- |

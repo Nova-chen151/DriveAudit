@@ -6,8 +6,16 @@ __pycache__/
 *.egg-info/
 build/
 /dist/
-work/
+/work
+!/work/
+/work/*
+!/work/resources/
+/work/resources/*
+!/work/resources/.gitkeep
 ._*
 
 /weights
+!/weights/
+/weights/*
+!/weights/.gitkeep
 /assets/readme/tools/

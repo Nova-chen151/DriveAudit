@@ -68,7 +68,12 @@ def main():
         p.add_argument("--"+key, required=True, type=Path)
     args = p.parse_args()
     dest = args.output.absolute()
-    if dest.exists():
+    # A fresh clone has a tracked empty marker in weights/.
+    marker = dest / ".gitkeep"
+    scaffold = (dest.is_dir() and not dest.is_symlink()
+                and set(dest.iterdir()) == {marker} and marker.is_file()
+                and not marker.is_symlink() and marker.stat().st_size == 0)
+    if (dest.exists() or dest.is_symlink()) and not scaffold:
         raise FileExistsError(f"Use a fresh directory: {dest}")
     dest.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(dir=dest.parent, prefix=".weights-") as tmp:
@@ -77,7 +82,14 @@ def main():
         for source, relative in selected(args):
             materialize(source, stage/relative, stage, inventory)
         (stage/"inventory.json").write_text(json.dumps(inventory, indent=2, sort_keys=True)+"\n")
-        os.rename(stage, dest)
+        if scaffold:
+            (stage / ".gitkeep").touch()
+            marker.unlink()
+        try:
+            os.rename(stage, dest)
+        finally:
+            if scaffold and not marker.exists():
+                marker.touch(exist_ok=True)
     print(f"{dest}: {len(inventory)} verified files, {sum(inventory.values())} logical bytes")
 
 

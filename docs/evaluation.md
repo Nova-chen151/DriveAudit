@@ -8,6 +8,8 @@ The same frozen camera policy runs on generated and time-matched recorded observ
 
 <a id="evaluation-scope"></a>
 
+The scoring implementation lives in [vendor/evaluation](vendor/evaluation). The [DriveAudit scoring entry point](driveaudit/evaluation/score.py) imports it for both recorded and generated inputs.
+
 ## Evaluation scope
 
 The manuscript reports a 550-scenario, six-policy benchmark under **non-reactive replay**. Its additional 20-scenario closed-loop study is a separate protocol. The repository example uses two nuScenes scenes; results describe only the selected scenes. A single-policy diagnostic or a verified closed-loop feedback chain is not formal six-policy QTES.
