@@ -42,3 +42,10 @@ section:not(.hero)>h2{font-family:var(--serif);font-weight:500;letter-spacing:-.
 .paperfig{margin:24px 0}.paperfig img{display:block;width:100%;height:auto}.paperfig figcaption{font-size:15px;line-height:1.55;max-width:88ch}
 #feedback tbody tr:first-child{background:transparent;color:var(--ink)}
 @media(max-width:640px){.hero{padding:40px 0 28px}header nav{flex-wrap:wrap}#feedback table{min-width:520px}}
+
+.camera-inspect{max-width:400px;margin-inline:auto}
+.camera-inspect .camera-layer{position:absolute;inset:0;overflow:hidden}
+.camera-layer video{position:absolute;width:300%;max-width:none;height:auto;top:-25%;left:var(--camera-offset,-100%);border-radius:0}
+.camera-inspect .line b{white-space:nowrap}
+.camera-inspect .choices{grid-template-columns:repeat(2,minmax(0,1fr))}
+#camera-play{font:inherit;color:var(--ink);background:var(--paper);border:1px solid var(--rule);border-radius:4px;padding:4px 12px;cursor:pointer}
