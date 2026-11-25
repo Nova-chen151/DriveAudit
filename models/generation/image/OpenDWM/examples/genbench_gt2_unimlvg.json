@@ -1,8 +1,0 @@
-{
-  "base_config": "examples/ctsd_unimlvg_6views_video_generation.json",
-  "sequence_length": 83,
-  "sequence_length_per_iteration": 19,
-  "reference_frame_count": 3,
-  "generate_frames_for_reference": false,
-  "preview_image_size": [448, 256]
-}

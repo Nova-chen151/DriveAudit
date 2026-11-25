@@ -1,1 +1,0 @@
-{"version": {"cuda": 1103, "torch": "1.10.2+cu113", "python": "3.8.18"}, "env": {"TORCH_CUDA_ARCH_LIST": "8.0+PTX", "XFORMERS_BUILD_TYPE": null, "XFORMERS_ENABLE_DEBUG_ASSERTIONS": null, "NVCC_FLAGS": null, "XFORMERS_PACKAGE_FROM": null}}
