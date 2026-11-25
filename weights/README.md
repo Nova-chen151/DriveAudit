@@ -1,14 +1,13 @@
-# 模型权重
+# Model weights
 
-将模型文件按以下子目录放置，保留各模型要求的文件名和层级。
+Place checkpoints in the directories below. Keep the filenames and directory structure expected by each model.
 
-| 目录 | 内容 |
+| Directory | Contents |
 | --- | --- |
-| `catk/` | CAT-K 检查点和轨迹词表 |
-| `renderers/`、`magicdrivev2/` | 七个图像生成模型的权重 |
-| `agents/` | 六个主车策略的权重 |
-| `evaluation/` | 视觉评价模型的权重及缓存 |
+| `catk/` | CAT-K checkpoint and token vocabularies |
+| `renderers/` | Checkpoints for BaseDreamer, DreamForge, HorizonDrive, MagicDrive, OpenDWM, and Panacea |
+| `magicdrivev2/` | MagicDrive-V2 checkpoints and pretrained components |
+| `agents/` | Checkpoints for the six driving policies |
+| `evaluation/` | Weights and caches for the visual quality metrics |
 
-已有权重库可按[生成指南](../docs/generation.zh-CN.md#model-weights)接入。Git 会忽略本目录中的权重文件。
-
-Model checkpoints go here. See the [English weights guide](../docs/generation.md#model-weights) for setup.
+Git ignores weight files in this directory. To use an existing weight store, see the [model weights guide](../docs/generation.md#model-weights).
