@@ -11,11 +11,11 @@ build/
 /work/*
 !/work/resources/
 /work/resources/*
-!/work/resources/.gitkeep
+!/work/resources/README.md
 ._*
 
 /weights
 !/weights/
 /weights/*
-!/weights/.gitkeep
+!/weights/README.md
 /assets/readme/tools/

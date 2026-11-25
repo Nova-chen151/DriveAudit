@@ -3,17 +3,15 @@ import csv
 import hashlib
 import json
 import re
-import sys
 from pathlib import Path
 
-from driveaudit.resources import resource_root
+from . import EVALUATION_ROOT, enable_engine_imports
 from statistics import mean
 
 import numpy as np
 import yaml
 
-VENDOR = resource_root() / "vendor" / "evaluation"
-sys.path.insert(0, str(VENDOR))
+enable_engine_imports()
 
 from driveaudit_eval.agents.core import ego_to_world
 from driveaudit_eval.agents.input_gt import load_scene, sample, score_window
@@ -148,7 +146,7 @@ def window_attribution(scene, window, actors, timestamps, times, poses, lookup, 
                          first_collision_frame=min(timestamps, key=lambda f: abs(timestamps[f]-hit_time)),
                          collision_sample_steps=group.tolist(), collision_duration=len(group)*.5)
             cars = evaluate_collision_responsibility([event], tracks, traffic_map,
-                dict(cfg["collision_responsibility"], traffic_config=traffic_cfg), {"root": VENDOR})["events"][0]
+                dict(cfg["collision_responsibility"], traffic_config=traffic_cfg), {"root": EVALUATION_ROOT})["events"][0]
             evidence = evaluate_event(cars, tracks, traffic_map, cfg["responsibility_v2"], cars_event=cars,
                 traffic_config=traffic_cfg, kinematic_thresholds=cfg["evaluation"]["trajectory"].get("kinematics", {}))
             final = classify(evidence, cfg["collision_responsibility_v3"])
@@ -159,7 +157,7 @@ def window_attribution(scene, window, actors, timestamps, times, poses, lookup, 
 
 
 def evaluate_branch(case, path, records):
-    cfg = yaml.safe_load((VENDOR / "driveaudit_eval/defaults.yaml").read_text())
+    cfg = yaml.safe_load((EVALUATION_ROOT / "driveaudit_eval/defaults.yaml").read_text())
     timestamps, times, poses, actors, _ = load_scene(path)
     raster = load_map_context(path)
     traffic_map = load_traffic_map(path)
@@ -200,7 +198,7 @@ def evaluate_branch(case, path, records):
     policy = next(iter(records.values()))["policy"]
     def terminal_attribution(event, window, executed_history):
         return evaluate_terminal_responsibility(event, window, executed_history, case, times, poses,
-            tracks, lookup, traffic_map, cfg, {"root": VENDOR}, timestamps)
+            tracks, lookup, traffic_map, cfg, {"root": EVALUATION_ROOT}, timestamps)
 
     options = dict(cfg["episode_rollout"], traffic_config=cfg["traffic_compliance"])
     replay = run_episode(case, policy, windows, actors, poses[:, :2], options,
@@ -308,7 +306,7 @@ def run(args):
                   official_status="requires_complete_formal_policy_population",
                   observation="generated RGB + generated traffic versus recorded RGB + recorded traffic",
                   implementation_sha256={"adapter": digest(Path(__file__)),
-                      **{k: digest(VENDOR/"driveaudit_eval"/k) for k in ("defaults.yaml", "agents/input_gt.py",
+                      **{k: digest(EVALUATION_ROOT/"driveaudit_eval"/k) for k in ("defaults.yaml", "agents/input_gt.py",
                           "episode_rollout.py", "route_projection.py", "metrics/core.py",
                           "metrics/population_testing.py", "metrics/testing_effectiveness.py")}},
                   hashes={k: digest(getattr(args, k)) for k in ("real", "generated", "scenes", "quality", "trs")

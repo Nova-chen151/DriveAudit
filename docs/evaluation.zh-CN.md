@@ -8,7 +8,7 @@
 
 <a id="evaluation-scope"></a>
 
-[vendor/evaluation](vendor/evaluation) 存放评分引擎。[DriveAudit 评分入口](driveaudit/evaluation/score.py) 调用同一套实现，为真实回放和生成场景计算指标。
+[driveaudit/evaluation/driveaudit_eval](../driveaudit/evaluation/driveaudit_eval) 存放评分引擎。[DriveAudit 评分入口](../driveaudit/evaluation/score.py) 调用同一套实现，为真实回放和生成场景计算指标。
 
 ## 评估范围
 

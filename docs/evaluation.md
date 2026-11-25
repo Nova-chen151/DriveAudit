@@ -8,7 +8,7 @@ The same frozen camera policy runs on generated and time-matched recorded observ
 
 <a id="evaluation-scope"></a>
 
-The scoring implementation lives in [vendor/evaluation](vendor/evaluation). The [DriveAudit scoring entry point](driveaudit/evaluation/score.py) imports it for both recorded and generated inputs.
+The scoring implementation lives in [driveaudit/evaluation/driveaudit_eval](../driveaudit/evaluation/driveaudit_eval). The [DriveAudit scoring entry point](../driveaudit/evaluation/score.py) imports it for both recorded and generated inputs.
 
 ## Evaluation scope
 

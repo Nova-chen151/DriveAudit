@@ -68,13 +68,13 @@ def main():
         p.add_argument("--"+key, required=True, type=Path)
     args = p.parse_args()
     dest = args.output.absolute()
-    # A fresh clone has a tracked empty marker in weights/.
-    marker = dest / ".gitkeep"
-    scaffold = (dest.is_dir() and not dest.is_symlink()
-                and set(dest.iterdir()) == {marker} and marker.is_file()
-                and not marker.is_symlink() and marker.stat().st_size == 0)
-    if (dest.exists() or dest.is_symlink()) and not scaffold:
-        raise FileExistsError(f"Use a fresh directory: {dest}")
+    marker = None
+    if dest.exists() or dest.is_symlink():
+        entries = list(dest.iterdir()) if dest.is_dir() and not dest.is_symlink() else []
+        if (len(entries) != 1 or entries[0].name not in {"README.md", ".gitkeep"}
+                or entries[0].is_symlink() or not entries[0].is_file()):
+            raise FileExistsError(f"Use a fresh directory: {dest}")
+        marker = entries[0]
     dest.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(dir=dest.parent, prefix=".weights-") as tmp:
         stage = Path(tmp)/"weights"
@@ -82,14 +82,13 @@ def main():
         for source, relative in selected(args):
             materialize(source, stage/relative, stage, inventory)
         (stage/"inventory.json").write_text(json.dumps(inventory, indent=2, sort_keys=True)+"\n")
-        if scaffold:
-            (stage / ".gitkeep").touch()
-            marker.unlink()
+        if marker is not None:
+            marker.rename(stage / marker.name)
         try:
             os.rename(stage, dest)
         finally:
-            if scaffold and not marker.exists():
-                marker.touch(exist_ok=True)
+            if marker is not None and (stage / marker.name).exists() and not marker.exists():
+                (stage / marker.name).rename(marker)
     print(f"{dest}: {len(inventory)} verified files, {sum(inventory.values())} logical bytes")
 
 

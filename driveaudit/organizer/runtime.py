@@ -1,13 +1,11 @@
-"""Resolve the native evaluator in this source checkout, including child interpreters."""
+"""Resolve the scoring engine for the organizer and child interpreters."""
 import os
-import sys
-from pathlib import Path
 
-from driveaudit.resources import resource_root
+from driveaudit.evaluation import EVALUATION_ROOT, enable_engine_imports
 
 
 def native_evaluator():
-    vendor = str(resource_root() / "vendor/evaluation")
-    sys.path.insert(0, vendor)
+    enable_engine_imports()
+    root = str(EVALUATION_ROOT)
     paths = os.environ.get("PYTHONPATH", "").split(os.pathsep)
-    os.environ["PYTHONPATH"] = os.pathsep.join([vendor, *(p for p in paths if p and p != vendor)])
+    os.environ["PYTHONPATH"] = os.pathsep.join([root, *(p for p in paths if p and p != root)])
