@@ -1,55 +1,59 @@
-const inspector = document.querySelector('.camera-inspect');
-const stage = inspector.querySelector('.stage');
-const slider = inspector.querySelector('#split');
-const clips = ['left', 'right'].map(id => document.getElementById(id));
-const choices = inspector.querySelectorAll('.choices button');
-const toggle = inspector.querySelector('#camera-play');
-const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
-let scene;
-let generation = 0;
+(() => {
+  const panel = document.querySelector('.camera-inspect');
+  const stage = panel.querySelector('.stage');
+  const slider = panel.querySelector('#split');
+  const button = panel.querySelector('#camera-play');
+  const choices = [...panel.querySelectorAll('.choices button')];
+  const contexts = ['left', 'right'].map(id => document.getElementById(id).getContext('2d'));
+  let images, timer, frame = 0, version = 0, interval = 125;
 
-slider.addEventListener('input', () => stage.style.setProperty('--split', slider.value + '%'));
-function pauseClips() {
-  generation++;
-  clips.forEach(video => video.pause());
-  toggle.textContent = 'Play clips';
-}
-async function playClips() {
-  const attempt = ++generation;
-  try {
-    await Promise.all(clips.map(video => video.play()));
-    if (attempt === generation) toggle.textContent = 'Pause clips';
-  } catch {
-    if (attempt === generation) pauseClips();
+  function draw() {
+    contexts.forEach((ctx, i) => ctx.drawImage(images[i], (frame % 8) * 400,
+      Math.floor(frame / 8) * 224, 400, 224, 0, 0, 400, 224));
   }
-}
-function selectClip(button) {
-  if (scene !== button.dataset.scene) {
-    pauseClips();
-    scene = button.dataset.scene;
-    clips.forEach((video, i) => {
-      const model = i === 0 ? 'opendwm' : 'dreamforge';
-      video.src = 'media/' + model + '-' + scene + '.mp4';
-      video.preload = 'auto';
-      video.load();
-    });
+  function stop() {
+    clearInterval(timer);
+    timer = null;
+    button.textContent = 'Play clips';
   }
-  stage.style.setProperty('--camera-offset', button.dataset.camera === 'CAM_FRONT' ? '-100%' : '0%');
-  document.querySelector('#caption').textContent = button.dataset.caption;
-  for (const choice of choices) choice.setAttribute('aria-pressed', String(choice === button));
-  if (inspector.open && !reduceMotion.matches) playClips();
-}
-for (const button of choices) button.addEventListener('click', () => selectClip(button));
-inspector.addEventListener('toggle', () => {
-  if (inspector.open) selectClip(inspector.querySelector('[aria-pressed="true"]'));
-  else pauseClips();
-});
-toggle.addEventListener('click', () => clips[0].paused ? playClips() : pauseClips());
-clips[0].addEventListener('timeupdate', () => {
-  if (!clips[0].paused && Math.abs(clips[0].currentTime - clips[1].currentTime) > .12)
-    clips[1].currentTime = clips[0].currentTime;
-});
-clips[0].addEventListener('ended', () => {
-  clips.forEach(video => { video.currentTime = 0; });
-  if (inspector.open) playClips();
-});
+  function play() {
+    stop();
+    if (!images) return;
+    button.textContent = 'Pause clips';
+    timer = setInterval(() => { frame = (frame + 1) % 80; draw(); }, interval);
+  }
+  async function select(choice) {
+    const token = ++version;
+    stop();
+    images = null;
+    button.disabled = true;
+    choices.forEach(item => item.setAttribute('aria-pressed', String(item === choice)));
+    const {scene, camera, caption} = choice.dataset;
+    panel.querySelector('#caption').textContent = caption;
+    try {
+      const pair = await Promise.all(['opendwm', 'dreamforge'].map(async model => {
+        const image = new Image();
+        image.src = 'media/camera/' + model + '-' + scene + '-' + camera + '.jpg';
+        await image.decode();
+        return image;
+      }));
+      if (token !== version) return;
+      images = pair;
+      frame = 0;
+      interval = (scene === '000001' ? 10040 : 10280) / 80;
+      draw();
+      button.disabled = false;
+      if (panel.open && !matchMedia('(prefers-reduced-motion: reduce)').matches) play();
+    } catch {
+      if (token === version) panel.querySelector('#caption').textContent = 'Camera frames could not load. Select a view to retry.';
+    }
+  }
+  choices.forEach(c => c.addEventListener('click', () => select(c)));
+  panel.addEventListener('toggle', () => {
+    if (panel.open) select(choices.find(c => c.getAttribute('aria-pressed') === 'true'));
+    else stop();
+  });
+  slider.addEventListener('input', () => stage.style.setProperty('--split', slider.value + '%'));
+  button.addEventListener('click', () => timer ? stop() : play());
+  if (location.hash === '#camera-comparison') panel.open = true;
+})();

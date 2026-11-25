@@ -45,7 +45,7 @@ section:not(.hero)>h2{font-family:var(--serif);font-weight:500;letter-spacing:-.
 
 .camera-inspect{max-width:400px;margin-inline:auto}
 .camera-inspect .camera-layer{position:absolute;inset:0;overflow:hidden}
-.camera-layer video{position:absolute;width:300%;max-width:none;height:auto;top:-25%;left:var(--camera-offset,-100%);border-radius:0}
+.camera-layer canvas{width:100%;height:100%;display:block}
 .camera-inspect .line b{white-space:nowrap}
 .camera-inspect .choices{grid-template-columns:repeat(2,minmax(0,1fr))}
 #camera-play{font:inherit;color:var(--ink);background:var(--paper);border:1px solid var(--rule);border-radius:4px;padding:4px 12px;cursor:pointer}
