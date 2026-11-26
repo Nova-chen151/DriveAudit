@@ -1,82 +1,176 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Benchmarking generated driving scenarios as policy tests, with paired video examples and benchmark results."><title>DriveAudit | Beyond Visual Realism</title><link rel="stylesheet" href="style.css?v=df-sync"></head>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Benchmarking generated driving scenarios as policy tests, with paired video examples and benchmark results."><title>DriveAudit | Beyond Visual Realism</title><link rel="stylesheet" href="style.css?v=recorded-reference"></head>
 <body><header><a class="brand" href="#top">DriveAudit</a><nav aria-label="Sections"><a href="#contrasts">Comparisons</a><a href="#rollout">Closed loop</a><a href="#dimension-2">Policy response</a><a href="#results">Results</a><a href="https://github.com/Nova-chen151/DriveAudit">Code</a></nav></header>
 <main id="top"><section class="cover"><div class="cover-title"><h1>DriveAudit</h1><p>Beyond Visual Realism<br>Benchmarking Generated Driving Scenarios as Policy Tests</p></div><div class="windshield"><video id="cover-film" muted loop playsinline preload="metadata" poster="media/overview-poster.jpg" src="media/overview.mp4" aria-label="DriveAudit scenario montage"></video></div><div class="cover-footer"><a href="#contrasts">Explore the comparisons ↓</a><span>DriveAudit scenario montage</span><button type="button" id="cover-toggle">Play cover</button></div></section><section id="contrasts" class="atlas"><h2>From camera quality to driving response</h2><p>Explore renderer pairs, compare six ego policies, and see how generators rank by QTES.</p><nav aria-label="Evaluation dimensions"><a href="#dimension-0">Observation quality</a><a href="#dimension-1">Scenario fidelity</a><a href="#dimension-2">Policy response</a><a href="#dimension-3">Testing effectiveness</a></nav><article id="dimension-0" class="dimension"><h3>Observation quality</h3>
-<section class="visual-metric">
-<div class="metric-heading"><h4>CLIP-IQA+</h4><p>Compare the detail and visible artifacts in matched camera views.</p></div>
-<div class="camera-modes" role="group" aria-label="Select camera view" hidden><button type="button" data-view="-1" aria-pressed="true">All six</button><button type="button" data-view="0" aria-pressed="false">Front left</button><button type="button" data-view="1" aria-pressed="false">Front</button><button type="button" data-view="2" aria-pressed="false">Front right</button><button type="button" data-view="3" aria-pressed="false">Back left</button><button type="button" data-view="4" aria-pressed="false">Back</button><button type="button" data-view="5" aria-pressed="false">Back right</button></div>
-<figure class="motion-comparison">
- <div class="motion-stage">
-  <video controls muted loop playsinline preload="none" src="media/atlas-scored/clip-1.mp4" poster="media/atlas-scored/clip-1.jpg" aria-label="OpenDWM and MagicDrive-V2 paired replay"></video>
-  <canvas width="400" height="224" aria-hidden="true" hidden></canvas>
-  <span class="motion-divider" aria-hidden="true"></span>
-  <input hidden type="range" min="0" max="100" value="50" aria-label="Visible percentage of the left CLIP-IQA+ video">
- </div>
- <div class="motion-meta"><div class="motion-scores" aria-live="polite">
-  <span><span class="model-left">OpenDWM</span> <strong class="score-left">0.555</strong></span>
-  <span><span class="model-right">MagicDrive-V2</span> <strong class="score-right">0.382</strong></span>
- </div><button type="button" class="motion-toggle" hidden>Play</button></div>
- <figcaption><span class="clip-caption">nuScenes adv_case_0038 / All six cameras / 20 sampled frames</span><span class="clip-scope">Scores use the full matched six-camera sequence.</span></figcaption>
-
-</figure>
-<div class="atlas-picker scored-picker" role="group" aria-label="CLIP-IQA+ scenes"><button type="button" class="clip-choice" data-clip="clip-1" data-source="nuscenes300_challenger_v1/adv_case_0038" data-left="OpenDWM" data-right="MagicDrive-V2" data-left-score="0.555" data-right-score="0.382" data-caption="nuScenes adv_case_0038 / All six cameras / 20 sampled frames" aria-pressed="true"><img loading="lazy" alt="" src="media/atlas-scored/clip-1.jpg"><span>nuScenes adv_case_0038</span><span class="pair-name">MagicDrive-V2</span></button><button type="button" class="clip-choice" data-clip="clip-2" data-source="nuscenes300_challenger_v1/adv_case_0046" data-left="OpenDWM" data-right="MagicDrive" data-left-score="0.501" data-right-score="0.450" data-caption="nuScenes adv_case_0046 / All six cameras / 20 sampled frames" aria-pressed="false"><img loading="lazy" alt="" src="media/atlas-scored/clip-2.jpg"><span>nuScenes adv_case_0046</span><span class="pair-name">MagicDrive</span></button><button type="button" class="clip-choice" data-clip="clip-3" data-source="nuscenes300_challenger_v1/adv_case_0029" data-left="OpenDWM" data-right="HorizonDrive" data-left-score="0.505" data-right-score="0.488" data-caption="nuScenes adv_case_0029 / All six cameras / 20 sampled frames" aria-pressed="false"><img loading="lazy" alt="" src="media/atlas-scored/clip-3.jpg"><span>nuScenes adv_case_0029</span><span class="pair-name">HorizonDrive</span></button><button type="button" class="clip-choice" data-clip="clip-4" data-source="nuscenes300_challenger_v1/adv_case_0033" data-left="OpenDWM" data-right="Panacea" data-left-score="0.532" data-right-score="0.525" data-caption="nuScenes adv_case_0033 / All six cameras / 20 sampled frames" aria-pressed="false"><img loading="lazy" alt="" src="media/atlas-scored/clip-4.jpg"><span>nuScenes adv_case_0033</span><span class="pair-name">Panacea</span></button></div>
-</section><section class="visual-metric">
-<div class="metric-heading"><h4>DINO-T</h4><p>Watch whether the appearance stays consistent as the scene moves.</p></div>
-<div class="camera-modes" role="group" aria-label="Select camera view" hidden><button type="button" data-view="-1" aria-pressed="true">All six</button><button type="button" data-view="0" aria-pressed="false">Front left</button><button type="button" data-view="1" aria-pressed="false">Front</button><button type="button" data-view="2" aria-pressed="false">Front right</button><button type="button" data-view="3" aria-pressed="false">Back left</button><button type="button" data-view="4" aria-pressed="false">Back</button><button type="button" data-view="5" aria-pressed="false">Back right</button></div>
-<figure class="motion-comparison">
- <div class="motion-stage">
-  <video controls muted loop playsinline preload="none" src="media/atlas-scored/dino-1.mp4" poster="media/atlas-scored/dino-1.jpg" aria-label="OpenDWM and Panacea paired replay"></video>
-  <canvas width="400" height="224" aria-hidden="true" hidden></canvas>
-  <span class="motion-divider" aria-hidden="true"></span>
-  <input hidden type="range" min="0" max="100" value="50" aria-label="Visible percentage of the left DINO-T video">
- </div>
- <div class="motion-meta"><div class="motion-scores" aria-live="polite">
-  <span><span class="model-left">OpenDWM</span> <strong class="score-left">0.734</strong></span>
-  <span><span class="model-right">Panacea</span> <strong class="score-right">0.567</strong></span>
- </div><button type="button" class="motion-toggle" hidden>Play</button></div>
- <figcaption><span class="clip-caption">nuScenes adv_case_0040 / All six cameras / 20 sampled frames</span><span class="clip-scope">Scores use the full matched six-camera sequence.</span></figcaption>
-
-</figure>
-<div class="atlas-picker scored-picker" role="group" aria-label="DINO-T scenes"><button type="button" class="clip-choice" data-clip="dino-1" data-source="nuscenes300_challenger_v1/adv_case_0040" data-left="OpenDWM" data-right="Panacea" data-left-score="0.734" data-right-score="0.567" data-caption="nuScenes adv_case_0040 / All six cameras / 20 sampled frames" aria-pressed="true"><img loading="lazy" alt="" src="media/atlas-scored/dino-1.jpg"><span>nuScenes adv_case_0040</span><span class="pair-name">Panacea</span></button><button type="button" class="clip-choice" data-clip="dino-2" data-source="nuscenes300_challenger_v1/adv_case_0027" data-left="OpenDWM" data-right="MagicDrive" data-left-score="0.827" data-right-score="0.676" data-caption="nuScenes adv_case_0027 / All six cameras / 20 sampled frames" aria-pressed="false"><img loading="lazy" alt="" src="media/atlas-scored/dino-2.jpg"><span>nuScenes adv_case_0027</span><span class="pair-name">MagicDrive</span></button><button type="button" class="clip-choice" data-clip="dino-3" data-source="nuscenes300_challenger_v1/adv_case_0036" data-left="OpenDWM" data-right="DreamForge" data-left-score="0.759" data-right-score="0.714" data-caption="nuScenes adv_case_0036 / All six cameras / 20 sampled frames" aria-pressed="false"><img loading="lazy" alt="" src="media/atlas-scored/dino-3.jpg"><span>nuScenes adv_case_0036</span><span class="pair-name">DreamForge</span></button><button type="button" class="clip-choice" data-clip="dino-4" data-source="nuscenes300_challenger_v1/adv_case_0043" data-left="OpenDWM" data-right="MagicDrive-V2" data-left-score="0.782" data-right-score="0.765" data-caption="nuScenes adv_case_0043 / All six cameras / 20 sampled frames" aria-pressed="false"><img loading="lazy" alt="" src="media/atlas-scored/dino-4.jpg"><span>nuScenes adv_case_0043</span><span class="pair-name">MagicDrive-V2</span></button></div>
-</section></article>
+<p class="reference-selection">One scene per dataset for each metric. Cases highlight large measured gaps between OpenDWM and the comparison renderer.</p>
+<section class="visual-metric" data-reference-review>
+ <div class="metric-heading"><h4>CLIP-IQA+</h4><p>Compare sharpness, visible artifacts and image detail.</p></div>
+ <div class="reference-modes camera-modes" role="group" aria-label="CLIP-IQA+ comparison mode" hidden><button type="button" data-compare="all" aria-pressed="true">All three</button><button type="button" data-compare="generators" aria-pressed="false">OpenDWM / comparison</button><button type="button" data-compare="reference-open" aria-pressed="false">Recorded / OpenDWM</button><button type="button" data-compare="reference-peer" aria-pressed="false">Recorded / comparison</button></div>
+ <div class="camera-modes" role="group" aria-label="Camera view" hidden><button type="button" data-view="-1" aria-pressed="false">All six</button><button type="button" data-view="0" aria-pressed="false">Front left</button><button type="button" data-view="1" aria-pressed="true">Front</button><button type="button" data-view="2" aria-pressed="false">Front right</button><button type="button" data-view="3" aria-pressed="false">Back left</button><button type="button" data-view="4" aria-pressed="false">Back</button><button type="button" data-view="5" aria-pressed="false">Back right</button></div>
+ <figure class="motion-comparison">
+  <div class="motion-stage">
+   <video controls muted loop playsinline preload="none" src="media/quality-reference/clip-nuplan.mp4" poster="media/quality-reference/clip-nuplan.jpg" aria-label="Recorded reference, OpenDWM and MagicDrive-V2 matched clips"></video>
+   <canvas width="960" height="180" aria-hidden="true" hidden></canvas>
+   <span class="motion-divider" aria-hidden="true"></span>
+   <input hidden type="range" min="0" max="100" value="50" aria-label="Visible percentage of the left CLIP-IQA+ stream">
+  </div>
+  <div class="motion-meta">
+   <div class="motion-scores reference-scores" aria-live="polite">
+    <span class="score-stream-reference">Recorded <strong class="score-reference">0.704</strong></span>
+    <span class="score-stream-open"><span class="model-left">OpenDWM</span> <strong class="score-left">0.607</strong></span>
+    <span class="score-stream-peer"><span class="model-right">MagicDrive-V2</span> <strong class="score-right">0.456</strong></span>
+   </div>
+   <button type="button" class="motion-toggle" hidden>Play</button>
+  </div>
+  <figcaption><span class="clip-caption">nuPlan adv_case_0008 / Front / 20 sampled frames</span>
+   <span>OpenDWM gap <strong class="score-gap">+0.151</strong></span>
+   <span class="clip-scope">Scores use the full six-camera sequence.</span></figcaption>
+ </figure>
+ <div class="atlas-picker scored-picker" role="group" aria-label="CLIP-IQA+ scenes"><button type="button" class="clip-choice" data-clip="clip-nuplan" data-source="nuplan_challenger_v1/adv_case_0008"
+         data-left="OpenDWM" data-right="MagicDrive-V2" data-left-score="0.607" data-right-score="0.456"
+         data-reference-score="0.704" data-gap="+0.151" data-caption="nuPlan adv_case_0008 / Front / 20 sampled frames"
+         aria-pressed="true"><img loading="lazy" alt="" src="media/quality-reference/clip-nuplan-thumb.jpg">
+         <span>nuPlan adv_case_0008</span><span class="pair-name">Gap +0.151 against MagicDrive-V2</span></button><button type="button" class="clip-choice" data-clip="clip-av2" data-source="av2_challenger_v1/adv_case_0005"
+         data-left="OpenDWM" data-right="MagicDrive-V2" data-left-score="0.615" data-right-score="0.492"
+         data-reference-score="0.700" data-gap="+0.124" data-caption="Argoverse 2 adv_case_0005 / Front / 20 sampled frames"
+         aria-pressed="false"><img loading="lazy" alt="" src="media/quality-reference/clip-av2-thumb.jpg">
+         <span>Argoverse 2 adv_case_0005</span><span class="pair-name">Gap +0.124 against MagicDrive-V2</span></button><button type="button" class="clip-choice" data-clip="clip-pandaset" data-source="pandaset_challenger_v1/adv_case_0010"
+         data-left="OpenDWM" data-right="MagicDrive-V2" data-left-score="0.584" data-right-score="0.376"
+         data-reference-score="0.656" data-gap="+0.208" data-caption="PandaSet adv_case_0010 / Front / 20 sampled frames"
+         aria-pressed="false"><img loading="lazy" alt="" src="media/quality-reference/clip-pandaset-thumb.jpg">
+         <span>PandaSet adv_case_0010</span><span class="pair-name">Gap +0.208 against MagicDrive-V2</span></button><button type="button" class="clip-choice" data-clip="clip-nuscenes" data-source="nuscenes300_challenger_v1/adv_case_0023"
+         data-left="OpenDWM" data-right="MagicDrive-V2" data-left-score="0.593" data-right-score="0.385"
+         data-reference-score="0.685" data-gap="+0.208" data-caption="nuScenes adv_case_0023 / Front / 20 sampled frames"
+         aria-pressed="false"><img loading="lazy" alt="" src="media/quality-reference/clip-nuscenes-thumb.jpg">
+         <span>nuScenes adv_case_0023</span><span class="pair-name">Gap +0.208 against MagicDrive-V2</span></button></div>
+</section>
+<section class="visual-metric" data-reference-review>
+ <div class="metric-heading"><h4>DINO-T</h4><p>Watch for changes in appearance as the cameras move.</p></div>
+ <div class="reference-modes camera-modes" role="group" aria-label="DINO-T comparison mode" hidden><button type="button" data-compare="all" aria-pressed="true">All three</button><button type="button" data-compare="generators" aria-pressed="false">OpenDWM / comparison</button><button type="button" data-compare="reference-open" aria-pressed="false">Recorded / OpenDWM</button><button type="button" data-compare="reference-peer" aria-pressed="false">Recorded / comparison</button></div>
+ <div class="camera-modes" role="group" aria-label="Camera view" hidden><button type="button" data-view="-1" aria-pressed="false">All six</button><button type="button" data-view="0" aria-pressed="false">Front left</button><button type="button" data-view="1" aria-pressed="true">Front</button><button type="button" data-view="2" aria-pressed="false">Front right</button><button type="button" data-view="3" aria-pressed="false">Back left</button><button type="button" data-view="4" aria-pressed="false">Back</button><button type="button" data-view="5" aria-pressed="false">Back right</button></div>
+ <figure class="motion-comparison">
+  <div class="motion-stage">
+   <video controls muted loop playsinline preload="none" src="media/quality-reference/dino-nuplan.mp4" poster="media/quality-reference/dino-nuplan.jpg" aria-label="Recorded reference, OpenDWM and MagicDrive matched clips"></video>
+   <canvas width="960" height="180" aria-hidden="true" hidden></canvas>
+   <span class="motion-divider" aria-hidden="true"></span>
+   <input hidden type="range" min="0" max="100" value="50" aria-label="Visible percentage of the left DINO-T stream">
+  </div>
+  <div class="motion-meta">
+   <div class="motion-scores reference-scores" aria-live="polite">
+    <span class="score-stream-reference">Recorded <strong class="score-reference">0.984</strong></span>
+    <span class="score-stream-open"><span class="model-left">OpenDWM</span> <strong class="score-left">0.958</strong></span>
+    <span class="score-stream-peer"><span class="model-right">MagicDrive</span> <strong class="score-right">0.651</strong></span>
+   </div>
+   <button type="button" class="motion-toggle" hidden>Play</button>
+  </div>
+  <figcaption><span class="clip-caption">nuPlan adv_case_0004 / Front / 20 sampled frames</span>
+   <span>OpenDWM gap <strong class="score-gap">+0.307</strong></span>
+   <span class="clip-scope">Scores use the full six-camera sequence.</span></figcaption>
+ </figure>
+ <div class="atlas-picker scored-picker" role="group" aria-label="DINO-T scenes"><button type="button" class="clip-choice" data-clip="dino-nuplan" data-source="nuplan_challenger_v1/adv_case_0004"
+         data-left="OpenDWM" data-right="MagicDrive" data-left-score="0.958" data-right-score="0.651"
+         data-reference-score="0.984" data-gap="+0.307" data-caption="nuPlan adv_case_0004 / Front / 20 sampled frames"
+         aria-pressed="true"><img loading="lazy" alt="" src="media/quality-reference/dino-nuplan-thumb.jpg">
+         <span>nuPlan adv_case_0004</span><span class="pair-name">Gap +0.307 against MagicDrive</span></button><button type="button" class="clip-choice" data-clip="dino-av2" data-source="av2_challenger_v1/adv_case_0007"
+         data-left="OpenDWM" data-right="MagicDrive" data-left-score="0.774" data-right-score="0.555"
+         data-reference-score="0.793" data-gap="+0.219" data-caption="Argoverse 2 adv_case_0007 / Front / 20 sampled frames"
+         aria-pressed="false"><img loading="lazy" alt="" src="media/quality-reference/dino-av2-thumb.jpg">
+         <span>Argoverse 2 adv_case_0007</span><span class="pair-name">Gap +0.219 against MagicDrive</span></button><button type="button" class="clip-choice" data-clip="dino-pandaset" data-source="pandaset_challenger_v1/adv_case_0002"
+         data-left="OpenDWM" data-right="MagicDrive" data-left-score="0.806" data-right-score="0.618"
+         data-reference-score="0.841" data-gap="+0.188" data-caption="PandaSet adv_case_0002 / Front / 20 sampled frames"
+         aria-pressed="false"><img loading="lazy" alt="" src="media/quality-reference/dino-pandaset-thumb.jpg">
+         <span>PandaSet adv_case_0002</span><span class="pair-name">Gap +0.188 against MagicDrive</span></button><button type="button" class="clip-choice" data-clip="dino-nuscenes" data-source="nuscenes300_challenger_v1/adv_case_0018"
+         data-left="OpenDWM" data-right="MagicDrive" data-left-score="0.808" data-right-score="0.716"
+         data-reference-score="0.843" data-gap="+0.092" data-caption="nuScenes adv_case_0018 / Front / 20 sampled frames"
+         aria-pressed="false"><img loading="lazy" alt="" src="media/quality-reference/dino-nuscenes-thumb.jpg">
+         <span>nuScenes adv_case_0018</span><span class="pair-name">Gap +0.092 against MagicDrive</span></button></div>
+</section>
+</article>
 <article id="dimension-1" class="dimension"><h3>Scenario fidelity</h3>
-<section class="visual-metric">
-<div class="metric-heading"><h4>Epi@3</h4><p>Compare scenes selected for their cross-view geometric agreement.</p></div>
-<div class="camera-modes" role="group" aria-label="Select camera view" hidden><button type="button" data-view="-1" aria-pressed="true">All six</button><button type="button" data-view="0" aria-pressed="false">Front left</button><button type="button" data-view="1" aria-pressed="false">Front</button><button type="button" data-view="2" aria-pressed="false">Front right</button><button type="button" data-view="3" aria-pressed="false">Back left</button><button type="button" data-view="4" aria-pressed="false">Back</button><button type="button" data-view="5" aria-pressed="false">Back right</button></div>
-<figure class="motion-comparison">
- <div class="motion-stage">
-  <video controls muted loop playsinline preload="none" src="media/atlas-scored/epi-1.mp4" poster="media/atlas-scored/epi-1.jpg" aria-label="OpenDWM and HorizonDrive paired replay"></video>
-  <canvas width="400" height="224" aria-hidden="true" hidden></canvas>
-  <span class="motion-divider" aria-hidden="true"></span>
-  <input hidden type="range" min="0" max="100" value="50" aria-label="Visible percentage of the left Epi@3 video">
- </div>
- <div class="motion-meta"><div class="motion-scores" aria-live="polite">
-  <span><span class="model-left">OpenDWM</span> <strong class="score-left">0.307</strong></span>
-  <span><span class="model-right">HorizonDrive</span> <strong class="score-right">0.077</strong></span>
- </div><button type="button" class="motion-toggle" hidden>Play</button></div>
- <figcaption><span class="clip-caption">nuScenes adv_case_0003 / All six cameras / 20 sampled frames</span><span class="clip-scope">Scores use the full matched six-camera sequence.</span></figcaption>
 
-</figure>
-<div class="atlas-picker scored-picker" role="group" aria-label="Epi@3 scenes"><button type="button" class="clip-choice" data-clip="epi-1" data-source="nuscenes300_challenger_v1/adv_case_0003" data-left="OpenDWM" data-right="HorizonDrive" data-left-score="0.307" data-right-score="0.077" data-caption="nuScenes adv_case_0003 / All six cameras / 20 sampled frames" aria-pressed="true"><img loading="lazy" alt="" src="media/atlas-scored/epi-1.jpg"><span>nuScenes adv_case_0003</span><span class="pair-name">HorizonDrive</span></button><button type="button" class="clip-choice" data-clip="epi-2" data-source="nuscenes300_challenger_v1/adv_case_0045" data-left="OpenDWM" data-right="Panacea" data-left-score="0.282" data-right-score="0.083" data-caption="nuScenes adv_case_0045 / All six cameras / 20 sampled frames" aria-pressed="false"><img loading="lazy" alt="" src="media/atlas-scored/epi-2.jpg"><span>nuScenes adv_case_0045</span><span class="pair-name">Panacea</span></button><button type="button" class="clip-choice" data-clip="epi-3" data-source="nuscenes300_challenger_v1/adv_case_0042" data-left="OpenDWM" data-right="MagicDrive" data-left-score="0.268" data-right-score="0.137" data-caption="nuScenes adv_case_0042 / All six cameras / 20 sampled frames" aria-pressed="false"><img loading="lazy" alt="" src="media/atlas-scored/epi-3.jpg"><span>nuScenes adv_case_0042</span><span class="pair-name">MagicDrive</span></button><button type="button" class="clip-choice" data-clip="epi-4" data-source="nuscenes300_challenger_v1/adv_case_0037" data-left="OpenDWM" data-right="DreamForge" data-left-score="0.277" data-right-score="0.200" data-caption="nuScenes adv_case_0037 / All six cameras / 20 sampled frames" aria-pressed="false"><img loading="lazy" alt="" src="media/atlas-scored/epi-4.jpg"><span>nuScenes adv_case_0037</span><span class="pair-name">DreamForge</span></button></div>
-</section><section class="visual-metric">
-<div class="metric-heading"><h4>TVC</h4><p>Follow the traffic through the six views and compare consistency between trajectories and video.</p></div>
-<div class="camera-modes" role="group" aria-label="Select camera view" hidden><button type="button" data-view="-1" aria-pressed="true">All six</button><button type="button" data-view="0" aria-pressed="false">Front left</button><button type="button" data-view="1" aria-pressed="false">Front</button><button type="button" data-view="2" aria-pressed="false">Front right</button><button type="button" data-view="3" aria-pressed="false">Back left</button><button type="button" data-view="4" aria-pressed="false">Back</button><button type="button" data-view="5" aria-pressed="false">Back right</button></div>
-<figure class="motion-comparison">
- <div class="motion-stage">
-  <video controls muted loop playsinline preload="none" src="media/atlas-scored/tvc-1.mp4" poster="media/atlas-scored/tvc-1.jpg" aria-label="OpenDWM and Panacea paired replay"></video>
-  <canvas width="400" height="224" aria-hidden="true" hidden></canvas>
-  <span class="motion-divider" aria-hidden="true"></span>
-  <input hidden type="range" min="0" max="100" value="50" aria-label="Visible percentage of the left TVC video">
- </div>
- <div class="motion-meta"><div class="motion-scores" aria-live="polite">
-  <span><span class="model-left">OpenDWM</span> <strong class="score-left">0.500</strong></span>
-  <span><span class="model-right">Panacea</span> <strong class="score-right">0.190</strong></span>
- </div><button type="button" class="motion-toggle" hidden>Play</button></div>
- <figcaption><span class="clip-caption">nuScenes adv_case_0028 / All six cameras / 20 sampled frames</span><span class="clip-scope">Scores use the full matched six-camera sequence.</span></figcaption>
-
-</figure>
-<div class="atlas-picker scored-picker" role="group" aria-label="TVC scenes"><button type="button" class="clip-choice" data-clip="tvc-1" data-source="nuscenes300_challenger_v1/adv_case_0028" data-left="OpenDWM" data-right="Panacea" data-left-score="0.500" data-right-score="0.190" data-caption="nuScenes adv_case_0028 / All six cameras / 20 sampled frames" aria-pressed="true"><img loading="lazy" alt="" src="media/atlas-scored/tvc-1.jpg"><span>nuScenes adv_case_0028</span><span class="pair-name">Panacea</span></button><button type="button" class="clip-choice" data-clip="tvc-2" data-source="nuscenes300_challenger_v1/adv_case_0030" data-left="OpenDWM" data-right="MagicDrive" data-left-score="0.608" data-right-score="0.375" data-caption="nuScenes adv_case_0030 / All six cameras / 20 sampled frames" aria-pressed="false"><img loading="lazy" alt="" src="media/atlas-scored/tvc-2.jpg"><span>nuScenes adv_case_0030</span><span class="pair-name">MagicDrive</span></button><button type="button" class="clip-choice" data-clip="tvc-3" data-source="nuscenes300_challenger_v1/adv_case_0041" data-left="OpenDWM" data-right="DreamForge" data-left-score="0.569" data-right-score="0.438" data-caption="nuScenes adv_case_0041 / All six cameras / 20 sampled frames" aria-pressed="false"><img loading="lazy" alt="" src="media/atlas-scored/tvc-3.jpg"><span>nuScenes adv_case_0041</span><span class="pair-name">DreamForge</span></button><button type="button" class="clip-choice" data-clip="tvc-4" data-source="nuscenes300_challenger_v1/adv_case_0044" data-left="OpenDWM" data-right="HorizonDrive" data-left-score="0.558" data-right-score="0.516" data-caption="nuScenes adv_case_0044 / All six cameras / 20 sampled frames" aria-pressed="false"><img loading="lazy" alt="" src="media/atlas-scored/tvc-4.jpg"><span>nuScenes adv_case_0044</span><span class="pair-name">HorizonDrive</span></button></div>
-</section></article>
+<section class="visual-metric" data-reference-review>
+ <div class="metric-heading"><h4>Epi@3</h4><p>Compare object and lane geometry across camera views.</p></div>
+ <div class="reference-modes camera-modes" role="group" aria-label="Epi@3 comparison mode" hidden><button type="button" data-compare="all" aria-pressed="true">All three</button><button type="button" data-compare="generators" aria-pressed="false">OpenDWM / comparison</button><button type="button" data-compare="reference-open" aria-pressed="false">Recorded / OpenDWM</button><button type="button" data-compare="reference-peer" aria-pressed="false">Recorded / comparison</button></div>
+ <div class="camera-modes" role="group" aria-label="Camera view" hidden><button type="button" data-view="-1" aria-pressed="false">All six</button><button type="button" data-view="0" aria-pressed="false">Front left</button><button type="button" data-view="1" aria-pressed="true">Front</button><button type="button" data-view="2" aria-pressed="false">Front right</button><button type="button" data-view="3" aria-pressed="false">Back left</button><button type="button" data-view="4" aria-pressed="false">Back</button><button type="button" data-view="5" aria-pressed="false">Back right</button></div>
+ <figure class="motion-comparison">
+  <div class="motion-stage">
+   <video controls muted loop playsinline preload="none" src="media/quality-reference/epi-nuplan.mp4" poster="media/quality-reference/epi-nuplan.jpg" aria-label="Recorded reference, OpenDWM and MagicDrive-V2 matched clips"></video>
+   <canvas width="960" height="180" aria-hidden="true" hidden></canvas>
+   <span class="motion-divider" aria-hidden="true"></span>
+   <input hidden type="range" min="0" max="100" value="50" aria-label="Visible percentage of the left Epi@3 stream">
+  </div>
+  <div class="motion-meta">
+   <div class="motion-scores reference-scores" aria-live="polite">
+    <span class="score-stream-reference">Recorded <strong class="score-reference">0.486</strong></span>
+    <span class="score-stream-open"><span class="model-left">OpenDWM</span> <strong class="score-left">0.423</strong></span>
+    <span class="score-stream-peer"><span class="model-right">MagicDrive-V2</span> <strong class="score-right">0.079</strong></span>
+   </div>
+   <button type="button" class="motion-toggle" hidden>Play</button>
+  </div>
+  <figcaption><span class="clip-caption">nuPlan adv_case_0006 / Front / 20 sampled frames</span>
+   <span>OpenDWM gap <strong class="score-gap">+0.345</strong></span>
+   <span class="clip-scope">Scores use the full six-camera sequence.</span></figcaption>
+ </figure>
+ <div class="atlas-picker scored-picker" role="group" aria-label="Epi@3 scenes"><button type="button" class="clip-choice" data-clip="epi-nuplan" data-source="nuplan_challenger_v1/adv_case_0006"
+         data-left="OpenDWM" data-right="MagicDrive-V2" data-left-score="0.423" data-right-score="0.079"
+         data-reference-score="0.486" data-gap="+0.345" data-caption="nuPlan adv_case_0006 / Front / 20 sampled frames"
+         aria-pressed="true"><img loading="lazy" alt="" src="media/quality-reference/epi-nuplan-thumb.jpg">
+         <span>nuPlan adv_case_0006</span><span class="pair-name">Gap +0.345 against MagicDrive-V2</span></button><button type="button" class="clip-choice" data-clip="epi-av2" data-source="av2_challenger_v1/adv_case_0012"
+         data-left="OpenDWM" data-right="MagicDrive" data-left-score="0.413" data-right-score="0.075"
+         data-reference-score="0.633" data-gap="+0.338" data-caption="Argoverse 2 adv_case_0012 / Front / 20 sampled frames"
+         aria-pressed="false"><img loading="lazy" alt="" src="media/quality-reference/epi-av2-thumb.jpg">
+         <span>Argoverse 2 adv_case_0012</span><span class="pair-name">Gap +0.338 against MagicDrive</span></button><button type="button" class="clip-choice" data-clip="epi-pandaset" data-source="pandaset_challenger_v1/adv_case_0009"
+         data-left="OpenDWM" data-right="MagicDrive" data-left-score="0.170" data-right-score="0.045"
+         data-reference-score="0.501" data-gap="+0.124" data-caption="PandaSet adv_case_0009 / Front / 20 sampled frames"
+         aria-pressed="false"><img loading="lazy" alt="" src="media/quality-reference/epi-pandaset-thumb.jpg">
+         <span>PandaSet adv_case_0009</span><span class="pair-name">Gap +0.124 against MagicDrive</span></button><button type="button" class="clip-choice" data-clip="epi-nuscenes" data-source="nuscenes300_challenger_v1/adv_case_0007"
+         data-left="OpenDWM" data-right="HorizonDrive" data-left-score="0.299" data-right-score="0.080"
+         data-reference-score="0.309" data-gap="+0.219" data-caption="nuScenes adv_case_0007 / Front / 20 sampled frames"
+         aria-pressed="false"><img loading="lazy" alt="" src="media/quality-reference/epi-nuscenes-thumb.jpg">
+         <span>nuScenes adv_case_0007</span><span class="pair-name">Gap +0.219 against HorizonDrive</span></button></div>
+</section>
+<section class="visual-metric" data-reference-review>
+ <div class="metric-heading"><h4>TVC</h4><p>Compare video with the corresponding traffic trajectories. The recorded reference uses recorded motion. Both renderers use CAT-K.</p></div>
+ <div class="reference-modes camera-modes" role="group" aria-label="TVC comparison mode" hidden><button type="button" data-compare="all" aria-pressed="true">All three</button><button type="button" data-compare="generators" aria-pressed="false">OpenDWM / comparison</button><button type="button" data-compare="reference-open" aria-pressed="false">Recorded / OpenDWM</button><button type="button" data-compare="reference-peer" aria-pressed="false">Recorded / comparison</button></div>
+ <div class="camera-modes" role="group" aria-label="Camera view" hidden><button type="button" data-view="-1" aria-pressed="false">All six</button><button type="button" data-view="0" aria-pressed="false">Front left</button><button type="button" data-view="1" aria-pressed="true">Front</button><button type="button" data-view="2" aria-pressed="false">Front right</button><button type="button" data-view="3" aria-pressed="false">Back left</button><button type="button" data-view="4" aria-pressed="false">Back</button><button type="button" data-view="5" aria-pressed="false">Back right</button></div>
+ <figure class="motion-comparison">
+  <div class="motion-stage">
+   <video controls muted loop playsinline preload="none" src="media/quality-reference/tvc-nuplan.mp4" poster="media/quality-reference/tvc-nuplan.jpg" aria-label="Recorded reference, OpenDWM and MagicDrive matched clips"></video>
+   <canvas width="960" height="180" aria-hidden="true" hidden></canvas>
+   <span class="motion-divider" aria-hidden="true"></span>
+   <input hidden type="range" min="0" max="100" value="50" aria-label="Visible percentage of the left TVC stream">
+  </div>
+  <div class="motion-meta">
+   <div class="motion-scores reference-scores" aria-live="polite">
+    <span class="score-stream-reference">Recorded <strong class="score-reference">0.672</strong></span>
+    <span class="score-stream-open"><span class="model-left">OpenDWM</span> <strong class="score-left">0.674</strong></span>
+    <span class="score-stream-peer"><span class="model-right">MagicDrive</span> <strong class="score-right">0.388</strong></span>
+   </div>
+   <button type="button" class="motion-toggle" hidden>Play</button>
+  </div>
+  <figcaption><span class="clip-caption">nuPlan adv_case_0014 / Front / 20 sampled frames</span>
+   <span>OpenDWM gap <strong class="score-gap">+0.286</strong></span>
+   <span class="clip-scope">Scores use the full six-camera sequence.</span></figcaption>
+ </figure>
+ <div class="atlas-picker scored-picker" role="group" aria-label="TVC scenes"><button type="button" class="clip-choice" data-clip="tvc-nuplan" data-source="nuplan_challenger_v1/adv_case_0014"
+         data-left="OpenDWM" data-right="MagicDrive" data-left-score="0.674" data-right-score="0.388"
+         data-reference-score="0.672" data-gap="+0.286" data-caption="nuPlan adv_case_0014 / Front / 20 sampled frames"
+         aria-pressed="true"><img loading="lazy" alt="" src="media/quality-reference/tvc-nuplan-thumb.jpg">
+         <span>nuPlan adv_case_0014</span><span class="pair-name">Gap +0.286 against MagicDrive</span></button><button type="button" class="clip-choice" data-clip="tvc-av2" data-source="av2_challenger_v1/adv_case_0008"
+         data-left="OpenDWM" data-right="MagicDrive" data-left-score="0.641" data-right-score="0.187"
+         data-reference-score="0.598" data-gap="+0.454" data-caption="Argoverse 2 adv_case_0008 / Front / 20 sampled frames"
+         aria-pressed="false"><img loading="lazy" alt="" src="media/quality-reference/tvc-av2-thumb.jpg">
+         <span>Argoverse 2 adv_case_0008</span><span class="pair-name">Gap +0.454 against MagicDrive</span></button><button type="button" class="clip-choice" data-clip="tvc-pandaset" data-source="pandaset_challenger_v1/adv_case_0003"
+         data-left="OpenDWM" data-right="Panacea" data-left-score="0.529" data-right-score="0.211"
+         data-reference-score="0.553" data-gap="+0.318" data-caption="PandaSet adv_case_0003 / Front / 20 sampled frames"
+         aria-pressed="false"><img loading="lazy" alt="" src="media/quality-reference/tvc-pandaset-thumb.jpg">
+         <span>PandaSet adv_case_0003</span><span class="pair-name">Gap +0.318 against Panacea</span></button><button type="button" class="clip-choice" data-clip="tvc-nuscenes" data-source="nuscenes300_challenger_v1/adv_case_0025"
+         data-left="OpenDWM" data-right="Panacea" data-left-score="0.554" data-right-score="0.267"
+         data-reference-score="0.535" data-gap="+0.287" data-caption="nuScenes adv_case_0025 / Front / 20 sampled frames"
+         aria-pressed="false"><img loading="lazy" alt="" src="media/quality-reference/tvc-nuscenes-thumb.jpg">
+         <span>nuScenes adv_case_0025</span><span class="pair-name">Gap +0.287 against Panacea</span></button></div>
+</section>
+</article>
 <article class="dimension" id="dimension-2">
 <h3>Policy response</h3>
 <p>Six nuScenes scenes span sun, rain and night. Select a scene, then switch ego policies on the same OpenDWM and DreamForge inputs.</p>
@@ -152,4 +246,4 @@
 <section id="protocol"><h2>Inside the benchmark</h2><p>550 scenario histories. Seven renderers. Six driving policies.</p><details><summary>How DriveAudit scores a test</summary><p>DriveAudit compares policy decisions on paired recorded and generated sequences.</p>
 <dl><div><dt>Observation quality</dt><dd>Measure visual fidelity and temporal consistency across camera sequences.</dd></div><div><dt>Scenario fidelity</dt><dd>Check whether images agree with the traffic trajectories and whether that traffic remains plausible.</dd></div><div><dt>Policy response</dt><dd>Compare route completion and responsibility-aware driving scores on paired sequences.</dd></div><div><dt>Testing effectiveness</dt><dd>QTES weights the paired policy response by retained scenario quality.</dd></div></dl>
 <figure class="paperfig"><a href="media/paper/overview.webp" aria-label="Open full-size figure: DriveAudit pairs recorded and generated conditions across four levels of evaluation"><img loading="lazy" src="media/paper/overview.webp" alt="DriveAudit pairs recorded and generated conditions across four levels of evaluation"></a><figcaption>Paired evaluation holds the source history and driving policy fixed while changing the generated scenario. <a href="media/paper/overview.webp">Full size</a></figcaption></figure></details><details><summary>Dataset and camera coverage</summary><p>Of 550 histories, 500 come from native multi-camera recordings: 250 nuScenes, 100 nuPlan, 75 Argoverse 2 and 75 PandaSet. The remaining 50 come from Nexar. Each Nexar history provides one recorded camera view; the other five are synthesized.</p><figure class="paperfig"><a href="media/paper/dataset_examples_and_characteristics.webp" aria-label="Open full-size figure: Multi-camera input examples and source-wise distributions of image characteristics"><img loading="lazy" src="media/paper/dataset_examples_and_characteristics.webp" alt="Multi-camera input examples and source-wise distributions of image characteristics"></a><figcaption>Input examples and distributions of contrast, brightness and temporal change across the five sources. <a href="media/paper/dataset_examples_and_characteristics.webp">Full size</a></figcaption></figure></details><details id="closed-loop-results" open><summary>Closed-loop results</summary><p>On 20 matched scenarios, closed-loop RPDMS falls for all seven renderers. DreamForge and MagicDrive-V2 retain the top two QTES ranks.</p><div class="scroll"><table><thead><tr><th rowspan="2">Renderer</th><th colspan="2">RPDMS ↑</th><th colspan="2">QTES ↑</th></tr><tr><th>Replay</th><th>Closed loop</th><th>Replay</th><th>Closed loop</th></tr></thead><tbody><tr><th scope="row">MagicDrive-V2</th><td>0.955</td><td>0.707</td><td>42.405</td><td>53.861</td></tr><tr><th scope="row">OpenDWM</th><td>0.949</td><td>0.715</td><td>41.236</td><td>50.260</td></tr><tr><th scope="row">Panacea</th><td>0.951</td><td>0.700</td><td>37.464</td><td>47.222</td></tr><tr><th scope="row">DreamForge</th><td>0.940</td><td>0.671</td><td>43.954</td><td>54.545</td></tr><tr><th scope="row">BaseDreamer</th><td>0.953</td><td>0.693</td><td>38.254</td><td>52.532</td></tr><tr><th scope="row">HorizonDrive</th><td>0.961</td><td>0.700</td><td>37.668</td><td>49.421</td></tr><tr><th scope="row">MagicDrive</th><td>0.954</td><td>0.692</td><td>33.285</td><td>45.999</td></tr></tbody></table></div></details></section><section><h2>Run DriveAudit</h2><p>Generate traffic trajectories, render future camera views, then evaluate driving policies on generated and recorded observations.</p><div class="resources"><a href="https://github.com/Nova-chen151/DriveAudit/blob/main/docs/challenge.md">Challenge specification</a><a href="https://github.com/Nova-chen151/DriveAudit/blob/main/docs/evaluation.md">Evaluation guide</a><a href="https://github.com/Nova-chen151/DriveAudit/blob/main/closed_loop/README.md">Closed-loop testing</a></div></section></main>
-<footer>DriveAudit / Beyond Visual Realism</footer><script src="closed-scenes.js?v=df-matrix-complete"></script><script src="closed-view.js?v=df-sync"></script><script src="policy-results.js?v=fixed-scenes"></script><script src="policy-view.js?v=fixed-scenes"></script><script src="screening.js?v=scored-cases"></script></body></html>
+<footer>DriveAudit / Beyond Visual Realism</footer><script src="closed-scenes.js?v=df-matrix-complete"></script><script src="closed-view.js?v=df-sync"></script><script src="policy-results.js?v=fixed-scenes"></script><script src="policy-view.js?v=fixed-scenes"></script><script src="screening.js?v=recorded-reference"></script></body></html>

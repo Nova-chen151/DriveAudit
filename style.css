@@ -181,3 +181,14 @@ header nav{flex-wrap:wrap}
 .loop-controls output{font-variant-numeric:tabular-nums}
 .loop-policy h4{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px}
 .loop-distance{color:var(--soft);font-size:13px;font-weight:400;font-variant-numeric:tabular-nums}
+
+[data-reference-review] .reference-modes:not([hidden]){margin-bottom:4px}
+[data-reference-review] .motion-stage.three-streams{max-width:none}
+[data-reference-review] .three-streams .motion-divider{display:none}
+[data-reference-review] .motion-comparison figcaption{row-gap:4px}
+[data-reference-review] .reference-scores{flex:1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+[data-reference-review] .reference-scores>span{padding-inline-start:8px;border-inline-start:1px solid var(--rule)}
+[data-reference-review] .reference-scores strong{display:inline-block}
+[data-reference-review] .score-gap{color:var(--cover-accent);font-variant-numeric:tabular-nums}
+[data-reference-review] .scored-picker img{aspect-ratio:16/3}
+@media(max-width:580px){[data-reference-review] .reference-scores{font-size:12px}}

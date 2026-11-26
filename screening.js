@@ -23,8 +23,14 @@ document.querySelectorAll('.visual-metric').forEach(section => {
   const poster = new Image();
   let nextFrame = 0;
   let videoReady = false;
-  let camera = -1;
-  const modes = section.querySelector('.camera-modes');
+  const hasReference = section.hasAttribute('data-reference-review');
+  const compareButtons = section.querySelectorAll('[data-compare]');
+  let camera = hasReference ? 1 : -1;
+  let comparison = 'all';
+  const streamCount = hasReference ? 3 : 2;
+  const streamPairs = { generators: [1, 2], 'reference-open': [0, 1], 'reference-peer': [0, 2] };
+  const showTriptych = () => hasReference && comparison === 'all';
+  const modes = section.querySelector('.camera-modes:not(.reference-modes)');
   const viewButtons = modes.querySelectorAll('[data-view]');
   const names = [...viewButtons].slice(1).map(button => button.textContent);
   const labels = getComputedStyle(stage);
@@ -36,8 +42,12 @@ document.querySelectorAll('.visual-metric').forEach(section => {
 
   function updateView() {
     const all = camera === -1;
-    canvas.width = all ? 960 : 640;
-    canvas.height = 360;
+    const triple = showTriptych();
+    canvas.width = all || triple ? 960 : 640;
+    canvas.height = triple ? (all ? 120 : 180) : 360;
+    stage.classList.toggle('three-streams', triple);
+    slider.hidden = !stage.classList.contains('interactive') || triple;
+    compareButtons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.compare === comparison)));
     stage.classList.toggle('all-views', all);
     caption.textContent = activeChoice.dataset.caption.replace(
       /^(.*?) \/ .*? \/ (.*?)$/, (_, scene, length) =>
@@ -53,45 +63,60 @@ document.querySelectorAll('.visual-metric').forEach(section => {
     const width = videoReady ? video.videoWidth : poster.naturalWidth;
     const height = videoReady ? video.videoHeight : poster.naturalHeight;
     if (!width || !height || (!videoReady && !poster.complete)) return;
-    const tileWidth = width / 6;
+    const streamWidth = width / streamCount;
+    const tileWidth = streamWidth / 3;
     const tileHeight = height / 2;
     const split = Number(slider.value) / 100;
     const all = camera === -1;
-    const destinationWidth = all ? canvas.width / 3 : canvas.width;
+    const triple = showTriptych();
+    const paneWidth = triple ? canvas.width / 3 : canvas.width;
+    const destinationWidth = all ? paneWidth / 3 : paneWidth;
     const destinationHeight = all ? canvas.height / 2 : canvas.height;
+    const pair = hasReference ? streamPairs[comparison] : [0, 1];
 
-    function tile(index) {
+    function paintTile(index, pane = 0) {
       const column = index % 3;
       const row = Math.floor(index / 3);
-      const x = all ? column * destinationWidth : 0;
+      const x = pane * paneWidth + (all ? column * destinationWidth : 0);
       const y = all ? row * destinationHeight : 0;
       const sx = column * tileWidth;
       const sy = row * tileHeight;
       const cut = destinationWidth * split;
-      if (split > 0) {
-        context.drawImage(frame, sx, sy, tileWidth * split, tileHeight, x, y, cut, destinationHeight);
+      if (triple) {
+        context.drawImage(frame, pane * streamWidth + sx, sy, tileWidth, tileHeight,
+          x, y, destinationWidth, destinationHeight);
+      } else {
+        if (split > 0) {
+          context.drawImage(frame, pair[0] * streamWidth + sx, sy, tileWidth * split, tileHeight,
+            x, y, cut, destinationHeight);
+        }
+        if (split < 1) {
+          context.drawImage(frame, pair[1] * streamWidth + sx + tileWidth * split, sy,
+            tileWidth * (1 - split), tileHeight, x + cut, y, destinationWidth - cut, destinationHeight);
+        }
       }
-      if (split < 1) {
-        context.drawImage(frame, width / 2 + sx + tileWidth * split, sy, tileWidth * (1 - split), tileHeight,
-          x + cut, y, destinationWidth - cut, destinationHeight);
-      }
-      if (!all) return;
+      if (!all && !triple) return;
       context.strokeStyle = surface;
       context.lineWidth = 2;
       context.strokeRect(x, y, destinationWidth, destinationHeight);
       context.fillStyle = divider;
-      if (split > 0 && split < 1) context.fillRect(x + cut - 1, y, 2, destinationHeight);
-      context.font = '600 15px system-ui';
+      if (!triple && split > 0 && split < 1) context.fillRect(x + cut - 1, y, 2, destinationHeight);
+      if (!all) return;
+      context.font = triple ? '600 10px system-ui' : '600 15px system-ui';
       const name = names[index];
       const labelWidth = context.measureText(name).width;
+      const metrics = triple ? [5, 19, 10, 14, 10, 9] : [7, 27, 12, 21, 13, 11];
+      const [boxX, boxY, padding, boxHeight, textX, textY] = metrics;
       context.fillStyle = surface;
-      context.fillRect(x + 7, y + destinationHeight - 27, labelWidth + 12, 21);
+      context.fillRect(x + boxX, y + destinationHeight - boxY, labelWidth + padding, boxHeight);
       context.fillStyle = divider;
-      context.fillText(name, x + 13, y + destinationHeight - 11);
+      context.fillText(name, x + textX, y + destinationHeight - textY);
     }
 
-    if (all) names.forEach((_, index) => tile(index));
-    else tile(camera);
+    for (let pane = 0; pane < (triple ? 3 : 1); pane++) {
+      if (all) names.forEach((_, index) => paintTile(index, pane));
+      else paintTile(camera, pane);
+    }
   }
 
   function animate() {
@@ -100,14 +125,19 @@ document.querySelectorAll('.visual-metric').forEach(section => {
   }
 
   poster.addEventListener('load', () => {
-    updateView();
     stage.classList.add('interactive');
-    canvas.hidden = slider.hidden = toggle.hidden = modes.hidden = false;
+    canvas.hidden = toggle.hidden = modes.hidden = false;
+    if (hasReference) section.querySelector('.reference-modes').hidden = false;
+    updateView();
     video.controls = false;
   });
   poster.src = video.poster;
   viewButtons.forEach(button => button.addEventListener('click', () => {
     camera = Number(button.dataset.view);
+    updateView();
+  }));
+  compareButtons.forEach(button => button.addEventListener('click', () => {
+    comparison = button.dataset.compare;
     updateView();
   }));
   slider.addEventListener('input', () => {
@@ -141,15 +171,22 @@ document.querySelectorAll('.visual-metric').forEach(section => {
     const {clip, left, right, leftScore, rightScore} = choice.dataset;
     video.pause();
     videoReady = false;
-    video.src = 'media/atlas-scored/' + clip + '.mp4';
-    video.poster = poster.src = 'media/atlas-scored/' + clip + '.jpg';
+    const directory = hasReference ? 'media/quality-reference/' : 'media/atlas-scored/';
+    video.src = directory + clip + '.mp4';
+    video.poster = poster.src = directory + clip + '.jpg';
     choices.forEach(button => button.setAttribute('aria-pressed', String(button === choice)));
     section.querySelector('.model-left').textContent = left;
     section.querySelector('.model-right').textContent = right;
     section.querySelector('.score-left').textContent = leftScore;
     section.querySelector('.score-right').textContent = rightScore;
     if (components) components.textContent = choice.dataset.components;
-    video.setAttribute('aria-label', left + ' and ' + right + ' paired replay');
+    if (hasReference) {
+      section.querySelector('.score-reference').textContent = choice.dataset.referenceScore;
+      section.querySelector('.score-gap').textContent = choice.dataset.gap;
+    }
+    video.setAttribute('aria-label', hasReference
+      ? 'Recorded reference, ' + left + ' and ' + right + ' matched clips'
+      : left + ' and ' + right + ' paired replay');
     updateView();
     if (play && !reduceMotion.matches) video.play().catch(() => {});
   }
