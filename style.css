@@ -174,3 +174,10 @@ header nav{flex-wrap:wrap}
 .loop-status{margin:0;padding:12px}
 @media(max-width:680px){.loop-comparison{grid-template-columns:minmax(0,1fr)}}
 .loop-policy video[hidden],.loop-status[hidden]{display:none}
+
+.loop-controls:not([hidden]){display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px;margin:0 0 12px}
+.loop-controls button{font:inherit;color:var(--ink);background:var(--pale);border:1px solid var(--rule);border-radius:8px;padding:4px 12px;cursor:pointer}
+.loop-controls input{width:clamp(120px,24vw,260px);accent-color:var(--cover-accent)}
+.loop-controls output{font-variant-numeric:tabular-nums}
+.loop-policy h4{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px}
+.loop-distance{color:var(--soft);font-size:13px;font-weight:400;font-variant-numeric:tabular-nums}
