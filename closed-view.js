@@ -6,11 +6,13 @@ const loopPlay = document.querySelector('#loop-play-together');
 const loopTime = document.querySelector('#loop-time');
 const loopTimeValue = document.querySelector('#loop-time-value');
 let comparePlayback = false;
+const isZhLoop = () => document.documentElement.lang === 'zh-CN';
+const syncPlayLabel = playing => (isZhLoop() ? (playing ? '全部暂停' : '同步播放') : (playing ? 'Pause both' : 'Play together'));
 
 function stopComparison() {
   comparePlayback = false;
   closedFilms.forEach(video => video.pause());
-  loopPlay.textContent = 'Play together';
+  loopPlay.textContent = syncPlayLabel(false);
 }
 
 function setComparisonTime(seconds) {
@@ -35,14 +37,14 @@ function showClosedScene(scene) {
       video.setAttribute('aria-label', policy + ' DreamForge closed loop for ' + scene);
       video.hidden = false;
       status.hidden = true;
-      distanceLabel.textContent = 'Executed ' + distance[slot.dataset.loopPolicy].toFixed(1) + ' m in 6 s';
+      if (distanceLabel) distanceLabel.textContent = 'Executed ' + distance[slot.dataset.loopPolicy].toFixed(1) + ' m in 6 s';
     } else {
       video.removeAttribute('src');
       video.load();
       video.hidden = true;
       status.textContent = 'Awaiting a verified rollout.';
       status.hidden = false;
-      distanceLabel.textContent = '';
+      if (distanceLabel) distanceLabel.textContent = '';
     }
   });
   loopControls.hidden = closedFilms.some(video => video.hidden);
@@ -57,7 +59,7 @@ loopPlay.addEventListener('click', async () => {
   try {
     closedFilms.forEach(video => { video.currentTime = seconds; });
     comparePlayback = true;
-    loopPlay.textContent = 'Pause both';
+    loopPlay.textContent = syncPlayLabel(true);
     await Promise.all(closedFilms.map(video => video.play()));
   } catch {
     stopComparison();
@@ -81,4 +83,7 @@ closedFilms.forEach(video => video.addEventListener('pause', () => {
   if (comparePlayback) stopComparison();
 }));
 closedTabs.forEach(tab => tab.addEventListener('click', () => showClosedScene(tab.dataset.loopScene)));
+addEventListener('driveaudit-lang-change', () => {
+  loopPlay.textContent = syncPlayLabel(comparePlayback);
+});
 showClosedScene(closedTabs[0].dataset.loopScene);

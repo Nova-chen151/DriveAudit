@@ -25,9 +25,9 @@ function showPolicyPair() {
       }, { once: true });
     }
   }
-  policyVideo.setAttribute('aria-label', policyName + ', OpenDWM and DreamForge camera inputs and predicted paths');
-  activeLabel.textContent = policyName + ' / nuScenes ' + sceneId;
-  supportLabel.textContent = scene.frames.length + ' decision windows shared across all six policies';
+  policyVideo.setAttribute('aria-label', policyName + ' paired replay with predicted paths');
+  if (activeLabel) activeLabel.textContent = policyName + ' / nuScenes ' + sceneId;
+  if (supportLabel) supportLabel.textContent = scene.frames.length + ' decision windows shared across all six policies';
   metricRows.forEach((row, i) => {
     row.querySelectorAll('td').forEach((cell, model) => {
       cell.textContent = result.means[model][i].toFixed(3);

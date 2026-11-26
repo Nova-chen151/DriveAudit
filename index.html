@@ -1,270 +1,317 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Benchmarking generated driving scenarios as policy tests, with paired video examples and benchmark results."><title>DriveAudit | Beyond Visual Realism</title><link rel="stylesheet" href="style.css?v=reference-cases"></head>
-<body><header><a class="brand" href="#top">DriveAudit</a><nav aria-label="Sections"><a href="#contrasts">Comparisons</a><a href="#rollout">Closed loop</a><a href="#dimension-2">Policy response</a><a href="#results">Results</a><a href="https://github.com/Nova-chen151/DriveAudit">Code</a></nav></header>
-<main id="top"><section class="cover"><div class="cover-title"><h1>DriveAudit</h1><p>Beyond Visual Realism<br>Benchmarking Generated Driving Scenarios as Policy Tests</p></div><div class="windshield"><video id="cover-film" muted loop playsinline preload="metadata" poster="media/overview-poster.jpg" src="media/overview.mp4" aria-label="DriveAudit scenario montage"></video></div><div class="cover-footer"><a href="#contrasts">Explore the comparisons ↓</a><span>DriveAudit scenario montage</span><button type="button" id="cover-toggle">Play cover</button></div></section><section id="contrasts" class="atlas"><h2>From camera quality to driving response</h2><p>Explore renderer pairs, compare six ego policies, and see how generators rank by QTES.</p><nav aria-label="Evaluation dimensions"><a href="#dimension-0">Observation quality</a><a href="#dimension-1">Scenario fidelity</a><a href="#dimension-2">Policy response</a><a href="#dimension-3">Testing effectiveness</a></nav><article id="dimension-0" class="dimension"><h3>Observation quality</h3>
-<p class="reference-selection">Selected scenes show how close OpenDWM scores to the recording and how it compares with another renderer.</p>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Benchmarking generated driving scenarios as policy tests, with paired video examples and benchmark results."><title>DriveAudit | Beyond Visual Realism</title><script>try{if(localStorage.getItem('driveaudit-theme')==='dark')document.documentElement.dataset.theme='dark';}catch{}</script><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700&amp;family=Noto+Sans:wght@400;500;600&amp;family=Noto+Sans+SC:wght@400;500;600;700&amp;display=swap" rel="stylesheet"><link rel="stylesheet" href="style.css?v=balanced-overview-gap"></head>
+<body><header class="cover-nav"><a class="brand" href="#top" aria-label="DriveAudit home"><img src="media/wordmark/driveaudit-on-dark.svg" width="1208" height="176" alt="DriveAudit"></a><nav aria-label="Sections"><a href="#overview" data-i18n="nav.overview">Overview</a><a href="#leaderboard" data-i18n="nav.leaderboard">Leaderboard</a><a href="#contrasts" data-i18n="nav.comparisons">Comparisons</a><a href="#rollout" data-i18n="nav.closedLoop">Closed loop</a><a href="https://github.com/Nova-chen151/DriveAudit" data-i18n="nav.code">Code</a><span class="nav-controls"><button type="button" class="nav-toggle" id="lang-toggle" aria-label="Switch language">中文</button><button type="button" class="nav-toggle" id="theme-toggle" aria-label="Switch color theme" aria-pressed="false"></button></span></nav><span class="scroll-progress" id="scroll-progress" aria-hidden="true"></span></header>
+<main id="top">
+<section class="cover" aria-labelledby="cover-title">
+  <div class="cover-pin">
+    <div class="cover-tiles" aria-hidden="true"></div>
+    <div class="windshield" aria-hidden="true">
+      <video id="cover-film" muted loop playsinline preload="metadata" poster="media/leaderboard-cover.jpg" src="media/leaderboard-cover.mp4" tabindex="-1"></video>
+      <div class="cover-media-label"><span data-i18n="cover.montage">Driving scenario montage</span><span data-i18n="cover.syncViews">Synchronized views</span></div>
+    </div>
+    <div class="cover-title">
+      <picture class="cover-wordmark">
+        <source type="image/svg+xml" srcset="media/wordmark/driveaudit-on-dark.svg">
+        <img src="media/wordmark/driveaudit-on-dark@2x.png" srcset="media/wordmark/driveaudit-on-dark@2x.png 2x, media/wordmark/driveaudit-on-dark@3x.png 3x" width="1208" height="176" alt="DriveAudit" fetchpriority="high">
+      </picture>
+      <h1 id="cover-title" data-i18n="cover.title">Beyond Visual Realism: Benchmarking Generated Driving Scenarios as Policy Tests</h1>
+      <div class="cover-links">
+        <a href="https://github.com/Nova-chen151/DriveAudit"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .8a11.2 11.2 0 0 0-3.54 21.83c.56.1.76-.24.76-.54v-2.1c-3.12.68-3.78-1.32-3.78-1.32-.51-1.29-1.25-1.63-1.25-1.63-1.02-.7.08-.68.08-.68 1.13.08 1.73 1.16 1.73 1.16 1 1.72 2.63 1.22 3.27.94.1-.73.39-1.22.71-1.5-2.49-.28-5.11-1.25-5.11-5.54 0-1.22.44-2.22 1.15-3-.12-.28-.5-1.42.11-2.96 0 0 .94-.3 3.08 1.15a10.7 10.7 0 0 1 5.6 0c2.14-1.45 3.08-1.15 3.08-1.15.61 1.54.23 2.68.11 2.96.72.78 1.15 1.78 1.15 3 0 4.3-2.62 5.26-5.12 5.54.4.35.76 1.03.76 2.08v3.05c0 .3.2.65.77.54A11.2 11.2 0 0 0 12 .8Z"/></svg><span data-i18n="nav.code">Code</span></a>
+        <a href="#leaderboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V11h5v9m0 0V4h6v16m0 0v-6h5v6M2 20h20"/></svg><span data-i18n="nav.leaderboard">Leaderboard</span></a>
+        <a href="#contrasts"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M12 4v16M7 9l-2 3 2 3m10-6 2 3-2 3"/></svg><span data-i18n="cover.explore">Explore comparisons</span></a>
+      </div>
+    </div>
+    <div class="cover-expanded cover-expanded-heading" hidden inert aria-hidden="true">
+      <img class="cover-expanded-wordmark" src="media/wordmark/driveaudit-on-light.svg" width="1208" height="176" alt="DriveAudit">
+      <h2 data-i18n="cover.expandedHeading">From visual realism to driving policy tests</h2>
+    </div>
+    <div class="cover-expanded cover-dimensions" hidden inert aria-hidden="true">
+      <nav aria-label="Explore evaluation dimensions">
+        <a href="#dimension-0"><span class="cover-dimension-copy"><strong data-i18n="dim.obs.title">Observation quality</strong></span><span class="cover-dimension-arrow" aria-hidden="true">↗</span></a>
+        <a href="#dimension-1"><span class="cover-dimension-copy"><strong data-i18n="dim.fid.title">Scenario fidelity</strong></span><span class="cover-dimension-arrow" aria-hidden="true">↗</span></a>
+        <a href="#dimension-2"><span class="cover-dimension-copy"><strong data-i18n="dim.pol.title">Policy response</strong></span><span class="cover-dimension-arrow" aria-hidden="true">↗</span></a>
+        <a href="#leaderboard"><span class="cover-dimension-copy"><strong data-i18n="dim.eff.title">Testing effectiveness</strong></span><span class="cover-dimension-arrow" aria-hidden="true">↗</span></a>
+      </nav>
+    </div>
+    <a class="cover-scroll" href="#overview" aria-label="Scroll to explore DriveAudit">
+      <span data-i18n="cover.scroll">Scroll to explore</span>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+  </div>
+</section>
+<div class="project-content">
+<section id="overview" class="content-band overview-band">
+  <div class="section-inner">
+    <div class="overview-copy">
+      <h2 data-i18n="overview.title">Benchmark overview</h2>
+      <p class="section-lede" data-i18n-html="overview.lede"><strong>A convincing video is not yet a credible driving test.</strong> DriveAudit evaluates generated driving scenarios through the open- and closed-loop behavior they elicit from autonomous driving policies—not visual realism alone. By pairing recorded and generated branches under matched scene identities, timestamps, calibration, and ego motion across four coupled levels (observation quality, scenario fidelity, policy response, and quality-aware testing effectiveness), DriveAudit distinguishes genuine policy weaknesses from failures caused by rendering artifacts or implausible traffic.</p>
+    </div>
+    <figure class="paperfig"><a href="media/paper/overview.webp" aria-label="Open full-size figure: DriveAudit pairs recorded and generated conditions across four levels of evaluation"><img loading="lazy" width="2200" height="1116" src="media/paper/overview.webp" alt="DriveAudit pairs recorded and generated conditions across four levels of evaluation"></a></figure>
+  </div>
+</section>
+<section id="leaderboard" class="content-band leaderboard-band">
+  <div class="section-inner">
+    <div class="section-heading">
+      <h2 id="results" data-i18n="lb.title">Leaderboard results</h2>
+    </div>
+    <div class="leaderboard-controls" hidden>
+      <div class="setting-switch" role="group" aria-label="Traffic condition">
+        <button type="button" data-setting-target="catk" aria-pressed="true" data-i18n="lb.catk">Shared CAT-K traffic</button>
+        <button type="button" data-setting-target="recorded" aria-pressed="false" data-i18n="lb.recorded">Recorded traffic</button>
+      </div>
+      <div class="leaderboard-tools">
+        <label class="renderer-search"><span data-i18n="lb.find">Find a renderer</span><input id="renderer-search" type="search" placeholder="Renderer name" data-i18n-placeholder="lb.searchPlaceholder" autocomplete="off"></label>
+        <label><span data-i18n="lb.rankBy">Rank by</span><select id="ranking-metric"><option value="fvd">FVD ↓</option><option value="iqa">CLIP-IQA+ ↑</option><option value="dino">DINO-T ↑</option><option value="epi">Epi@3 ↑</option><option value="tvc">TVC ↑</option><option value="trs">TRS ↑</option><option value="rpdms">RPDMS ↑</option><option value="route" data-i18n="lb.routeUp">Route completion ↑</option><option value="qtes" selected>QTES ↑</option></select></label>
+        <label><span data-i18n="lb.order">Order</span><select id="ranking-direction"><option value="desc" data-i18n="lb.highToLow">High to low</option><option value="asc" data-i18n="lb.lowToHigh">Low to high</option></select></label>
+        <details class="column-picker"><summary data-i18n="lb.visibleMetrics">Visible metrics</summary><div class="metric-options"><label><input type="checkbox" data-metric-toggle="fvd" checked><span>FVD</span></label><label><input type="checkbox" data-metric-toggle="iqa" checked><span>CLIP-IQA+</span></label><label><input type="checkbox" data-metric-toggle="dino" checked><span>DINO-T</span></label><label><input type="checkbox" data-metric-toggle="epi" checked><span>Epi@3</span></label><label><input type="checkbox" data-metric-toggle="tvc" checked><span>TVC</span></label><label><input type="checkbox" data-metric-toggle="trs" checked><span>TRS</span></label><label><input type="checkbox" data-metric-toggle="rpdms" checked><span>RPDMS</span></label><label><input type="checkbox" data-metric-toggle="route" checked><span data-i18n="lb.route">Route completion</span></label><label><input type="checkbox" data-metric-toggle="qtes" checked><span>QTES</span></label></div></details>
+        <button type="button" class="secondary-button" id="leaderboard-reset" data-i18n="lb.reset">Reset</button>
+      </div>
+    </div>
+    <div class="leaderboard-setting" data-results-setting="catk">
+  <div class="results-scroll" role="region" aria-label="Shared CAT-K trajectories + rendering results" tabindex="0">
+    <table class="leaderboard-table">
+      <caption data-i18n="lb.captionCatk">Shared CAT-K trajectories + rendering</caption>
+      <thead><tr><th scope="col" class="rank-heading" data-i18n="lb.rank">Rank</th><th scope="col" class="renderer-heading" data-i18n="lb.renderer">Renderer</th><th scope="col" data-metric="fvd" data-label="FVD" data-direction="asc" title="Lower is better. Population-level feature-distribution distance."><span class="metric-static">FVD ↓</span><button type="button" class="table-sort" data-rank-by="fvd" hidden>FVD ↓</button></th><th scope="col" data-metric="iqa" data-label="CLIP-IQA+" data-direction="desc" title="Higher is better. No-reference perceptual image quality."><span class="metric-static">CLIP-IQA+ ↑</span><button type="button" class="table-sort" data-rank-by="iqa" hidden>CLIP-IQA+ ↑</button></th><th scope="col" data-metric="dino" data-label="DINO-T" data-direction="desc" title="Higher is better. Temporal feature consistency, not motion magnitude."><span class="metric-static">DINO-T ↑</span><button type="button" class="table-sort" data-rank-by="dino" hidden>DINO-T ↑</button></th><th scope="col" data-metric="epi" data-label="Epi@3" data-direction="desc" title="Higher is better. Cross-view correspondence inlier fraction at a 3-pixel epipolar threshold."><span class="metric-static">Epi@3 ↑</span><button type="button" class="table-sort" data-rank-by="epi" hidden>Epi@3 ↑</button></th><th scope="col" data-metric="tvc" data-label="TVC" data-direction="desc" title="Higher is better. Agreement between rendered evidence and traffic trajectories."><span class="metric-static">TVC ↑</span><button type="button" class="table-sort" data-rank-by="tvc" hidden>TVC ↑</button></th><th scope="col" data-metric="trs" data-label="TRS" data-direction="desc" title="Higher is better. Population-level traffic realism; shared traffic produces a shared value."><span class="metric-static">TRS ↑</span><button type="button" class="table-sort" data-rank-by="trs" hidden>TRS ↑</button></th><th scope="col" data-metric="rpdms" data-label="RPDMS" data-direction="desc" title="Higher is better for the driving policy. Responsibility-aware planning performance."><span class="metric-static">RPDMS ↑</span><button type="button" class="table-sort" data-rank-by="rpdms" hidden>RPDMS ↑</button></th><th scope="col" data-metric="route" data-label="Route completion" data-direction="desc" title="Higher is better for the driving policy. A supported-route progress proxy in replay."><span class="metric-static" data-i18n="lb.routeUp">Route completion ↑</span><button type="button" class="table-sort" data-rank-by="route" data-i18n="lb.routeUp" hidden>Route completion ↑</button></th><th scope="col" data-metric="qtes" data-label="QTES" data-direction="desc" title="Higher is better for testing effectiveness, not policy safety. Reference-equivalent anchor: 50."><span class="metric-static">QTES ↑</span><button type="button" class="table-sort" data-rank-by="qtes" hidden>QTES ↑</button></th></tr></thead>
+      <tbody><tr data-renderer="OpenDWM"><td class="rank-value">1</td><th scope="row">OpenDWM</th><td data-metric="fvd">93.383</td><td data-metric="iqa">0.531</td><td data-metric="dino">0.730</td><td data-metric="epi">0.222</td><td data-metric="tvc">0.543</td><td data-metric="trs">0.782</td><td data-metric="rpdms">0.724</td><td data-metric="route">0.878</td><td data-metric="qtes">44.079</td></tr><tr data-renderer="DreamForge"><td class="rank-value">2</td><th scope="row">DreamForge</th><td data-metric="fvd">272.880</td><td data-metric="iqa">0.573</td><td data-metric="dino">0.705</td><td data-metric="epi">0.168</td><td data-metric="tvc">0.495</td><td data-metric="trs">0.782</td><td data-metric="rpdms">0.729</td><td data-metric="route">0.881</td><td data-metric="qtes">41.311</td></tr><tr data-renderer="HorizonDrive"><td class="rank-value">3</td><th scope="row">HorizonDrive</th><td data-metric="fvd">178.708</td><td data-metric="iqa">0.593</td><td data-metric="dino">0.842</td><td data-metric="epi">0.116</td><td data-metric="tvc">0.519</td><td data-metric="trs">0.782</td><td data-metric="rpdms">0.725</td><td data-metric="route">0.880</td><td data-metric="qtes">40.108</td></tr><tr data-renderer="MagicDrive-V2"><td class="rank-value">4</td><th scope="row">MagicDrive-V2</th><td data-metric="fvd">217.146</td><td data-metric="iqa">0.437</td><td data-metric="dino">0.744</td><td data-metric="epi">0.179</td><td data-metric="tvc">0.447</td><td data-metric="trs">0.782</td><td data-metric="rpdms">0.718</td><td data-metric="route">0.870</td><td data-metric="qtes">39.509</td></tr><tr data-renderer="Panacea"><td class="rank-value">5</td><th scope="row">Panacea</th><td data-metric="fvd">280.866</td><td data-metric="iqa">0.581</td><td data-metric="dino">0.728</td><td data-metric="epi">0.164</td><td data-metric="tvc">0.374</td><td data-metric="trs">0.782</td><td data-metric="rpdms">0.717</td><td data-metric="route">0.881</td><td data-metric="qtes">39.146</td></tr><tr data-renderer="BaseDreamer"><td class="rank-value">6</td><th scope="row">BaseDreamer</th><td data-metric="fvd">630.836</td><td data-metric="iqa">0.661</td><td data-metric="dino">0.677</td><td data-metric="epi">0.143</td><td data-metric="tvc">0.410</td><td data-metric="trs">0.782</td><td data-metric="rpdms">0.721</td><td data-metric="route">0.880</td><td data-metric="qtes">38.522</td></tr><tr data-renderer="MagicDrive"><td class="rank-value">7</td><th scope="row">MagicDrive</th><td data-metric="fvd">378.423</td><td data-metric="iqa">0.530</td><td data-metric="dino">0.681</td><td data-metric="epi">0.132</td><td data-metric="tvc">0.363</td><td data-metric="trs">0.782</td><td data-metric="rpdms">0.670</td><td data-metric="route">0.855</td><td data-metric="qtes">37.282</td></tr></tbody>
+      <tfoot><tr class="reference-row"><td aria-label="Not ranked">—</td><th scope="row"><span data-i18n="lb.realVideo">Real video</span> <span class="ref-sub" data-i18n="lb.reference">reference</span></th><td data-metric="fvd">0.000</td><td data-metric="iqa">0.619</td><td data-metric="dino">0.792</td><td data-metric="epi">0.379</td><td data-metric="tvc">0.584</td><td data-metric="trs">1.000</td><td data-metric="rpdms">0.788</td><td data-metric="route">0.931</td><td data-metric="qtes">50.000</td></tr></tfoot>
+    </table>
+  </div>
+  <p class="leaderboard-empty" data-i18n="lb.empty" hidden>No renderer matches this search. The real-video reference is shown separately.</p>
+</div>
+    <div class="leaderboard-setting" data-results-setting="recorded">
+  <div class="results-scroll" role="region" aria-label="Fixed recorded trajectories + rendering results" tabindex="0">
+    <table class="leaderboard-table">
+      <caption data-i18n="lb.captionRecorded">Fixed recorded trajectories + rendering</caption>
+      <thead><tr><th scope="col" class="rank-heading" data-i18n="lb.rank">Rank</th><th scope="col" class="renderer-heading" data-i18n="lb.renderer">Renderer</th><th scope="col" data-metric="fvd" data-label="FVD" data-direction="asc" title="Lower is better. Population-level feature-distribution distance."><span class="metric-static">FVD ↓</span><button type="button" class="table-sort" data-rank-by="fvd" hidden>FVD ↓</button></th><th scope="col" data-metric="iqa" data-label="CLIP-IQA+" data-direction="desc" title="Higher is better. No-reference perceptual image quality."><span class="metric-static">CLIP-IQA+ ↑</span><button type="button" class="table-sort" data-rank-by="iqa" hidden>CLIP-IQA+ ↑</button></th><th scope="col" data-metric="dino" data-label="DINO-T" data-direction="desc" title="Higher is better. Temporal feature consistency, not motion magnitude."><span class="metric-static">DINO-T ↑</span><button type="button" class="table-sort" data-rank-by="dino" hidden>DINO-T ↑</button></th><th scope="col" data-metric="epi" data-label="Epi@3" data-direction="desc" title="Higher is better. Cross-view correspondence inlier fraction at a 3-pixel epipolar threshold."><span class="metric-static">Epi@3 ↑</span><button type="button" class="table-sort" data-rank-by="epi" hidden>Epi@3 ↑</button></th><th scope="col" data-metric="tvc" data-label="TVC" data-direction="desc" title="Higher is better. Agreement between rendered evidence and traffic trajectories."><span class="metric-static">TVC ↑</span><button type="button" class="table-sort" data-rank-by="tvc" hidden>TVC ↑</button></th><th scope="col" data-metric="trs" data-label="TRS" data-direction="desc" title="Higher is better. Population-level traffic realism; shared traffic produces a shared value."><span class="metric-static">TRS ↑</span><button type="button" class="table-sort" data-rank-by="trs" hidden>TRS ↑</button></th><th scope="col" data-metric="rpdms" data-label="RPDMS" data-direction="desc" title="Higher is better for the driving policy. Responsibility-aware planning performance."><span class="metric-static">RPDMS ↑</span><button type="button" class="table-sort" data-rank-by="rpdms" hidden>RPDMS ↑</button></th><th scope="col" data-metric="route" data-label="Route completion" data-direction="desc" title="Higher is better for the driving policy. A supported-route progress proxy in replay."><span class="metric-static" data-i18n="lb.routeUp">Route completion ↑</span><button type="button" class="table-sort" data-rank-by="route" data-i18n="lb.routeUp" hidden>Route completion ↑</button></th><th scope="col" data-metric="qtes" data-label="QTES" data-direction="desc" title="Higher is better for testing effectiveness, not policy safety. Reference-equivalent anchor: 50."><span class="metric-static">QTES ↑</span><button type="button" class="table-sort" data-rank-by="qtes" hidden>QTES ↑</button></th></tr></thead>
+      <tbody><tr data-renderer="OpenDWM"><td class="rank-value">1</td><th scope="row">OpenDWM</th><td data-metric="fvd">93.767</td><td data-metric="iqa">0.537</td><td data-metric="dino">0.733</td><td data-metric="epi">0.225</td><td data-metric="tvc">0.573</td><td data-metric="trs">1.000</td><td data-metric="rpdms">0.774</td><td data-metric="route">0.916</td><td data-metric="qtes">44.631</td></tr><tr data-renderer="DreamForge"><td class="rank-value">2</td><th scope="row">DreamForge</th><td data-metric="fvd">279.270</td><td data-metric="iqa">0.573</td><td data-metric="dino">0.704</td><td data-metric="epi">0.169</td><td data-metric="tvc">0.534</td><td data-metric="trs">1.000</td><td data-metric="rpdms">0.782</td><td data-metric="route">0.920</td><td data-metric="qtes">41.573</td></tr><tr data-renderer="HorizonDrive"><td class="rank-value">3</td><th scope="row">HorizonDrive</th><td data-metric="fvd">176.006</td><td data-metric="iqa">0.593</td><td data-metric="dino">0.840</td><td data-metric="epi">0.117</td><td data-metric="tvc">0.551</td><td data-metric="trs">1.000</td><td data-metric="rpdms">0.777</td><td data-metric="route">0.920</td><td data-metric="qtes">40.507</td></tr><tr data-renderer="MagicDrive-V2"><td class="rank-value">4</td><th scope="row">MagicDrive-V2</th><td data-metric="fvd">216.224</td><td data-metric="iqa">0.435</td><td data-metric="dino">0.740</td><td data-metric="epi">0.179</td><td data-metric="tvc">0.469</td><td data-metric="trs">1.000</td><td data-metric="rpdms">0.764</td><td data-metric="route">0.906</td><td data-metric="qtes">39.868</td></tr><tr data-renderer="Panacea"><td class="rank-value">5</td><th scope="row">Panacea</th><td data-metric="fvd">278.398</td><td data-metric="iqa">0.581</td><td data-metric="dino">0.729</td><td data-metric="epi">0.163</td><td data-metric="tvc">0.408</td><td data-metric="trs">1.000</td><td data-metric="rpdms">0.770</td><td data-metric="route">0.922</td><td data-metric="qtes">39.637</td></tr><tr data-renderer="BaseDreamer"><td class="rank-value">6</td><th scope="row">BaseDreamer</th><td data-metric="fvd">615.745</td><td data-metric="iqa">0.662</td><td data-metric="dino">0.674</td><td data-metric="epi">0.144</td><td data-metric="tvc">0.448</td><td data-metric="trs">1.000</td><td data-metric="rpdms">0.777</td><td data-metric="route">0.921</td><td data-metric="qtes">38.765</td></tr><tr data-renderer="MagicDrive"><td class="rank-value">7</td><th scope="row">MagicDrive</th><td data-metric="fvd">372.394</td><td data-metric="iqa">0.534</td><td data-metric="dino">0.684</td><td data-metric="epi">0.136</td><td data-metric="tvc">0.383</td><td data-metric="trs">1.000</td><td data-metric="rpdms">0.721</td><td data-metric="route">0.887</td><td data-metric="qtes">37.839</td></tr></tbody>
+      <tfoot><tr class="reference-row"><td aria-label="Not ranked">—</td><th scope="row"><span data-i18n="lb.realVideo">Real video</span> <span class="ref-sub" data-i18n="lb.reference">reference</span></th><td data-metric="fvd">0.000</td><td data-metric="iqa">0.619</td><td data-metric="dino">0.792</td><td data-metric="epi">0.379</td><td data-metric="tvc">0.584</td><td data-metric="trs">1.000</td><td data-metric="rpdms">0.788</td><td data-metric="route">0.931</td><td data-metric="qtes">50.000</td></tr></tfoot>
+    </table>
+  </div>
+  <p class="leaderboard-empty" data-i18n="lb.empty" hidden>No renderer matches this search. The real-video reference is shown separately.</p>
+</div>
+  </div>
+</section>
+<section id="protocol" class="content-band protocol-band">
+  <div class="section-inner">
+    <div class="section-heading">
+      <h2 data-i18n="proto.title">Dataset and evaluation protocol</h2>
+      <p class="section-lede" data-i18n="proto.lede">All seven rendering models are evaluated under the same 550 scene histories, matched traffic conditions, scoring anchors, and a fixed six-policy panel (UniAD, VAD, DrivoR, SparseDriveV2, DiffusionDriveV2, and GoalFlow). Holding the source history and frozen policies constant isolates the causal effect of generated observations and traffic on driving behavior.</p>
+    </div>
+    <div class="protocol-columns">
+      <div><h3 data-i18n="proto.col1Title">One shared history, two motion settings</h3><p data-i18n="proto.col1P1">Starting from a one-second six-camera history (10 frames), DriveAudit evaluates every renderer under two motion settings: fixed recorded traffic trajectories and shared CAT-K generated traffic trajectories over the next 80 frames. Each frozen policy predicts future plans at matched timestamps, and its actions do not alter subsequent observations or traffic in the main non-reactive replay protocol.</p><p data-i18n="proto.col1P2">The evaluation interface is strictly camera-only so that policy decisions reflect visual observations rather than privileged 3D ground truth. For policies whose architectures expect LiDAR-shaped tensors, zero/null-LiDAR compatibility inputs are supplied under a unified sensor contract.</p></div>
+      <div><h3 data-i18n="proto.col2Title">Five data sources, explicit provenance</h3><ul class="source-list"><li><span>nuScenes</span><strong data-i18n="proto.h250">250 histories</strong></li><li><span>nuPlan</span><strong data-i18n="proto.h100">100 histories</strong></li><li><span>Argoverse 2</span><strong data-i18n="proto.h75">75 histories</strong></li><li><span>PandaSet</span><strong data-i18n="proto.h75">75 histories</strong></li><li><span>Nexar</span><strong data-i18n="proto.h50">50 histories</strong></li></ul></div>
+    </div>
+    <figure class="paperfig"><a href="media/paper/dataset_examples_and_characteristics.webp" aria-label="Open full-size figure: Multi-camera input examples and source-wise distributions of image characteristics"><img loading="lazy" width="2200" height="1346" src="media/paper/dataset_examples_and_characteristics.webp" alt="Multi-camera input examples and source-wise distributions of image characteristics"></a></figure>
+  </div>
+</section>
+<section id="contrasts" class="content-band evidence-band atlas"><div class="section-inner">
+<div class="section-heading"><h2 data-i18n="comp.title">Visual comparisons</h2></div>
+<article id="dimension-0" class="dimension"><div class="dimension-heading"><div><h3 data-i18n="dim.obs.title">Observation quality</h3><p data-i18n="dim.obs.desc">Rendering blur, structural distortion, and temporal flicker can distort a driving policy's perception even when the underlying traffic layout is valid. Before attributing behavioral changes to a policy weakness, we audit perceptual frame realism and temporal appearance stability across all six synchronized camera views.</p></div></div>
 <section class="visual-metric" data-reference-review>
- <div class="metric-heading"><h4>CLIP-IQA+</h4><p>Compare sharpness, visible artifacts and image detail.</p></div>
- <div class="reference-modes camera-modes" role="group" aria-label="CLIP-IQA+ comparison mode" hidden><button type="button" data-compare="all" aria-pressed="true">All three</button><button type="button" data-compare="generators" aria-pressed="false">OpenDWM / comparison</button><button type="button" data-compare="reference-open" aria-pressed="false">Recorded / OpenDWM</button><button type="button" data-compare="reference-peer" aria-pressed="false">Recorded / comparison</button></div>
- <div class="camera-modes" role="group" aria-label="Camera view" hidden><button type="button" data-view="-1" aria-pressed="false">All six</button><button type="button" data-view="0" aria-pressed="false">Front left</button><button type="button" data-view="1" aria-pressed="true">Front</button><button type="button" data-view="2" aria-pressed="false">Front right</button><button type="button" data-view="3" aria-pressed="false">Back left</button><button type="button" data-view="4" aria-pressed="false">Back</button><button type="button" data-view="5" aria-pressed="false">Back right</button></div>
+ <div class="metric-heading"><h4>CLIP-IQA+</h4><p data-i18n="metric.clip.desc">CLIP-IQA+ evaluates no-reference perceptual image quality, capturing sharpness, fine road and vehicle textures, lighting consistency, and visible generation artifacts. Higher scores indicate cleaner, more realistic camera observations; drag the divider to compare high-scoring and degraded renderings across all six views.</p></div>
+ <div class="motion-toolbar">
+  <div class="reference-modes camera-modes" role="group" aria-label="CLIP-IQA+ comparison mode" hidden><button type="button" data-compare="generators" aria-pressed="true" data-i18n="cmp.goodBad">Good / Bad</button><button type="button" data-compare="reference-open" aria-pressed="false" data-i18n="cmp.recGood">Recorded / Good</button><button type="button" data-compare="reference-peer" aria-pressed="false" data-i18n="cmp.recBad">Recorded / Bad</button><button type="button" data-compare="all" aria-pressed="false" data-i18n="cmp.allThree">All three</button></div>
+  <div class="camera-modes" role="group" aria-label="Camera view" hidden><button type="button" data-view="0" aria-pressed="false" data-i18n="cam.fl">Front left</button><button type="button" data-view="1" aria-pressed="true" data-i18n="cam.f">Front</button><button type="button" data-view="2" aria-pressed="false" data-i18n="cam.fr">Front right</button><button type="button" data-view="3" aria-pressed="false" data-i18n="cam.bl">Back left</button><button type="button" data-view="4" aria-pressed="false" data-i18n="cam.b">Back</button><button type="button" data-view="5" aria-pressed="false" data-i18n="cam.br">Back right</button></div>
+ </div>
  <figure class="motion-comparison">
   <div class="motion-stage">
-   <video controls muted loop playsinline preload="none" src="media/quality-reference/clip-nuplan-0013.mp4" poster="media/quality-reference/clip-nuplan-0013.jpg" aria-label="Recorded reference, OpenDWM and MagicDrive-V2 matched clips"></video>
-   <canvas width="960" height="180" aria-hidden="true" hidden></canvas>
+   <video controls muted loop playsinline preload="none" src="media/quality-reference/clip-nuplan-0013.mp4" poster="media/quality-reference/clip-nuplan-0013.jpg" aria-label="Recorded reference, Good example and Bad example matched clips"></video>
+   <canvas width="1200" height="450" aria-hidden="true" hidden></canvas>
    <span class="motion-divider" aria-hidden="true"></span>
    <input hidden type="range" min="0" max="100" value="50" aria-label="Visible percentage of the left CLIP-IQA+ stream">
-  </div>
-  <div class="motion-meta">
-   <div class="motion-scores reference-scores" aria-live="polite">
-    <span class="score-stream-reference">Recorded <strong class="score-reference">0.704</strong></span>
-    <span class="score-stream-open"><span class="model-left">OpenDWM</span> <strong class="score-left">0.621</strong></span>
-    <span class="score-stream-peer"><span class="model-right">MagicDrive-V2</span> <strong class="score-right">0.514</strong></span>
+   <button type="button" class="motion-toggle stage-play-btn" hidden>▶ Play</button>
+   <div class="stage-badges" aria-live="polite">
+    <span class="stage-badge score-stream-reference" hidden><span data-i18n="cmp.recorded">Recorded</span> <strong class="score-reference">0.704</strong></span>
+    <span class="stage-badge score-stream-open"><span class="model-left" data-i18n="cmp.good">Good example</span> <strong class="score-left">0.621</strong></span>
+    <span class="stage-badge score-stream-peer"><span class="model-right" data-i18n="cmp.bad">Bad example</span> <strong class="score-right">0.514</strong></span>
    </div>
-   <button type="button" class="motion-toggle" hidden>Play</button>
   </div>
-  <figcaption><span class="clip-caption">nuPlan adv_case_0013 / Front / 20 sampled frames</span>
-   <span>OpenDWM vs. comparison <strong class="score-gap">+0.107</strong></span>
-   <span class="clip-scope">Scores use the full six-camera sequence.</span></figcaption>
  </figure>
- <div class="atlas-picker scored-picker" role="group" aria-label="CLIP-IQA+ scenes"><button type="button" class="clip-choice" data-clip="clip-nuplan-0013" data-source="nuplan_challenger_v1/adv_case_0013"
-         data-left="OpenDWM" data-right="MagicDrive-V2" data-left-score="0.621" data-right-score="0.514"
-         data-reference-score="0.704" data-gap="+0.107" data-caption="nuPlan adv_case_0013 / Front / 20 sampled frames"
-         aria-pressed="true"><img loading="lazy" alt="" src="media/quality-reference/clip-nuplan-0013-thumb.jpg">
-         <span>nuPlan adv_case_0013</span><span class="pair-name">Δ from Recorded 0.083</span>
-         <span class="pair-name">+0.107 vs. MagicDrive-V2</span></button><button type="button" class="clip-choice" data-clip="clip-av2" data-source="av2_challenger_v1/adv_case_0005"
-         data-left="OpenDWM" data-right="MagicDrive-V2" data-left-score="0.615" data-right-score="0.492"
-         data-reference-score="0.700" data-gap="+0.124" data-caption="Argoverse 2 adv_case_0005 / Front / 20 sampled frames"
-         aria-pressed="false"><img loading="lazy" alt="" src="media/quality-reference/clip-av2-thumb.jpg">
-         <span>Argoverse 2 adv_case_0005</span><span class="pair-name">Δ from Recorded 0.085</span>
-         <span class="pair-name">+0.124 vs. MagicDrive-V2</span></button><button type="button" class="clip-choice" data-clip="clip-pandaset" data-source="pandaset_challenger_v1/adv_case_0010"
-         data-left="OpenDWM" data-right="MagicDrive-V2" data-left-score="0.584" data-right-score="0.376"
-         data-reference-score="0.656" data-gap="+0.208" data-caption="PandaSet adv_case_0010 / Front / 20 sampled frames"
-         aria-pressed="false"><img loading="lazy" alt="" src="media/quality-reference/clip-pandaset-thumb.jpg">
-         <span>PandaSet adv_case_0010</span><span class="pair-name">Δ from Recorded 0.072</span>
-         <span class="pair-name">+0.208 vs. MagicDrive-V2</span></button><button type="button" class="clip-choice" data-clip="clip-nuscenes-0029" data-source="nuscenes300_challenger_v1/adv_case_0029"
-         data-left="OpenDWM" data-right="MagicDrive-V2" data-left-score="0.505" data-right-score="0.366"
-         data-reference-score="0.527" data-gap="+0.140" data-caption="nuScenes adv_case_0029 / Front / 20 sampled frames"
-         aria-pressed="false"><img loading="lazy" alt="" src="media/quality-reference/clip-nuscenes-0029-thumb.jpg">
-         <span>nuScenes adv_case_0029</span><span class="pair-name">Δ from Recorded 0.021</span>
-         <span class="pair-name">+0.140 vs. MagicDrive-V2</span></button></div>
+ <div class="atlas-picker scored-picker" role="group" aria-label="CLIP-IQA+ scenes"><button type="button" class="clip-choice" data-clip="clip-nuplan-0013"
+         data-left="Good example" data-right="Bad example" data-left-score="0.621" data-right-score="0.514"
+         data-reference-score="0.704" aria-pressed="true"><img loading="lazy" alt="" src="media/quality-reference/clip-nuplan-0013-thumb.jpg">
+         <span data-i18n="case.1">Case 1</span></button><button type="button" class="clip-choice" data-clip="clip-av2"
+         data-left="Good example" data-right="Bad example" data-left-score="0.615" data-right-score="0.492"
+         data-reference-score="0.700" aria-pressed="false"><img loading="lazy" alt="" src="media/quality-reference/clip-av2-thumb.jpg">
+         <span data-i18n="case.2">Case 2</span></button><button type="button" class="clip-choice" data-clip="clip-pandaset"
+         data-left="Good example" data-right="Bad example" data-left-score="0.584" data-right-score="0.376"
+         data-reference-score="0.656" aria-pressed="false"><img loading="lazy" alt="" src="media/quality-reference/clip-pandaset-thumb.jpg">
+         <span data-i18n="case.3">Case 3</span></button></div>
 </section>
 <section class="visual-metric" data-reference-review>
- <div class="metric-heading"><h4>DINO-T</h4><p>Watch for changes in appearance as the cameras move.</p></div>
- <div class="reference-modes camera-modes" role="group" aria-label="DINO-T comparison mode" hidden><button type="button" data-compare="all" aria-pressed="true">All three</button><button type="button" data-compare="generators" aria-pressed="false">OpenDWM / comparison</button><button type="button" data-compare="reference-open" aria-pressed="false">Recorded / OpenDWM</button><button type="button" data-compare="reference-peer" aria-pressed="false">Recorded / comparison</button></div>
- <div class="camera-modes" role="group" aria-label="Camera view" hidden><button type="button" data-view="-1" aria-pressed="false">All six</button><button type="button" data-view="0" aria-pressed="false">Front left</button><button type="button" data-view="1" aria-pressed="true">Front</button><button type="button" data-view="2" aria-pressed="false">Front right</button><button type="button" data-view="3" aria-pressed="false">Back left</button><button type="button" data-view="4" aria-pressed="false">Back</button><button type="button" data-view="5" aria-pressed="false">Back right</button></div>
+ <div class="metric-heading"><h4>DINO-T</h4><p data-i18n="metric.dino.desc">DINO-T measures temporal feature consistency between consecutive frames using self-supervised visual representations. Higher scores indicate that vehicles, lane markings, and static background structures maintain coherent identity and appearance as the ego vehicle moves, rather than morphing or flickering.</p></div>
+ <div class="motion-toolbar">
+  <div class="reference-modes camera-modes" role="group" aria-label="DINO-T comparison mode" hidden><button type="button" data-compare="generators" aria-pressed="true" data-i18n="cmp.goodBad">Good / Bad</button><button type="button" data-compare="reference-open" aria-pressed="false" data-i18n="cmp.recGood">Recorded / Good</button><button type="button" data-compare="reference-peer" aria-pressed="false" data-i18n="cmp.recBad">Recorded / Bad</button><button type="button" data-compare="all" aria-pressed="false" data-i18n="cmp.allThree">All three</button></div>
+  <div class="camera-modes" role="group" aria-label="Camera view" hidden><button type="button" data-view="0" aria-pressed="false" data-i18n="cam.fl">Front left</button><button type="button" data-view="1" aria-pressed="true" data-i18n="cam.f">Front</button><button type="button" data-view="2" aria-pressed="false" data-i18n="cam.fr">Front right</button><button type="button" data-view="3" aria-pressed="false" data-i18n="cam.bl">Back left</button><button type="button" data-view="4" aria-pressed="false" data-i18n="cam.b">Back</button><button type="button" data-view="5" aria-pressed="false" data-i18n="cam.br">Back right</button></div>
+ </div>
  <figure class="motion-comparison">
   <div class="motion-stage">
-   <video controls muted loop playsinline preload="none" src="media/quality-reference/dino-nuplan.mp4" poster="media/quality-reference/dino-nuplan.jpg" aria-label="Recorded reference, OpenDWM and MagicDrive matched clips"></video>
-   <canvas width="960" height="180" aria-hidden="true" hidden></canvas>
+   <video controls muted loop playsinline preload="none" src="media/quality-reference/dino-nuplan.mp4" poster="media/quality-reference/dino-nuplan.jpg" aria-label="Recorded reference, Good example and Bad example matched clips"></video>
+   <canvas width="1200" height="450" aria-hidden="true" hidden></canvas>
    <span class="motion-divider" aria-hidden="true"></span>
    <input hidden type="range" min="0" max="100" value="50" aria-label="Visible percentage of the left DINO-T stream">
-  </div>
-  <div class="motion-meta">
-   <div class="motion-scores reference-scores" aria-live="polite">
-    <span class="score-stream-reference">Recorded <strong class="score-reference">0.984</strong></span>
-    <span class="score-stream-open"><span class="model-left">OpenDWM</span> <strong class="score-left">0.958</strong></span>
-    <span class="score-stream-peer"><span class="model-right">MagicDrive</span> <strong class="score-right">0.651</strong></span>
+   <button type="button" class="motion-toggle stage-play-btn" hidden>▶ Play</button>
+   <div class="stage-badges" aria-live="polite">
+    <span class="stage-badge score-stream-reference" hidden><span data-i18n="cmp.recorded">Recorded</span> <strong class="score-reference">0.984</strong></span>
+    <span class="stage-badge score-stream-open"><span class="model-left" data-i18n="cmp.good">Good example</span> <strong class="score-left">0.958</strong></span>
+    <span class="stage-badge score-stream-peer"><span class="model-right" data-i18n="cmp.bad">Bad example</span> <strong class="score-right">0.651</strong></span>
    </div>
-   <button type="button" class="motion-toggle" hidden>Play</button>
   </div>
-  <figcaption><span class="clip-caption">nuPlan adv_case_0004 / Front / 20 sampled frames</span>
-   <span>OpenDWM vs. comparison <strong class="score-gap">+0.307</strong></span>
-   <span class="clip-scope">Scores use the full six-camera sequence.</span></figcaption>
  </figure>
- <div class="atlas-picker scored-picker" role="group" aria-label="DINO-T scenes"><button type="button" class="clip-choice" data-clip="dino-nuplan" data-source="nuplan_challenger_v1/adv_case_0004"
-         data-left="OpenDWM" data-right="MagicDrive" data-left-score="0.958" data-right-score="0.651"
-         data-reference-score="0.984" data-gap="+0.307" data-caption="nuPlan adv_case_0004 / Front / 20 sampled frames"
-         aria-pressed="true"><img loading="lazy" alt="" src="media/quality-reference/dino-nuplan-thumb.jpg">
-         <span>nuPlan adv_case_0004</span><span class="pair-name">Δ from Recorded 0.026</span>
-         <span class="pair-name">+0.307 vs. MagicDrive</span></button><button type="button" class="clip-choice" data-clip="dino-av2" data-source="av2_challenger_v1/adv_case_0007"
-         data-left="OpenDWM" data-right="MagicDrive" data-left-score="0.774" data-right-score="0.555"
-         data-reference-score="0.793" data-gap="+0.219" data-caption="Argoverse 2 adv_case_0007 / Front / 20 sampled frames"
-         aria-pressed="false"><img loading="lazy" alt="" src="media/quality-reference/dino-av2-thumb.jpg">
-         <span>Argoverse 2 adv_case_0007</span><span class="pair-name">Δ from Recorded 0.019</span>
-         <span class="pair-name">+0.219 vs. MagicDrive</span></button><button type="button" class="clip-choice" data-clip="dino-pandaset-0008" data-source="pandaset_challenger_v1/adv_case_0008"
-         data-left="OpenDWM" data-right="MagicDrive" data-left-score="0.813" data-right-score="0.652"
-         data-reference-score="0.879" data-gap="+0.161" data-caption="PandaSet adv_case_0008 / Front / 20 sampled frames"
-         aria-pressed="false"><img loading="lazy" alt="" src="media/quality-reference/dino-pandaset-0008-thumb.jpg">
-         <span>PandaSet adv_case_0008</span><span class="pair-name">Δ from Recorded 0.067</span>
-         <span class="pair-name">+0.161 vs. MagicDrive</span></button><button type="button" class="clip-choice" data-clip="dino-nuscenes" data-source="nuscenes300_challenger_v1/adv_case_0018"
-         data-left="OpenDWM" data-right="MagicDrive" data-left-score="0.808" data-right-score="0.716"
-         data-reference-score="0.843" data-gap="+0.092" data-caption="nuScenes adv_case_0018 / Front / 20 sampled frames"
-         aria-pressed="false"><img loading="lazy" alt="" src="media/quality-reference/dino-nuscenes-thumb.jpg">
-         <span>nuScenes adv_case_0018</span><span class="pair-name">Δ from Recorded 0.035</span>
-         <span class="pair-name">+0.092 vs. MagicDrive</span></button></div>
+ <div class="atlas-picker scored-picker" role="group" aria-label="DINO-T scenes"><button type="button" class="clip-choice" data-clip="dino-nuplan"
+         data-left="Good example" data-right="Bad example" data-left-score="0.958" data-right-score="0.651"
+         data-reference-score="0.984" aria-pressed="true"><img loading="lazy" alt="" src="media/quality-reference/dino-nuplan-thumb.jpg">
+         <span data-i18n="case.1">Case 1</span></button><button type="button" class="clip-choice" data-clip="dino-pandaset-0008"
+         data-left="Good example" data-right="Bad example" data-left-score="0.813" data-right-score="0.652"
+         data-reference-score="0.879" aria-pressed="false"><img loading="lazy" alt="" src="media/quality-reference/dino-pandaset-0008-thumb.jpg">
+         <span data-i18n="case.2">Case 2</span></button><button type="button" class="clip-choice" data-clip="dino-nuscenes"
+         data-left="Good example" data-right="Bad example" data-left-score="0.808" data-right-score="0.716"
+         data-reference-score="0.843" aria-pressed="false"><img loading="lazy" alt="" src="media/quality-reference/dino-nuscenes-thumb.jpg">
+         <span data-i18n="case.3">Case 3</span></button></div>
 </section>
 </article>
-<article id="dimension-1" class="dimension"><h3>Scenario fidelity</h3>
+<article id="dimension-1" class="dimension"><div class="dimension-heading"><div><h3 data-i18n="dim.fid.title">Scenario fidelity</h3><p data-i18n="dim.fid.desc">A recorded drive represents only one possible future, so generated scenarios must remain physically and geometrically self-consistent rather than merely mimicking pixels. We verify both cross-view 3D epipolar geometry across overlapping cameras and image–trajectory alignment with the traffic states used for planning evaluation.</p></div></div>
 
 <section class="visual-metric" data-reference-review>
- <div class="metric-heading"><h4>Epi@3</h4><p>Compare object and lane geometry across camera views.</p></div>
- <div class="reference-modes camera-modes" role="group" aria-label="Epi@3 comparison mode" hidden><button type="button" data-compare="all" aria-pressed="true">All three</button><button type="button" data-compare="generators" aria-pressed="false">OpenDWM / comparison</button><button type="button" data-compare="reference-open" aria-pressed="false">Recorded / OpenDWM</button><button type="button" data-compare="reference-peer" aria-pressed="false">Recorded / comparison</button></div>
- <div class="camera-modes" role="group" aria-label="Camera view" hidden><button type="button" data-view="-1" aria-pressed="false">All six</button><button type="button" data-view="0" aria-pressed="false">Front left</button><button type="button" data-view="1" aria-pressed="true">Front</button><button type="button" data-view="2" aria-pressed="false">Front right</button><button type="button" data-view="3" aria-pressed="false">Back left</button><button type="button" data-view="4" aria-pressed="false">Back</button><button type="button" data-view="5" aria-pressed="false">Back right</button></div>
+ <div class="metric-heading"><h4>Epi@3</h4><p data-i18n="metric.epi.desc">Epi@3 computes the cross-view correspondence inlier ratio at a 3-pixel epipolar error threshold between overlapping camera pairs. Higher scores indicate that vehicles, curbs, and lane geometry project consistently across adjacent views instead of drifting, duplicating, or breaking 3D layout.</p></div>
+ <div class="motion-toolbar">
+  <div class="reference-modes camera-modes" role="group" aria-label="Epi@3 comparison mode" hidden><button type="button" data-compare="generators" aria-pressed="true" data-i18n="cmp.goodBad">Good / Bad</button><button type="button" data-compare="reference-open" aria-pressed="false" data-i18n="cmp.recGood">Recorded / Good</button><button type="button" data-compare="reference-peer" aria-pressed="false" data-i18n="cmp.recBad">Recorded / Bad</button><button type="button" data-compare="all" aria-pressed="false" data-i18n="cmp.allThree">All three</button></div>
+  <div class="camera-modes" role="group" aria-label="Camera view" hidden><button type="button" data-view="0" aria-pressed="false" data-i18n="cam.fl">Front left</button><button type="button" data-view="1" aria-pressed="true" data-i18n="cam.f">Front</button><button type="button" data-view="2" aria-pressed="false" data-i18n="cam.fr">Front right</button><button type="button" data-view="3" aria-pressed="false" data-i18n="cam.bl">Back left</button><button type="button" data-view="4" aria-pressed="false" data-i18n="cam.b">Back</button><button type="button" data-view="5" aria-pressed="false" data-i18n="cam.br">Back right</button></div>
+ </div>
  <figure class="motion-comparison">
   <div class="motion-stage">
-   <video controls muted loop playsinline preload="none" src="media/quality-reference/epi-nuscenes-0027.mp4" poster="media/quality-reference/epi-nuscenes-0027.jpg" aria-label="Recorded reference, OpenDWM and HorizonDrive matched clips"></video>
-   <canvas width="960" height="180" aria-hidden="true" hidden></canvas>
+   <video controls muted loop playsinline preload="none" src="media/quality-reference/epi-nuscenes-0027.mp4" poster="media/quality-reference/epi-nuscenes-0027.jpg" aria-label="Recorded reference, Good example and Bad example matched clips"></video>
+   <canvas width="1200" height="450" aria-hidden="true" hidden></canvas>
    <span class="motion-divider" aria-hidden="true"></span>
    <input hidden type="range" min="0" max="100" value="50" aria-label="Visible percentage of the left Epi@3 stream">
-  </div>
-  <div class="motion-meta">
-   <div class="motion-scores reference-scores" aria-live="polite">
-    <span class="score-stream-reference">Recorded <strong class="score-reference">0.290</strong></span>
-    <span class="score-stream-open"><span class="model-left">OpenDWM</span> <strong class="score-left">0.293</strong></span>
-    <span class="score-stream-peer"><span class="model-right">HorizonDrive</span> <strong class="score-right">0.069</strong></span>
+   <button type="button" class="motion-toggle stage-play-btn" hidden>▶ Play</button>
+   <div class="stage-badges" aria-live="polite">
+    <span class="stage-badge score-stream-reference" hidden><span data-i18n="cmp.recorded">Recorded</span> <strong class="score-reference">0.290</strong></span>
+    <span class="stage-badge score-stream-open"><span class="model-left" data-i18n="cmp.good">Good example</span> <strong class="score-left">0.293</strong></span>
+    <span class="stage-badge score-stream-peer"><span class="model-right" data-i18n="cmp.bad">Bad example</span> <strong class="score-right">0.069</strong></span>
    </div>
-   <button type="button" class="motion-toggle" hidden>Play</button>
   </div>
-  <figcaption><span class="clip-caption">nuScenes adv_case_0027 / Front / 20 sampled frames</span>
-   <span>OpenDWM vs. comparison <strong class="score-gap">+0.224</strong></span>
-   <span class="clip-scope">Scores use the full six-camera sequence.</span></figcaption>
  </figure>
- <div class="atlas-picker scored-picker" role="group" aria-label="Epi@3 scenes"><button type="button" class="clip-choice" data-clip="epi-nuscenes-0027" data-source="nuscenes300_challenger_v1/adv_case_0027"
-         data-left="OpenDWM" data-right="HorizonDrive" data-left-score="0.293" data-right-score="0.069"
-         data-reference-score="0.290" data-gap="+0.224" data-caption="nuScenes adv_case_0027 / Front / 20 sampled frames"
-         aria-pressed="true"><img loading="lazy" alt="" src="media/quality-reference/epi-nuscenes-0027-thumb.jpg">
-         <span>nuScenes adv_case_0027</span><span class="pair-name">Δ from Recorded 0.004</span>
-         <span class="pair-name">+0.224 vs. HorizonDrive</span></button><button type="button" class="clip-choice" data-clip="epi-nuplan" data-source="nuplan_challenger_v1/adv_case_0006"
-         data-left="OpenDWM" data-right="MagicDrive-V2" data-left-score="0.423" data-right-score="0.079"
-         data-reference-score="0.486" data-gap="+0.345" data-caption="nuPlan adv_case_0006 / Front / 20 sampled frames"
-         aria-pressed="false"><img loading="lazy" alt="" src="media/quality-reference/epi-nuplan-thumb.jpg">
-         <span>nuPlan adv_case_0006</span><span class="pair-name">Δ from Recorded 0.063</span>
-         <span class="pair-name">+0.345 vs. MagicDrive-V2</span></button><button type="button" class="clip-choice" data-clip="epi-av2" data-source="av2_challenger_v1/adv_case_0012"
-         data-left="OpenDWM" data-right="MagicDrive" data-left-score="0.413" data-right-score="0.075"
-         data-reference-score="0.633" data-gap="+0.338" data-caption="Argoverse 2 adv_case_0012 / Front / 20 sampled frames"
-         aria-pressed="false"><img loading="lazy" alt="" src="media/quality-reference/epi-av2-thumb.jpg">
-         <span>Argoverse 2 adv_case_0012</span><span class="pair-name">Δ from Recorded 0.219</span>
-         <span class="pair-name">+0.338 vs. MagicDrive</span></button><button type="button" class="clip-choice" data-clip="epi-pandaset-0002" data-source="pandaset_challenger_v1/adv_case_0002"
-         data-left="OpenDWM" data-right="MagicDrive" data-left-score="0.269" data-right-score="0.054"
-         data-reference-score="0.505" data-gap="+0.215" data-caption="PandaSet adv_case_0002 / Front / 20 sampled frames"
-         aria-pressed="false"><img loading="lazy" alt="" src="media/quality-reference/epi-pandaset-0002-thumb.jpg">
-         <span>PandaSet adv_case_0002</span><span class="pair-name">Δ from Recorded 0.236</span>
-         <span class="pair-name">+0.215 vs. MagicDrive</span></button><button type="button" class="clip-choice" data-clip="epi-nuscenes" data-source="nuscenes300_challenger_v1/adv_case_0007"
-         data-left="OpenDWM" data-right="HorizonDrive" data-left-score="0.299" data-right-score="0.080"
-         data-reference-score="0.309" data-gap="+0.219" data-caption="nuScenes adv_case_0007 / Front / 20 sampled frames"
-         aria-pressed="false"><img loading="lazy" alt="" src="media/quality-reference/epi-nuscenes-thumb.jpg">
-         <span>nuScenes adv_case_0007</span><span class="pair-name">Δ from Recorded 0.011</span>
-         <span class="pair-name">+0.219 vs. HorizonDrive</span></button></div>
+ <div class="atlas-picker scored-picker" role="group" aria-label="Epi@3 scenes"><button type="button" class="clip-choice" data-clip="epi-nuscenes-0027"
+         data-left="Good example" data-right="Bad example" data-left-score="0.293" data-right-score="0.069"
+         data-reference-score="0.290" aria-pressed="true"><img loading="lazy" alt="" src="media/quality-reference/epi-nuscenes-0027-thumb.jpg">
+         <span data-i18n="case.1">Case 1</span></button><button type="button" class="clip-choice" data-clip="epi-nuplan"
+         data-left="Good example" data-right="Bad example" data-left-score="0.423" data-right-score="0.079"
+         data-reference-score="0.486" aria-pressed="false"><img loading="lazy" alt="" src="media/quality-reference/epi-nuplan-thumb.jpg">
+         <span data-i18n="case.2">Case 2</span></button><button type="button" class="clip-choice" data-clip="epi-pandaset-0002"
+         data-left="Good example" data-right="Bad example" data-left-score="0.269" data-right-score="0.054"
+         data-reference-score="0.505" aria-pressed="false"><img loading="lazy" alt="" src="media/quality-reference/epi-pandaset-0002-thumb.jpg">
+         <span data-i18n="case.3">Case 3</span></button></div>
 </section>
 <section class="visual-metric" data-reference-review>
- <div class="metric-heading"><h4>TVC</h4><p>Compare video with the corresponding traffic trajectories. The recorded reference uses recorded motion. Both renderers use CAT-K.</p></div>
- <div class="reference-modes camera-modes" role="group" aria-label="TVC comparison mode" hidden><button type="button" data-compare="all" aria-pressed="true">All three</button><button type="button" data-compare="generators" aria-pressed="false">OpenDWM / comparison</button><button type="button" data-compare="reference-open" aria-pressed="false">Recorded / OpenDWM</button><button type="button" data-compare="reference-peer" aria-pressed="false">Recorded / comparison</button></div>
- <div class="camera-modes" role="group" aria-label="Camera view" hidden><button type="button" data-view="-1" aria-pressed="false">All six</button><button type="button" data-view="0" aria-pressed="false">Front left</button><button type="button" data-view="1" aria-pressed="true">Front</button><button type="button" data-view="2" aria-pressed="false">Front right</button><button type="button" data-view="3" aria-pressed="false">Back left</button><button type="button" data-view="4" aria-pressed="false">Back</button><button type="button" data-view="5" aria-pressed="false">Back right</button></div>
+ <div class="metric-heading"><h4>TVC</h4><p data-i18n="metric.tvc.desc">TVC (Trajectory–Visual Consistency) checks whether vehicles rendered in the generated video actually appear at the positions and headings specified by the conditioning traffic trajectories used for policy scoring. The recorded reference uses logged motion, while both generated streams are conditioned on shared CAT-K traffic.</p></div>
+ <div class="motion-toolbar">
+  <div class="reference-modes camera-modes" role="group" aria-label="TVC comparison mode" hidden><button type="button" data-compare="generators" aria-pressed="true" data-i18n="cmp.goodBad">Good / Bad</button><button type="button" data-compare="reference-open" aria-pressed="false" data-i18n="cmp.recGood">Recorded / Good</button><button type="button" data-compare="reference-peer" aria-pressed="false" data-i18n="cmp.recBad">Recorded / Bad</button><button type="button" data-compare="all" aria-pressed="false" data-i18n="cmp.allThree">All three</button></div>
+  <div class="camera-modes" role="group" aria-label="Camera view" hidden><button type="button" data-view="0" aria-pressed="false" data-i18n="cam.fl">Front left</button><button type="button" data-view="1" aria-pressed="true" data-i18n="cam.f">Front</button><button type="button" data-view="2" aria-pressed="false" data-i18n="cam.fr">Front right</button><button type="button" data-view="3" aria-pressed="false" data-i18n="cam.bl">Back left</button><button type="button" data-view="4" aria-pressed="false" data-i18n="cam.b">Back</button><button type="button" data-view="5" aria-pressed="false" data-i18n="cam.br">Back right</button></div>
+ </div>
  <figure class="motion-comparison">
   <div class="motion-stage">
-   <video controls muted loop playsinline preload="none" src="media/quality-reference/tvc-nuplan.mp4" poster="media/quality-reference/tvc-nuplan.jpg" aria-label="Recorded reference, OpenDWM and MagicDrive matched clips"></video>
-   <canvas width="960" height="180" aria-hidden="true" hidden></canvas>
+   <video controls muted loop playsinline preload="none" src="media/quality-reference/tvc-nuplan.mp4" poster="media/quality-reference/tvc-nuplan.jpg" aria-label="Recorded reference, Good example and Bad example matched clips"></video>
+   <canvas width="1200" height="450" aria-hidden="true" hidden></canvas>
    <span class="motion-divider" aria-hidden="true"></span>
    <input hidden type="range" min="0" max="100" value="50" aria-label="Visible percentage of the left TVC stream">
-  </div>
-  <div class="motion-meta">
-   <div class="motion-scores reference-scores" aria-live="polite">
-    <span class="score-stream-reference">Recorded <strong class="score-reference">0.672</strong></span>
-    <span class="score-stream-open"><span class="model-left">OpenDWM</span> <strong class="score-left">0.674</strong></span>
-    <span class="score-stream-peer"><span class="model-right">MagicDrive</span> <strong class="score-right">0.388</strong></span>
+   <button type="button" class="motion-toggle stage-play-btn" hidden>▶ Play</button>
+   <div class="stage-badges" aria-live="polite">
+    <span class="stage-badge score-stream-reference" hidden><span data-i18n="cmp.recorded">Recorded</span> <strong class="score-reference">0.672</strong></span>
+    <span class="stage-badge score-stream-open"><span class="model-left" data-i18n="cmp.good">Good example</span> <strong class="score-left">0.674</strong></span>
+    <span class="stage-badge score-stream-peer"><span class="model-right" data-i18n="cmp.bad">Bad example</span> <strong class="score-right">0.388</strong></span>
    </div>
-   <button type="button" class="motion-toggle" hidden>Play</button>
   </div>
-  <figcaption><span class="clip-caption">nuPlan adv_case_0014 / Front / 20 sampled frames</span>
-   <span>OpenDWM vs. comparison <strong class="score-gap">+0.286</strong></span>
-   <span class="clip-scope">Scores use the full six-camera sequence.</span></figcaption>
  </figure>
- <div class="atlas-picker scored-picker" role="group" aria-label="TVC scenes"><button type="button" class="clip-choice" data-clip="tvc-nuplan" data-source="nuplan_challenger_v1/adv_case_0014"
-         data-left="OpenDWM" data-right="MagicDrive" data-left-score="0.674" data-right-score="0.388"
-         data-reference-score="0.672" data-gap="+0.286" data-caption="nuPlan adv_case_0014 / Front / 20 sampled frames"
-         aria-pressed="true"><img loading="lazy" alt="" src="media/quality-reference/tvc-nuplan-thumb.jpg">
-         <span>nuPlan adv_case_0014</span><span class="pair-name">Δ from Recorded 0.002</span>
-         <span class="pair-name">+0.286 vs. MagicDrive</span></button><button type="button" class="clip-choice" data-clip="tvc-av2" data-source="av2_challenger_v1/adv_case_0008"
-         data-left="OpenDWM" data-right="MagicDrive" data-left-score="0.641" data-right-score="0.187"
-         data-reference-score="0.598" data-gap="+0.454" data-caption="Argoverse 2 adv_case_0008 / Front / 20 sampled frames"
-         aria-pressed="false"><img loading="lazy" alt="" src="media/quality-reference/tvc-av2-thumb.jpg">
-         <span>Argoverse 2 adv_case_0008</span><span class="pair-name">Δ from Recorded 0.043</span>
-         <span class="pair-name">+0.454 vs. MagicDrive</span></button><button type="button" class="clip-choice" data-clip="tvc-pandaset" data-source="pandaset_challenger_v1/adv_case_0003"
-         data-left="OpenDWM" data-right="Panacea" data-left-score="0.529" data-right-score="0.211"
-         data-reference-score="0.553" data-gap="+0.318" data-caption="PandaSet adv_case_0003 / Front / 20 sampled frames"
-         aria-pressed="false"><img loading="lazy" alt="" src="media/quality-reference/tvc-pandaset-thumb.jpg">
-         <span>PandaSet adv_case_0003</span><span class="pair-name">Δ from Recorded 0.024</span>
-         <span class="pair-name">+0.318 vs. Panacea</span></button><button type="button" class="clip-choice" data-clip="tvc-nuscenes" data-source="nuscenes300_challenger_v1/adv_case_0025"
-         data-left="OpenDWM" data-right="Panacea" data-left-score="0.554" data-right-score="0.267"
-         data-reference-score="0.535" data-gap="+0.287" data-caption="nuScenes adv_case_0025 / Front / 20 sampled frames"
-         aria-pressed="false"><img loading="lazy" alt="" src="media/quality-reference/tvc-nuscenes-thumb.jpg">
-         <span>nuScenes adv_case_0025</span><span class="pair-name">Δ from Recorded 0.019</span>
-         <span class="pair-name">+0.287 vs. Panacea</span></button></div>
+ <div class="atlas-picker scored-picker" role="group" aria-label="TVC scenes"><button type="button" class="clip-choice" data-clip="tvc-nuplan"
+         data-left="Good example" data-right="Bad example" data-left-score="0.674" data-right-score="0.388"
+         data-reference-score="0.672" aria-pressed="true"><img loading="lazy" alt="" src="media/quality-reference/tvc-nuplan-thumb.jpg">
+         <span data-i18n="case.1">Case 1</span></button><button type="button" class="clip-choice" data-clip="tvc-pandaset"
+         data-left="Good example" data-right="Bad example" data-left-score="0.529" data-right-score="0.211"
+         data-reference-score="0.553" aria-pressed="false"><img loading="lazy" alt="" src="media/quality-reference/tvc-pandaset-thumb.jpg">
+         <span data-i18n="case.2">Case 2</span></button><button type="button" class="clip-choice" data-clip="tvc-nuscenes"
+         data-left="Good example" data-right="Bad example" data-left-score="0.554" data-right-score="0.267"
+         data-reference-score="0.535" aria-pressed="false"><img loading="lazy" alt="" src="media/quality-reference/tvc-nuscenes-thumb.jpg">
+         <span data-i18n="case.3">Case 3</span></button></div>
 </section>
 </article>
 <article class="dimension" id="dimension-2">
-<h3>Policy response</h3>
-<p>Six nuScenes scenes span sun, rain and night. Select a scene, then switch ego policies on the same OpenDWM and DreamForge inputs.</p>
+<div class="dimension-heading"><div><h3 data-i18n="dim.pol.title">Policy response</h3><p data-i18n="dim.pol.desc">We run the same six frozen end-to-end driving policies on paired generated camera observations across six diverse nuScenes scenarios spanning daylight, rain, overcast, and night conditions. Select a case and switch policies below to inspect how visual differences shift predicted trajectories in the bird's-eye view, affecting safety margins, drivable-area compliance, and route progress.</p></div></div>
 <div id="policy-explorer">
- <div class="policy-pairs fixed-scene-picker" role="group" aria-label="Choose one of six scenes"><button type="button" data-policy-scene="adv_case_0005" aria-pressed="true"><span>Boston crosswalk</span><small>Daylight / adv_case_0005</small></button><button type="button" data-policy-scene="adv_case_0013" aria-pressed="false"><span>Wet junction</span><small>Rain / adv_case_0013</small></button><button type="button" data-policy-scene="adv_case_0004" aria-pressed="false"><span>Truck congestion</span><small>Night / adv_case_0004</small></button><button type="button" data-policy-scene="adv_case_0006" aria-pressed="false"><span>Busy intersection</span><small>Sunny / adv_case_0006</small></button><button type="button" data-policy-scene="adv_case_0010" aria-pressed="false"><span>Tree-lined right turn</span><small>Overcast / adv_case_0010</small></button><button type="button" data-policy-scene="adv_case_0011" aria-pressed="false"><span>T-junction</span><small>Daylight / adv_case_0011</small></button></div>
+ <div class="policy-pairs fixed-scene-picker" role="group" aria-label="Choose one of six cases"><button type="button" data-policy-scene="adv_case_0005" aria-pressed="true"><span data-i18n="case.1">Case 1</span><small data-i18n="scene.daylight">Daylight</small></button><button type="button" data-policy-scene="adv_case_0013" aria-pressed="false"><span data-i18n="case.2">Case 2</span><small data-i18n="scene.rain">Rain</small></button><button type="button" data-policy-scene="adv_case_0004" aria-pressed="false"><span data-i18n="case.3">Case 3</span><small data-i18n="scene.night">Night</small></button><button type="button" data-policy-scene="adv_case_0006" aria-pressed="false"><span data-i18n="case.4">Case 4</span><small data-i18n="scene.sunny">Sunny</small></button><button type="button" data-policy-scene="adv_case_0010" aria-pressed="false"><span data-i18n="case.5">Case 5</span><small data-i18n="scene.overcast">Overcast</small></button><button type="button" data-policy-scene="adv_case_0011" aria-pressed="false"><span data-i18n="case.6">Case 6</span><small data-i18n="scene.daylight">Daylight</small></button></div>
  <div class="policy-tabs" role="group" aria-label="Choose a driving policy"><button type="button" data-policy="UniAD" aria-pressed="true">UniAD</button><button type="button" data-policy="VAD" aria-pressed="false">VAD</button><button type="button" data-policy="DrivoR" aria-pressed="false">DrivoR</button><button type="button" data-policy="SparseDriveV2" aria-pressed="false">SparseDriveV2</button><button type="button" data-policy="DiffusionDriveV2" aria-pressed="false">DiffusionDriveV2</button><button type="button" data-policy="GoalFlow" aria-pressed="false">GoalFlow</button></div>
- <div class="policy-selection">
-  <h4 id="policy-active">UniAD / nuScenes adv_case_0005</h4>
-  <span id="policy-support">57 decision windows shared across all six policies</span>
- </div>
  <figure class="policy-film">
-  <video id="policy-film" controls muted playsinline loop preload="metadata" src="media/policy-fixed/adv_case_0005-uniad.mp4" aria-label="UniAD paired OpenDWM and DreamForge replay with bird’s-eye predictions"></video>
+  <video id="policy-film" controls muted playsinline loop preload="metadata" src="media/policy-fixed/adv_case_0005-uniad.mp4" aria-label="UniAD paired replay with bird’s-eye predictions"></video>
   <figcaption><ul class="policy-bev-key" aria-label="Bird’s-eye view legend">
-    <li class="policy-key-opendwm">OpenDWM plan</li>
-    <li class="policy-key-comparison">Comparison plan</li>
-    <li class="policy-key-ego">Ego</li>
-    <li class="policy-key-vehicle">Other vehicles</li>
-    <li class="policy-key-pedestrian">Pedestrians / riders</li>
+    <li class="policy-key-opendwm" data-i18n="bev.opendwm">OpenDWM plan</li>
+    <li class="policy-key-comparison" data-i18n="bev.comparison">Comparison plan</li>
+    <li class="policy-key-ego" data-i18n="bev.ego">Ego</li>
+    <li class="policy-key-vehicle" data-i18n="bev.vehicle">Other vehicles</li>
+    <li class="policy-key-pedestrian" data-i18n="bev.pedestrian">Pedestrians / riders</li>
    </ul>
-   <span>Open-loop plans share the same logged ego pose and CAT-K traffic. Videos sample every fourth matched frame.</span>
   </figcaption>
  </figure>
- <div class="scroll"><table class="policy-scores" aria-label="Selected policy scores">
-   <thead><tr><th>Metric</th><th>OpenDWM</th><th>DreamForge</th></tr></thead><tbody><tr><th scope="row">RPDMS</th><td>1.000</td><td>0.999</td></tr><tr><th scope="row">Ego progress</th><td>1.000</td><td>0.997</td></tr><tr><th scope="row">Drivable-area compliance</th><td>1.000</td><td>1.000</td></tr><tr><th scope="row">TTC score</th><td>1.000</td><td>1.000</td></tr><tr><th scope="row">Comfort</th><td>1.000</td><td>1.000</td></tr></tbody>
- </table></div>
- <div class="scroll"><table class="policy-panel-scores" aria-label="RPDMS across all six policies in the selected scene">
-   <caption>RPDMS across ego policies</caption>
-   <thead><tr><th>Ego policy</th><th>OpenDWM</th><th>DreamForge</th></tr></thead><tbody><tr><th scope="row">UniAD</th><td>1.000</td><td>0.999</td></tr><tr><th scope="row">VAD</th><td>1.000</td><td>1.000</td></tr><tr><th scope="row">DrivoR</th><td>0.996</td><td>0.992</td></tr><tr><th scope="row">SparseDriveV2</th><td>0.989</td><td>0.989</td></tr><tr><th scope="row">DiffusionDriveV2</th><td>0.852</td><td>0.866</td></tr><tr><th scope="row">GoalFlow</th><td>0.882</td><td>0.877</td></tr></tbody>
- </table></div>
 </div>
-<details><summary>View per-policy scores under camera-only replay</summary><div class="scroll"><table><thead><tr><th>Ego policy</th><th>Collision-window rate ↓</th><th>Plan TTC ↑</th><th>Drivable-area compliance ↑</th><th>Progress ↑</th><th>Comfort ↑</th></tr></thead><tbody><tr><th scope="row">UniAD</th><td>0.302</td><td>2.598</td><td>0.952</td><td>0.960</td><td>0.633</td></tr><tr><th scope="row">VAD</th><td>0.337</td><td>2.632</td><td>0.950</td><td>0.941</td><td>1.000</td></tr><tr><th scope="row">DrivoR</th><td>0.026</td><td>2.967</td><td>0.999</td><td>0.868</td><td>0.960</td></tr><tr><th scope="row">SparseDriveV2</th><td>0.016</td><td>2.960</td><td>0.999</td><td>0.874</td><td>0.998</td></tr><tr><th scope="row">DiffusionDriveV2</th><td>0.078</td><td>2.947</td><td>0.992</td><td>0.831</td><td>0.465</td></tr><tr><th scope="row">GoalFlow</th><td>0.051</td><td>2.954</td><td>0.991</td><td>0.869</td><td>0.602</td></tr></tbody></table></div></details></article>
-
-
-<article class="dimension" id="dimension-3"><h3 id="results">Testing effectiveness</h3><p>The QTES leaderboard for seven renderers on 80 paired scenes with CAT-K traffic (Table 2).</p><div class="scroll"><table><thead><tr><th>Rank</th><th>Renderer</th><th>TVC ↑</th><th>RPDMS ↑</th><th>Route completion ↑</th><th>QTES ↑</th></tr></thead><tbody><tr><td>1</td><th scope="row">OpenDWM</th><td>0.543</td><td>0.724</td><td>0.878</td><td>44.079</td></tr><tr><td>2</td><th scope="row">DreamForge</th><td>0.495</td><td>0.729</td><td>0.881</td><td>41.311</td></tr><tr><td>3</td><th scope="row">HorizonDrive</th><td>0.519</td><td>0.725</td><td>0.880</td><td>40.108</td></tr><tr><td>4</td><th scope="row">MagicDrive-V2</th><td>0.447</td><td>0.718</td><td>0.870</td><td>39.509</td></tr><tr><td>5</td><th scope="row">Panacea</th><td>0.374</td><td>0.717</td><td>0.881</td><td>39.146</td></tr><tr><td>6</td><th scope="row">BaseDreamer</th><td>0.410</td><td>0.721</td><td>0.880</td><td>38.522</td></tr><tr><td>7</td><th scope="row">MagicDrive</th><td>0.363</td><td>0.670</td><td>0.855</td><td>37.282</td></tr></tbody></table></div><a href="https://nova-chen151.github.io/Onsite3DSG-Benchmark.github.io/#leaderboard">Full leaderboard</a><section class="visual-metric">
-<div class="metric-heading"><h4>QTES contribution</h4><p>Inspect examples of how quality retention and policy response contribute to the 80-scene score.</p></div>
-<div class="camera-modes" role="group" aria-label="Select camera view" hidden><button type="button" data-view="-1" aria-pressed="true">All six</button><button type="button" data-view="0" aria-pressed="false">Front left</button><button type="button" data-view="1" aria-pressed="false">Front</button><button type="button" data-view="2" aria-pressed="false">Front right</button><button type="button" data-view="3" aria-pressed="false">Back left</button><button type="button" data-view="4" aria-pressed="false">Back</button><button type="button" data-view="5" aria-pressed="false">Back right</button></div>
-<figure class="motion-comparison">
- <div class="motion-stage">
-  <video controls muted loop playsinline preload="none" src="media/atlas-scored/qtes-1.mp4" poster="media/atlas-scored/qtes-1.jpg" aria-label="OpenDWM and HorizonDrive paired replay"></video>
-  <canvas width="400" height="224" aria-hidden="true" hidden></canvas>
-  <span class="motion-divider" aria-hidden="true"></span>
-  <input hidden type="range" min="0" max="100" value="50" aria-label="Visible percentage of the left QTES contribution video">
- </div>
- <div class="motion-meta"><div class="motion-scores" aria-live="polite">
-  <span><span class="model-left">OpenDWM</span> <strong class="score-left">47.75</strong></span>
-  <span><span class="model-right">HorizonDrive</span> <strong class="score-right">37.45</strong></span>
- </div><button type="button" class="motion-toggle" hidden>Play</button></div>
- <figcaption><span class="clip-caption">nuScenes adv_case_0035 / All six cameras / 20 sampled frames</span><span class="clip-scope">Scene contributions use the shared CAT-K cohort TRS. The mean gives the population QTES.</span></figcaption>
- <p class="qtes-components">TE 0.563 / 0.560 / B 0.901 / 0.711</p>
-</figure>
-<div class="atlas-picker scored-picker" role="group" aria-label="QTES contribution scenes"><button type="button" class="clip-choice" data-clip="qtes-1" data-source="nuscenes300_challenger_v1/adv_case_0035" data-left="OpenDWM" data-right="HorizonDrive" data-left-score="47.75" data-right-score="37.45" data-caption="nuScenes adv_case_0035 / All six cameras / 20 sampled frames" data-components="TE 0.563 / 0.560 / B 0.901 / 0.711" aria-pressed="true"><img loading="lazy" alt="" src="media/atlas-scored/qtes-1.jpg"><span>nuScenes adv_case_0035</span><span class="pair-name">HorizonDrive</span></button><button type="button" class="clip-choice" data-clip="qtes-2" data-source="nuscenes300_challenger_v1/adv_case_0031" data-left="OpenDWM" data-right="MagicDrive" data-left-score="44.53" data-right-score="36.41" data-caption="nuScenes adv_case_0031 / All six cameras / 20 sampled frames" data-components="TE 0.504 / 0.430 / B 0.939 / 0.900" aria-pressed="false"><img loading="lazy" alt="" src="media/atlas-scored/qtes-2.jpg"><span>nuScenes adv_case_0031</span><span class="pair-name">MagicDrive</span></button><button type="button" class="clip-choice" data-clip="qtes-3" data-source="nuscenes300_challenger_v1/adv_case_0047" data-left="OpenDWM" data-right="Panacea" data-left-score="49.25" data-right-score="42.70" data-caption="nuScenes adv_case_0047 / All six cameras / 20 sampled frames" data-components="TE 0.568 / 0.539 / B 0.923 / 0.842" aria-pressed="false"><img loading="lazy" alt="" src="media/atlas-scored/qtes-3.jpg"><span>nuScenes adv_case_0047</span><span class="pair-name">Panacea</span></button><button type="button" class="clip-choice" data-clip="qtes-4" data-source="nuscenes300_challenger_v1/adv_case_0048" data-left="OpenDWM" data-right="DreamForge" data-left-score="46.49" data-right-score="46.08" data-caption="nuScenes adv_case_0048 / All six cameras / 20 sampled frames" data-components="TE 0.524 / 0.502 / B 0.943 / 0.975" aria-pressed="false"><img loading="lazy" alt="" src="media/atlas-scored/qtes-4.jpg"><span>nuScenes adv_case_0048</span><span class="pair-name">DreamForge</span></button></div>
-</section></article></section><section id="rollout">
-<h2>Closed-loop driving</h2>
-<p>Four fixed nuScenes scenes with CAT-K traffic and DreamForge rendering. Each clip shows the first six seconds of state feedback. GoalFlow uses generated cameras with null LiDAR. In each scene, both runs start from the same ego pose and traffic state.</p>
-<div class="policy-pairs loop-picker" role="group" aria-label="Choose a closed-loop scene"><button type="button" data-loop-scene="adv_case_0001" aria-pressed="true"><span>Boston waterfront</span><small>nuScenes adv_case_0001</small></button><button type="button" data-loop-scene="adv_case_0009" aria-pressed="false"><span>Daytime right turn</span><small>nuScenes adv_case_0009</small></button><button type="button" data-loop-scene="adv_case_0022" aria-pressed="false"><span>Tree-lined street</span><small>nuScenes adv_case_0022</small></button><button type="button" data-loop-scene="adv_case_0024" aria-pressed="false"><span>Night intersection</span><small>nuScenes adv_case_0024</small></button></div>
+</article>
+</div></section>
+<section id="rollout" class="content-band closed-loop-band"><div class="section-inner">
+<div class="section-heading"><h2 data-i18n="loop.title">Closed-loop study</h2><p class="section-lede" data-i18n="loop.lede">While the main 550-scenario leaderboard evaluates non-reactive open-loop replay, real-world testing requires action feedback. In this separate 20-scenario closed-loop study with CAT-K traffic, each driving policy plans from the rendered multi-camera views, the executor advances the ego vehicle along the first 0.5 s of the plan, and the renderer synthesizes the next observation from the updated ego pose and traffic state. Because the evaluation subset and feedback dynamics differ, absolute scores should not be compared directly with the main replay leaderboard.</p></div>
+<div class="policy-pairs loop-picker" role="group" aria-label="Choose a closed-loop case"><button type="button" data-loop-scene="adv_case_0001" aria-pressed="true"><span data-i18n="case.1">Case 1</span><small data-i18n="loop.s1">Waterfront</small></button><button type="button" data-loop-scene="adv_case_0009" aria-pressed="false"><span data-i18n="case.2">Case 2</span><small data-i18n="loop.s2">Daytime right turn</small></button><button type="button" data-loop-scene="adv_case_0022" aria-pressed="false"><span data-i18n="case.3">Case 3</span><small data-i18n="loop.s3">Tree-lined street</small></button><button type="button" data-loop-scene="adv_case_0024" aria-pressed="false"><span data-i18n="case.4">Case 4</span><small data-i18n="loop.s4">Night intersection</small></button></div>
 <div class="loop-controls" hidden>
-  <button type="button" id="loop-play-together">Play together</button>
-  <label for="loop-time">Simulation time</label>
+  <button type="button" id="loop-play-together" data-i18n="loop.playTogether">Play together</button>
+  <label for="loop-time" data-i18n="loop.simTime">Simulation time</label>
   <input id="loop-time" type="range" min="0" max="5.5" step="0.5" value="0">
   <output for="loop-time" id="loop-time-value">0.0 s</output>
 </div>
 <div class="loop-comparison"><article class="loop-policy" data-loop-policy="drivor">
- <h4>DrivoR <small class="loop-distance"></small></h4>
- <video controls muted playsinline loop preload="metadata" src="media/dreamforge-closed/adv_case_0001-drivor.mp4" aria-label="DrivoR DreamForge closed loop for adv_case_0001"></video>
+ <h4>DrivoR</h4>
+ <video controls muted playsinline loop preload="metadata" src="media/dreamforge-closed/adv_case_0001-drivor.mp4" aria-label="DrivoR closed loop case 1"></video>
  <p class="loop-status" hidden></p>
 </article><article class="loop-policy" data-loop-policy="goalflow">
- <h4>GoalFlow <small class="loop-distance"></small></h4>
- <video controls muted playsinline loop preload="metadata" src="media/dreamforge-closed/adv_case_0001-goalflow.mp4" aria-label="GoalFlow DreamForge closed loop for adv_case_0001"></video>
+ <h4>GoalFlow</h4>
+ <video controls muted playsinline loop preload="metadata" src="media/dreamforge-closed/adv_case_0001-goalflow.mp4" aria-label="GoalFlow closed loop case 1"></video>
  <p class="loop-status" hidden></p>
 </article></div>
-<a href="#closed-loop-results">View closed-loop results</a>
-</section>
-<section id="protocol"><h2>Inside the benchmark</h2><p>550 scenario histories. Seven renderers. Six driving policies.</p><details><summary>How DriveAudit scores a test</summary><p>DriveAudit compares policy decisions on paired recorded and generated sequences.</p>
-<dl><div><dt>Observation quality</dt><dd>Measure visual fidelity and temporal consistency across camera sequences.</dd></div><div><dt>Scenario fidelity</dt><dd>Check whether images agree with the traffic trajectories and whether that traffic remains plausible.</dd></div><div><dt>Policy response</dt><dd>Compare route completion and responsibility-aware driving scores on paired sequences.</dd></div><div><dt>Testing effectiveness</dt><dd>QTES weights the paired policy response by retained scenario quality.</dd></div></dl>
-<figure class="paperfig"><a href="media/paper/overview.webp" aria-label="Open full-size figure: DriveAudit pairs recorded and generated conditions across four levels of evaluation"><img loading="lazy" src="media/paper/overview.webp" alt="DriveAudit pairs recorded and generated conditions across four levels of evaluation"></a><figcaption>Paired evaluation holds the source history and driving policy fixed while changing the generated scenario. <a href="media/paper/overview.webp">Full size</a></figcaption></figure></details><details><summary>Dataset and camera coverage</summary><p>Of 550 histories, 500 come from native multi-camera recordings: 250 nuScenes, 100 nuPlan, 75 Argoverse 2 and 75 PandaSet. The remaining 50 come from Nexar. Each Nexar history provides one recorded camera view; the other five are synthesized.</p><figure class="paperfig"><a href="media/paper/dataset_examples_and_characteristics.webp" aria-label="Open full-size figure: Multi-camera input examples and source-wise distributions of image characteristics"><img loading="lazy" src="media/paper/dataset_examples_and_characteristics.webp" alt="Multi-camera input examples and source-wise distributions of image characteristics"></a><figcaption>Input examples and distributions of contrast, brightness and temporal change across the five sources. <a href="media/paper/dataset_examples_and_characteristics.webp">Full size</a></figcaption></figure></details><details id="closed-loop-results" open><summary>Closed-loop results</summary><p>On 20 matched scenarios, closed-loop RPDMS falls for all seven renderers. DreamForge and MagicDrive-V2 retain the top two QTES ranks.</p><div class="scroll"><table><thead><tr><th rowspan="2">Renderer</th><th colspan="2">RPDMS ↑</th><th colspan="2">QTES ↑</th></tr><tr><th>Replay</th><th>Closed loop</th><th>Replay</th><th>Closed loop</th></tr></thead><tbody><tr><th scope="row">MagicDrive-V2</th><td>0.955</td><td>0.707</td><td>42.405</td><td>53.861</td></tr><tr><th scope="row">OpenDWM</th><td>0.949</td><td>0.715</td><td>41.236</td><td>50.260</td></tr><tr><th scope="row">Panacea</th><td>0.951</td><td>0.700</td><td>37.464</td><td>47.222</td></tr><tr><th scope="row">DreamForge</th><td>0.940</td><td>0.671</td><td>43.954</td><td>54.545</td></tr><tr><th scope="row">BaseDreamer</th><td>0.953</td><td>0.693</td><td>38.254</td><td>52.532</td></tr><tr><th scope="row">HorizonDrive</th><td>0.961</td><td>0.700</td><td>37.668</td><td>49.421</td></tr><tr><th scope="row">MagicDrive</th><td>0.954</td><td>0.692</td><td>33.285</td><td>45.999</td></tr></tbody></table></div></details></section><section><h2>Run DriveAudit</h2><p>Generate traffic trajectories, render future camera views, then evaluate driving policies on generated and recorded observations.</p><div class="resources"><a href="https://github.com/Nova-chen151/DriveAudit/blob/main/docs/challenge.md">Challenge specification</a><a href="https://github.com/Nova-chen151/DriveAudit/blob/main/docs/evaluation.md">Evaluation guide</a><a href="https://github.com/Nova-chen151/DriveAudit/blob/main/closed_loop/README.md">Closed-loop testing</a></div></section></main>
-<footer>DriveAudit / Beyond Visual Realism</footer><script src="closed-scenes.js?v=df-matrix-complete"></script><script src="closed-view.js?v=df-sync"></script><script src="policy-results.js?v=fixed-scenes"></script><script src="policy-view.js?v=fixed-scenes"></script><script src="screening.js?v=recorded-reference"></script></body></html>
+
+</div></section>
+</div>
+</main>
+<footer class="site-footer">
+  <div class="site-footer-inner">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a class="footer-wordmark-link" href="#top" aria-label="DriveAudit home"><img class="footer-wordmark" src="media/wordmark/driveaudit-on-light.svg" width="1208" height="176" alt="DriveAudit"></a>
+        <p class="footer-tagline" data-i18n="footer.tagline">Beyond Visual Realism: Benchmarking Generated Driving Scenarios as Policy Tests.</p>
+        <div class="footer-badges">
+          <a class="footer-pill" href="https://github.com/Nova-chen151/DriveAudit" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .8a11.2 11.2 0 0 0-3.54 21.83c.56.1.76-.24.76-.54v-2.1c-3.12.68-3.78-1.32-3.78-1.32-.51-1.29-1.25-1.63-1.25-1.63-1.02-.7.08-.68.08-.68 1.13.08 1.73 1.16 1.73 1.16 1 1.72 2.63 1.22 3.27.94.1-.73.39-1.22.71-1.5-2.49-.28-5.11-1.25-5.11-5.54 0-1.22.44-2.22 1.15-3-.12-.28-.5-1.42.11-2.96 0 0 .94-.3 3.08 1.15a10.7 10.7 0 0 1 5.6 0c2.14-1.45 3.08-1.15 3.08-1.15.61 1.54.23 2.68.11 2.96.72.78 1.15 1.78 1.15 3 0 4.3-2.62 5.26-5.12 5.54.4.35.76 1.03.76 2.08v3.05c0 .3.2.65.77.54A11.2 11.2 0 0 0 12 .8Z"/></svg><span data-i18n="footer.github">GitHub Repository</span></a>
+          <span class="footer-pill footer-pill-muted">Apache-2.0</span>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h3 data-i18n="footer.sections">Sections</h3>
+        <ul>
+          <li><a href="#overview" data-i18n="nav.overview">Overview</a></li>
+          <li><a href="#leaderboard" data-i18n="nav.leaderboard">Leaderboard</a></li>
+          <li><a href="#protocol" data-i18n="proto.title">Dataset and evaluation protocol</a></li>
+          <li><a href="#contrasts" data-i18n="nav.comparisons">Comparisons</a></li>
+          <li><a href="#rollout" data-i18n="nav.closedLoop">Closed loop</a></li>
+        </ul>
+      </div>
+      <div class="footer-col footer-col-actions">
+        <h3 data-i18n="footer.docs">Documentation</h3>
+        <ul>
+          <li><a href="https://github.com/Nova-chen151/DriveAudit/blob/main/docs/challenge.md" target="_blank" rel="noopener"><span data-i18n="footer.docChallenge">Challenge specification</span> <span aria-hidden="true">↗</span></a></li>
+          <li><a href="https://github.com/Nova-chen151/DriveAudit/blob/main/docs/evaluation.md" target="_blank" rel="noopener"><span data-i18n="footer.docEval">Evaluation guide</span> <span aria-hidden="true">↗</span></a></li>
+          <li><a href="https://github.com/Nova-chen151/DriveAudit/blob/main/closed_loop/README.md" target="_blank" rel="noopener"><span data-i18n="footer.docClosed">Closed-loop guide</span> <span aria-hidden="true">↗</span></a></li>
+        </ul>
+        <button type="button" class="footer-top-btn" data-scroll-top><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m18 15-6-6-6 6"/></svg><span data-i18n="footer.backToTop">Back to top</span></button>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span data-i18n="footer.credit">DriveAudit Benchmark · Paired Evaluation for Driving World Models</span>
+      <span data-i18n="footer.text">DriveAudit / Beyond Visual Realism</span>
+    </div>
+  </div>
+</footer>
+<button type="button" class="back-to-top" id="back-to-top" data-scroll-top aria-label="Back to top" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m18 15-6-6-6 6"/></svg><span data-i18n="footer.topShort">Top</span></button>
+<script src="closed-scenes.js?v=df-matrix-complete"></script><script src="closed-view.js?v=blue-theme-i18n"></script><script src="policy-results.js?v=fixed-scenes"></script><script src="policy-view.js?v=clean-cases"></script><script src="screening.js?v=larger-labels-colors"></script><script src="cover.js?v=balanced-overview-gap"></script><script src="leaderboard.js?v=worldlens-redesign"></script><script src="i18n-theme.js?v=3"></script></body></html>

@@ -1,0 +1,430 @@
+{
+  "components": [
+    {
+      "bounds": [
+        31,
+        20,
+        309,
+        155
+      ],
+      "id": 1,
+      "median": [
+        1.0,
+        162.0,
+        193.0
+      ],
+      "pixels": 17288
+    },
+    {
+      "bounds": [
+        686,
+        20,
+        799,
+        118
+      ],
+      "id": 2,
+      "median": [
+        131.0,
+        45.0,
+        243.0
+      ],
+      "pixels": 4387
+    },
+    {
+      "bounds": [
+        1114,
+        22,
+        1219,
+        136
+      ],
+      "id": 3,
+      "median": [
+        1.0,
+        30.0,
+        85.0
+      ],
+      "pixels": 4940
+    },
+    {
+      "bounds": [
+        820,
+        23,
+        944,
+        137
+      ],
+      "id": 4,
+      "median": [
+        1.0,
+        29.0,
+        83.0
+      ],
+      "pixels": 6976
+    },
+    {
+      "bounds": [
+        928,
+        23,
+        1055,
+        136
+      ],
+      "id": 5,
+      "median": [
+        0.0,
+        29.0,
+        83.0
+      ],
+      "pixels": 8192
+    },
+    {
+      "bounds": [
+        1045,
+        23,
+        1109,
+        136
+      ],
+      "id": 6,
+      "median": [
+        1.0,
+        29.0,
+        84.0
+      ],
+      "pixels": 3319
+    },
+    {
+      "bounds": [
+        482,
+        25,
+        597,
+        136
+      ],
+      "id": 7,
+      "median": [
+        1.0,
+        29.0,
+        83.0
+      ],
+      "pixels": 5783
+    },
+    {
+      "bounds": [
+        565,
+        25,
+        693,
+        136
+      ],
+      "id": 8,
+      "median": [
+        0.0,
+        29.0,
+        85.0
+      ],
+      "pixels": 7117
+    },
+    {
+      "bounds": [
+        302,
+        26,
+        425,
+        136
+      ],
+      "id": 9,
+      "median": [
+        0.0,
+        29.0,
+        83.0
+      ],
+      "pixels": 7785
+    },
+    {
+      "bounds": [
+        413,
+        26,
+        476,
+        136
+      ],
+      "id": 10,
+      "median": [
+        1.0,
+        30.0,
+        84.0
+      ],
+      "pixels": 3143
+    },
+    {
+      "bounds": [
+        669,
+        85,
+        813,
+        145
+      ],
+      "id": 11,
+      "median": [
+        104.0,
+        33.0,
+        211.0
+      ],
+      "pixels": 4079
+    },
+    {
+      "bounds": [
+        43,
+        101,
+        143,
+        117
+      ],
+      "id": 12,
+      "median": [
+        11.0,
+        199.0,
+        221.0
+      ],
+      "pixels": 794
+    },
+    {
+      "bounds": [
+        973,
+        158,
+        1007,
+        176
+      ],
+      "id": 14,
+      "median": [
+        4.0,
+        239.0,
+        252.0
+      ],
+      "pixels": 415
+    },
+    {
+      "bounds": [
+        1010,
+        158,
+        1041,
+        176
+      ],
+      "id": 15,
+      "median": [
+        147.0,
+        60.0,
+        252.0
+      ],
+      "pixels": 365
+    },
+    {
+      "bounds": [
+        1041,
+        158,
+        1071,
+        176
+      ],
+      "id": 16,
+      "median": [
+        140.0,
+        52.0,
+        251.0
+      ],
+      "pixels": 338
+    },
+    {
+      "bounds": [
+        241,
+        162,
+        963,
+        175
+      ],
+      "id": 17,
+      "median": [
+        132.0,
+        92.0,
+        253.0
+      ],
+      "pixels": 6950
+    },
+    {
+      "bounds": [
+        1076,
+        163,
+        1142,
+        170
+      ],
+      "id": 18,
+      "median": [
+        127.0,
+        49.0,
+        238.0
+      ],
+      "pixels": 241
+    }
+  ],
+  "dependencies": {
+    "Pillow": "12.2.0",
+    "PyMuPDF": "1.28.2",
+    "contourpy": "1.3.3",
+    "numpy": "2.4.6",
+    "scipy": "1.18.0"
+  },
+  "description": "Source-derived vector reconstruction, not recovered original vector artwork.",
+  "gradients": {
+    "cyan": {
+      "end": [
+        266.931,
+        20.708
+      ],
+      "start": [
+        98.627,
+        137.366
+      ],
+      "stops": [
+        {
+          "color": "#26d5e6",
+          "offset": 0
+        },
+        {
+          "color": "#01c7e1",
+          "offset": 0.25
+        },
+        {
+          "color": "#019dbf",
+          "offset": 0.5
+        },
+        {
+          "color": "#0195b9",
+          "offset": 0.75
+        },
+        {
+          "color": "#0193b4",
+          "offset": 1
+        }
+      ]
+    },
+    "purple": {
+      "end": [
+        750.538,
+        137.348
+      ],
+      "start": [
+        719.327,
+        20.202
+      ],
+      "stops": [
+        {
+          "color": "#6b24d3",
+          "offset": 0
+        },
+        {
+          "color": "#852ef5",
+          "offset": 0.25
+        },
+        {
+          "color": "#8530f5",
+          "offset": 0.5
+        },
+        {
+          "color": "#6921d6",
+          "offset": 0.75
+        },
+        {
+          "color": "#601dc5",
+          "offset": 1
+        }
+      ]
+    },
+    "underline": {
+      "end": [
+        931.5,
+        159.758
+      ],
+      "start": [
+        270.5,
+        159.758
+      ],
+      "stops": [
+        {
+          "color": "#5bd9fd",
+          "offset": 0
+        },
+        {
+          "color": "#61a5fd",
+          "offset": 0.25
+        },
+        {
+          "color": "#7f6cfd",
+          "offset": 0.5
+        },
+        {
+          "color": "#9146fd",
+          "offset": 0.75
+        },
+        {
+          "color": "#8531f5",
+          "offset": 1
+        }
+      ]
+    }
+  },
+  "groups": {
+    "accents": [
+      14,
+      15,
+      16,
+      18
+    ],
+    "cyan": [
+      1,
+      12
+    ],
+    "letters": [
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "purple": [
+      2,
+      11
+    ],
+    "underline": [
+      17
+    ]
+  },
+  "maximum_gentle_join_radius_source_px": 1.5,
+  "outputs": {
+    "driveaudit-on-dark.svg": "335c0ce07deb3bdacd59fc632f10d47602ab52957899c2d54c20895486c2aa22",
+    "driveaudit-on-dark@2x.png": "4a2fa5108c52976adbe8834de950a166bc09990c84bc33349aae47be7093df44",
+    "driveaudit-on-dark@3x.png": "e7e9565a3b1078d19f36cf89ad051d0c7ad464053df5310e2c5b50347c599e55",
+    "driveaudit-on-light.svg": "9b4b1e2db09815647fa7127f9885177ab3d24bfbebf3179591eb5effd7c43ffa",
+    "driveaudit-on-light@2x.png": "f0600e1742c234aa8db82c23a1881d5dff536bda17d9233d82fd17f91a8a6295",
+    "driveaudit-on-light@3x.png": "8b66fcfb757522a98eecc10172e07a577634a4ae8a09512b436610ff93e9c50e"
+  },
+  "renderer": "Vector path coverage via MuPDF; user-space SVG gradients composited in straight-alpha sRGB.",
+  "search_crop": [
+    460,
+    40,
+    1720,
+    235
+  ],
+  "simplify_error_source_px": 0.3,
+  "source": "visual-reference.png",
+  "source_bounds": [
+    481,
+    50,
+    1689,
+    226
+  ],
+  "source_sha256": "6d43b5a65536c1372ff08d6f7feaa48409836c8d7091c01865233272e392fd04",
+  "source_size": [
+    2172,
+    724
+  ],
+  "threshold": 0.5,
+  "viewbox": [
+    0,
+    0,
+    1208,
+    176
+  ]
+}

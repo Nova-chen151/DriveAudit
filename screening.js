@@ -1,14 +1,51 @@
+// Keep fixed-header clearance correct when links wrap or fonts finish loading.
+(() => {
+  const navigation = document.querySelector('.cover-nav');
+  if (!navigation) return;
+  const update = () => {
+    const height = `${navigation.getBoundingClientRect().height}px`;
+    if (document.documentElement.style.getPropertyValue('--page-nav-height') === height) return;
+    document.documentElement.style.setProperty('--page-nav-height', height);
+    dispatchEvent(new CustomEvent('page-nav-resize'));
+  };
+  if ('ResizeObserver' in window) new ResizeObserver(update).observe(navigation);
+  addEventListener('resize', update, { passive: true });
+  document.fonts?.ready.then(update);
+  update();
+})();
+
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
 const cover = document.querySelector('#cover-film');
-const coverToggle = document.querySelector('#cover-toggle');
+let coverWantsPlayback = !reduceMotion.matches;
+let coverVisible = true;
+cover.autoplay = coverWantsPlayback;
 
-coverToggle.addEventListener('click', () => {
-  if (cover.paused) cover.play().catch(() => {});
+// Suspend in hidden views or during body playback; resume on returning to cover.
+function updateCoverPlayback() {
+  if (coverWantsPlayback && coverVisible && !document.hidden) cover.play().catch(() => {});
   else cover.pause();
+}
+document.addEventListener('play', event => {
+  if (event.target instanceof HTMLMediaElement && event.target !== cover) {
+    coverWantsPlayback = false;
+    cover.pause();
+  }
+}, true);
+document.addEventListener('visibilitychange', updateCoverPlayback);
+reduceMotion.addEventListener('change', () => {
+  coverWantsPlayback = !reduceMotion.matches;
+  cover.autoplay = coverWantsPlayback;
+  updateCoverPlayback();
 });
-cover.addEventListener('play', () => { coverToggle.textContent = 'Pause cover'; });
-cover.addEventListener('pause', () => { coverToggle.textContent = 'Play cover'; });
-if (!reduceMotion.matches) cover.play().catch(() => {});
+if ('IntersectionObserver' in window) {
+  new IntersectionObserver(([entry]) => {
+    const wasVisible = coverVisible;
+    coverVisible = entry.isIntersecting && entry.intersectionRatio > 0;
+    if (coverVisible && !wasVisible) coverWantsPlayback = !reduceMotion.matches;
+    updateCoverPlayback();
+  }).observe(cover.closest('.cover-pin'));
+}
+updateCoverPlayback();
 
 document.querySelectorAll('.visual-metric').forEach(section => {
   const stage = section.querySelector('.motion-stage');
@@ -25,40 +62,62 @@ document.querySelectorAll('.visual-metric').forEach(section => {
   let videoReady = false;
   const hasReference = section.hasAttribute('data-reference-review');
   const compareButtons = section.querySelectorAll('[data-compare]');
-  let camera = hasReference ? 1 : -1;
-  let comparison = 'all';
+  let camera = 1;
+  let comparison = hasReference ? 'generators' : 'all';
   const streamCount = hasReference ? 3 : 2;
   const streamPairs = { generators: [1, 2], 'reference-open': [0, 1], 'reference-peer': [0, 2] };
   const showTriptych = () => hasReference && comparison === 'all';
   const modes = section.querySelector('.camera-modes:not(.reference-modes)');
   const viewButtons = modes.querySelectorAll('[data-view]');
-  const names = [...viewButtons].slice(1).map(button => button.textContent);
+  const getNames = () => [...viewButtons].map(button => button.textContent.trim());
+  const isZh = () => document.documentElement.lang === 'zh-CN';
+  const playText = paused => (isZh() ? (paused ? '▶ 播放' : '❚❚ 暂停') : (paused ? '▶ Play' : '❚❚ Pause'));
+  const localizeStream = label => {
+    if (!isZh()) return label;
+    if (label === 'Good example') return '优秀样例';
+    if (label === 'Bad example') return '较差样例';
+    return label;
+  };
   const labels = getComputedStyle(stage);
   const divider = labels.getPropertyValue('--white').trim();
   const surface = labels.getPropertyValue('--glass').trim();
   const caption = section.querySelector('.clip-caption');
   const components = section.querySelector('.qtes-components');
+  const badgeRef = section.querySelector('.score-stream-reference');
+  const badgeLeft = section.querySelector('.score-stream-open');
+  const badgeRight = section.querySelector('.score-stream-peer');
   let activeChoice = section.querySelector('.clip-choice[aria-pressed=true]');
 
   function updateView() {
-    const all = camera === -1;
+    const names = getNames();
     const triple = showTriptych();
-    canvas.width = all || triple ? 960 : 640;
-    canvas.height = triple ? (all ? 120 : 180) : 360;
+    const all = hasReference ? !triple : camera === -1;
+    canvas.width = 1200;
+    canvas.height = triple ? 225 : 450;
     stage.classList.toggle('three-streams', triple);
     slider.hidden = !stage.classList.contains('interactive') || triple;
+    modes.hidden = !stage.classList.contains('interactive') || (hasReference && !triple);
     compareButtons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.compare === comparison)));
     stage.classList.toggle('all-views', all);
-    caption.textContent = activeChoice.dataset.caption.replace(
-      /^(.*?) \/ .*? \/ (.*?)$/, (_, scene, length) =>
-        scene
-        + ' / ' + (all ? 'All six cameras' : names[camera]) + ' / ' + length
-    );
+    if (hasReference && badgeRef && badgeLeft && badgeRight) {
+      badgeRef.hidden = comparison === 'generators';
+      badgeLeft.hidden = comparison === 'reference-peer';
+      badgeRight.hidden = comparison === 'reference-open';
+    }
+    toggle.textContent = playText(video.paused);
+    if (caption && activeChoice.dataset.caption) {
+      caption.textContent = activeChoice.dataset.caption.replace(
+        /^(.*?) \/ .*? \/ (.*?)$/, (_, scene, length) =>
+          scene
+          + ' / ' + (all ? 'All six cameras' : names[camera]) + ' / ' + length
+      );
+    }
     viewButtons.forEach(button => button.setAttribute('aria-pressed', String(Number(button.dataset.view) === camera)));
     draw();
   }
 
   function draw() {
+    const names = getNames();
     const frame = videoReady ? video : poster;
     const width = videoReady ? video.videoWidth : poster.naturalWidth;
     const height = videoReady ? video.videoHeight : poster.naturalHeight;
@@ -67,12 +126,18 @@ document.querySelectorAll('.visual-metric').forEach(section => {
     const tileWidth = streamWidth / 3;
     const tileHeight = height / 2;
     const split = Number(slider.value) / 100;
-    const all = camera === -1;
     const triple = showTriptych();
+    const all = hasReference ? !triple : camera === -1;
     const paneWidth = triple ? canvas.width / 3 : canvas.width;
     const destinationWidth = all ? paneWidth / 3 : paneWidth;
     const destinationHeight = all ? canvas.height / 2 : canvas.height;
     const pair = hasReference ? streamPairs[comparison] : [0, 1];
+
+    function drawRoundedBox(rx, ry, rw, rh, radius) {
+      context.beginPath();
+      if (typeof context.roundRect === 'function') context.roundRect(rx, ry, rw, rh, radius);
+      else context.rect(rx, ry, rw, rh);
+    }
 
     function paintTile(index, pane = 0) {
       const column = index % 3;
@@ -96,21 +161,47 @@ document.querySelectorAll('.visual-metric').forEach(section => {
         }
       }
       if (!all && !triple) return;
-      context.strokeStyle = surface;
+      context.strokeStyle = 'rgba(15, 23, 42, 0.75)';
       context.lineWidth = 2;
       context.strokeRect(x, y, destinationWidth, destinationHeight);
-      context.fillStyle = divider;
-      if (!triple && split > 0 && split < 1) context.fillRect(x + cut - 1, y, 2, destinationHeight);
+      if (!triple && split > 0 && split < 1) {
+        context.fillStyle = '#ffffff';
+        context.fillRect(x + cut - 1, y, 2, destinationHeight);
+        if (split > 0.1 && split < 0.9) {
+          const handleW = 28;
+          const handleH = 18;
+          const hx = x + cut - handleW / 2;
+          const hy = y + destinationHeight / 2 - handleH / 2;
+          context.save();
+          context.fillStyle = 'rgba(15, 23, 42, 0.76)';
+          drawRoundedBox(hx, hy, handleW, handleH, 9);
+          context.fill();
+          context.strokeStyle = 'rgba(255, 255, 255, 0.32)';
+          context.lineWidth = 1;
+          context.stroke();
+          context.fillStyle = '#ffffff';
+          context.font = '600 12px system-ui, sans-serif';
+          context.textAlign = 'center';
+          context.textBaseline = 'middle';
+          context.fillText('‹ ›', x + cut, y + destinationHeight / 2 - 0.5);
+          context.restore();
+        }
+      }
       if (!all) return;
-      context.font = triple ? '600 10px system-ui' : '600 15px system-ui';
+      context.save();
+      context.font = '600 15px "Google Sans", "Noto Sans", "Noto Sans SC", system-ui, sans-serif';
       const name = names[index];
       const labelWidth = context.measureText(name).width;
-      const metrics = triple ? [5, 19, 10, 14, 10, 9] : [7, 27, 12, 21, 13, 11];
-      const [boxX, boxY, padding, boxHeight, textX, textY] = metrics;
-      context.fillStyle = surface;
-      context.fillRect(x + boxX, y + destinationHeight - boxY, labelWidth + padding, boxHeight);
-      context.fillStyle = divider;
-      context.fillText(name, x + textX, y + destinationHeight - textY);
+      const boxW = labelWidth + 22;
+      const boxH = 28;
+      context.fillStyle = 'rgba(15, 23, 42, 0.76)';
+      drawRoundedBox(x + 10, y + 10, boxW, boxH, 14);
+      context.fill();
+      context.fillStyle = '#ffffff';
+      context.textAlign = 'left';
+      context.textBaseline = 'middle';
+      context.fillText(name, x + 21, y + 10 + boxH / 2);
+      context.restore();
     }
 
     for (let pane = 0; pane < (triple ? 3 : 1); pane++) {
@@ -126,7 +217,7 @@ document.querySelectorAll('.visual-metric').forEach(section => {
 
   poster.addEventListener('load', () => {
     stage.classList.add('interactive');
-    canvas.hidden = toggle.hidden = modes.hidden = false;
+    canvas.hidden = toggle.hidden = false;
     if (hasReference) section.querySelector('.reference-modes').hidden = false;
     updateView();
     video.controls = false;
@@ -156,12 +247,12 @@ document.querySelectorAll('.visual-metric').forEach(section => {
     document.querySelectorAll('.visual-metric video, #cover-film').forEach(other => {
       if (other !== video) other.pause();
     });
-    toggle.textContent = 'Pause';
+    toggle.textContent = playText(false);
     cancelAnimationFrame(nextFrame);
     animate();
   });
   video.addEventListener('pause', () => {
-    toggle.textContent = 'Play';
+    toggle.textContent = playText(true);
     cancelAnimationFrame(nextFrame);
   });
 
@@ -175,14 +266,15 @@ document.querySelectorAll('.visual-metric').forEach(section => {
     video.src = directory + clip + '.mp4';
     video.poster = poster.src = directory + clip + '.jpg';
     choices.forEach(button => button.setAttribute('aria-pressed', String(button === choice)));
-    section.querySelector('.model-left').textContent = left;
-    section.querySelector('.model-right').textContent = right;
+    section.querySelector('.model-left').textContent = localizeStream(left);
+    section.querySelector('.model-right').textContent = localizeStream(right);
     section.querySelector('.score-left').textContent = leftScore;
     section.querySelector('.score-right').textContent = rightScore;
     if (components) components.textContent = choice.dataset.components;
     if (hasReference) {
       section.querySelector('.score-reference').textContent = choice.dataset.referenceScore;
-      section.querySelector('.score-gap').textContent = choice.dataset.gap;
+      const gap = section.querySelector('.score-gap');
+      if (gap && choice.dataset.gap) gap.textContent = choice.dataset.gap;
     }
     video.setAttribute('aria-label', hasReference
       ? 'Recorded reference, ' + left + ' and ' + right + ' matched clips'
@@ -192,4 +284,8 @@ document.querySelectorAll('.visual-metric').forEach(section => {
   }
 
   choices.forEach(choice => choice.addEventListener('click', () => chooseClip(choice, true)));
+  addEventListener('driveaudit-lang-change', () => {
+    toggle.textContent = playText(video.paused);
+    draw();
+  });
 });
