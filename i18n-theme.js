@@ -108,7 +108,8 @@
     'footer.backToTop': '回到顶部',
     'footer.topShort': '顶部',
     'footer.credit': 'DriveAudit 基准 · 自动驾驶世界模型配对评估框架',
-    'footer.text': 'DriveAudit / 超越视觉逼真度',
+    'footer.visitors': '访客数',
+    'footer.views': '总浏览量',
   };
 
   const enText = new Map();
@@ -241,6 +242,84 @@
   }, { passive: true });
   addEventListener('resize', updateScrollUI, { passive: true });
 
+  function initVisitorCounter() {
+    const uvEl = document.getElementById('busuanzi_value_site_uv');
+    const pvEl = document.getElementById('busuanzi_value_site_pv');
+    if (!uvEl || !pvEl) return;
+
+    const formatNumeric = el => {
+      const raw = (el.textContent || '').trim();
+      if (/^\d{4,}$/.test(raw)) el.textContent = Number(raw).toLocaleString();
+    };
+
+    const isLocal = location.protocol === 'file:' ||
+      location.hostname === 'localhost' ||
+      location.hostname === '127.0.0.1' ||
+      location.hostname === '[::1]';
+
+    if (isLocal) {
+      try {
+        const pv = (parseInt(localStorage.getItem('driveaudit-local-pv') || '0', 10) || 0) + 1;
+        localStorage.setItem('driveaudit-local-pv', String(pv));
+        let uv = parseInt(localStorage.getItem('driveaudit-local-uv') || '0', 10) || 0;
+        if (!uv) {
+          uv = 1;
+          localStorage.setItem('driveaudit-local-uv', '1');
+        }
+        uvEl.textContent = uv.toLocaleString();
+        pvEl.textContent = pv.toLocaleString();
+      } catch {
+        uvEl.textContent = '1';
+        pvEl.textContent = '1';
+      }
+      return;
+    }
+
+    const hasValue = () => /\d/.test(uvEl.textContent || '') || /\d/.test(pvEl.textContent || '');
+    const hasBothValues = () => /\d/.test(uvEl.textContent || '') && /\d/.test(pvEl.textContent || '');
+    const providers = [
+      'https://events.vercount.one/js',
+      'https://cn.vercount.one/js',
+      'https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js',
+    ];
+
+    let idx = 0;
+    let fallbackTimer = null;
+
+    const observer = new MutationObserver(() => {
+      if (hasValue()) {
+        clearTimeout(fallbackTimer);
+        formatNumeric(uvEl);
+        formatNumeric(pvEl);
+      }
+      if (hasBothValues()) {
+        observer.disconnect();
+      }
+    });
+    observer.observe(uvEl, { childList: true, characterData: true, subtree: true });
+    observer.observe(pvEl, { childList: true, characterData: true, subtree: true });
+
+    function loadNext() {
+      if (hasValue() || idx >= providers.length) return;
+      const src = providers[idx++];
+      const script = document.createElement('script');
+      script.async = true;
+      script.src = src;
+      script.onerror = () => {
+        clearTimeout(fallbackTimer);
+        loadNext();
+      };
+      document.head.appendChild(script);
+      clearTimeout(fallbackTimer);
+      fallbackTimer = setTimeout(() => {
+        if (!hasValue()) loadNext();
+      }, 4500);
+    }
+
+    loadNext();
+  }
+
   applyLang(currentLang);
   updateScrollUI();
+  initVisitorCounter();
 })();
